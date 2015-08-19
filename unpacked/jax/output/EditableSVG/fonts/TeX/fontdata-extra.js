@@ -235,5 +235,5 @@
 
   MathJax.Ajax.loadComplete(SVG.fontDir + "/fontdata-extra.js");
 
-})(MathJax.OutputJax.EditableSVG);
+})(MathJax.OutputJax.SVG);
 
