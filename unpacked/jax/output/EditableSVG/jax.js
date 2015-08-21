@@ -2729,7 +2729,7 @@
      * Append a visualization of the jax to a given div
      * Pass in the jax and a jQuery selector div
      */
-    visualizeJax: function(jax, selector) {
+    visualizeJax: function(jax, selector, cursor) {
       selector.empty();
       var hb = this.highlightBox;
 
@@ -2768,44 +2768,37 @@
         }
       };
       f(jax.root, "");
+
+
+      cursorInfo = cursor ? JSON.stringify({
+        type: cursor.node.type,
+        position: cursor.position
+      }) : "(no cursor)";
+      selector.prepend('<pre>' + cursorInfo + '</pre>');
+
     },
 
-    getSVGElem: function(elem) {
+    // Convert coordinates in some arbitrary element's coordinate system to the viewport coordinate system
+    elemCoordsToViewportCoords: function(elem, x, y) {
+      if (!elem.ownerSVGElement) {
+        console.error('No owner SVG element');
+        return;
+      }
+
+      var pt = elem.ownerSVGElement.createSVGPoint();
+      pt.x = x;
+      pt.y = y;
+
+      return pt.matrixTransform(elem.getTransformToElement(elem.ownerSVGElement));
+    },
+
+    screenCoordsToElemCoords: function(elem, x, y) {
       if (!elem) return
       var svg = elem.nodeName === 'svg' ? elem : elem.ownerSVGElement
       if (!svg) {
         console.error('No owner SVG element');
         return
       }
-      return svg
-    },
-
-    elemCoordsToScreenCoords: function(elem, x, y) {
-      var svg = this.getSVGElem(elem)
-      if (!svg) return
-
-      var pt = svg.createSVGPoint()
-      pt.x = x
-      pt.y = y
-
-      return pt.matrixTransform(elem.getScreenCTM())
-    },
-
-    // Convert coordinates in some arbitrary element's coordinate system to the viewport coordinate system
-    elemCoordsToViewportCoords: function(elem, x, y) {
-      var svg = this.getSVGElem(elem)
-      if (!svg) return
-
-      var pt = svg.createSVGPoint();
-      pt.x = x;
-      pt.y = y;
-
-      return pt.matrixTransform(elem.getTransformToElement(svg));
-    },
-
-    screenCoordsToElemCoords: function(elem, x, y) {
-      var svg = this.getSVGElem(elem)
-      if (!svg) return
 
       var pt = svg.createSVGPoint();
       pt.x = x
@@ -3071,8 +3064,6 @@
       span.addEventListener('keydown', handler)
       span.addEventListener('keypress', handler)
       span.addEventListener('mousedown', handler)
-      span.addEventListener('blur', handler)
-      span.addEventListener('focus', handler)
     },
 
     Translate: function(script, state) {
@@ -3656,6 +3647,16 @@
 
     loadFont: function(file) {
       HUB.RestartAfter(AJAX.Require(this.fontDir + "/" + file));
+    },
+
+    createHole: function(w, h) {
+      var svg = BBOX.RECT(h, 0, w, {
+        fill: 'white',
+        stroke: 'blue',
+        "stroke-width": '20'
+      });
+
+      return svg;
     },
 
     createDelimiter: function(code, HW, scale, font) {
@@ -4268,6 +4269,66 @@
 
     MML = MathJax.ElementJax.mml;
 
+    MML.hole = MML.mbase.Subclass({
+      SVG: BBOX.ROW,
+      type: "hole",
+
+      cursorable: true,
+
+      moveCursorFromParent: function(cursor, direction) {
+        console.error('HOLE NOT IMPLEMENTED');
+      },
+
+      moveCursorFromChild: function(cursor, direction, child) {
+        console.error('HOLE NOT IMPLEMENTED');
+      },
+
+      moveCursorFromClick: function(cursor, x, y) {
+        cursor.moveTo(this, 0);
+        cursor.draw();
+      },
+
+      moveCursor: function(cursor, direction) {
+        console.error('HOLE MOVECURSOR NOT IMPLEMENTED');
+      },
+
+      drawCursor: function(cursor) {
+        var bbox = this.getSVGBBox()
+        var x = bbox.x + (bbox.width / 2.0);
+        var y = bbox.y;
+        var height = bbox.height;
+        cursor.drawAt(this.EditableSVGelem.ownerSVGElement, x, y, height);
+      },
+
+      toSVG: function(h, d) {
+        this.SVGgetStyles();
+        var svg = this.SVG();
+        this.SVGhandleSpace(svg);
+
+        if (d != null) {
+          svg.sh = h;
+          svg.sd = d
+        }
+        for (var i = 0, m = this.data.length; i < m; i++) {
+          if (this.data[i]) {
+            svg.Check(this.data[i]);
+          }
+        }
+
+        svg.Clean();
+
+        var hole = SVG.createHole(300, 400);
+        svg.Add(hole, 0, 0);
+
+        svg.Clean();
+
+        this.SVGhandleColor(svg);
+        this.SVGsaveData(svg);
+
+        return svg;
+      }
+    });
+
     function getCursorValue(direction) {
       if (isNaN(direction)) {
         switch(direction[0].toLowerCase()) {
@@ -4323,7 +4384,12 @@
 
       getBB: function(relativeTo) {
         var elem = this.EditableSVGelem;
-        return elem && elem.getBBox();
+        if (!elem) {
+          console.error('Oh no! Couldn\'t find elem for ', this.type);
+          return;
+        }
+
+        return elem.getBBox();
       },
 
       moveCursor: function(cursor, direction) {
@@ -5335,9 +5401,7 @@
       cursorable: true,
 
       isCursorPassthrough: function() {
-        // TODO: implement cursor navigation better
-        // return this.data.length === 1 && this.data[0].cursorable
-        return false
+        return this.data.length === 1 && this.data[0].cursorable
       },
 
       moveCursorFromParent: function(cursor, direction) {
@@ -6494,7 +6558,7 @@
       var cp = SVG.screenCoordsToElemCoords(svg, event.clientX, event.clientY);
 
       // Find the deepest cursorable node that was clicked
-      var jax = SVG.getJaxFromMath(svg.parentNode)
+      jax = MathJax.Hub.getAllJax('#' + event.target.parentNode.id)[0];
       var current = jax.root
       while (true) {
         var matchedItems = current.data.filter(function(node) {
@@ -6555,11 +6619,23 @@
 
     backspace: function(event, recall) {
       event.preventDefault();
-      if (this.node && this.node.type === 'mrow') {
-        this.node.data.splice(this.position - 1, 1);
-        recall();
+      if (!this.node) return;
+
+      if (this.node.type === 'mrow') {
         this.move(LEFT);
+        this.node.data.splice(this.position, 1);
+        if (this.node.data.length === 0) {
+          // The mrow has become empty; make a hole
+          var hole = MML.hole();
+          this.node.SetData(0, hole);
+          this.node = hole;
+          this.position = 0;
+        }
+
+        recall();
         this.refocus();
+      } else if (this.node.type === 'hole') {
+        console.log('backspace on hole!');
       }
     },
 
@@ -6586,10 +6662,24 @@
       var c = String.fromCharCode(code);
       var toInsert;
 
-      if (this.node && this.node.type === 'mrow') {
+      if (!this.node) return;
 
-        // Backslash mode
+      if (this.node.type === 'hole') {
+        // Convert this hole into an empty mrow so the rest of this function
+        // can proceed to put something in it
+        // NOTE: depends on the assumption that every code path through the rest of this
+        // function inserts something into the mrow
+        var parent = this.node.parent;
+        var holeIndex = parent.data.indexOf(this.node);
+        parent.data.splice(holeIndex, 1);
+        this.node = parent;
+        this.position = holeIndex;
+      }
+
+      if (this.node.type === 'mrow') {
+
         if (c === "\\") {
+          // Backslash mode
           if (this.mode !== this.BACKSLASH) {
             // Enter backslash mode
             this.mode = this.BACKSLASH;
@@ -6615,6 +6705,61 @@
             console.log('TODO: insert a \\')
             // Just insert a \
           }
+
+        } else if (c === "^" || c === "_") {
+          // Superscript or subscript
+
+          if (this.position === 0) {
+            return; // Do nothing if we're at the beginning of the mbox
+          }
+
+          var prev = this.node.data[this.position - 1];
+
+          var createAndMoveIntoHole = function(msubsup, index) {
+            // Create the thing
+            var thing = MML.mrow();
+            var hole = MML.hole();
+            thing.Append(hole);
+            msubsup.SetData(index, thing);
+            // Move into it
+            this.position = 0;
+            this.node = hole;
+          }.bind(this);
+
+          var index = (c === "_") ? MML.msubsup().sub : MML.msubsup().sup;
+
+          if (prev.type === "msubsup") {
+            if (prev.data[index]) {
+              // Move into thing
+              var thing = prev.data[index];
+
+              if (thing.cursorable) {
+                this.node = thing;
+                this.position = thing.data.length;
+              } else {
+                this.node = prev;
+                this.position = {
+                  section: index,
+                  pos: 1
+                }
+              }
+            } else {
+              // Create a new thing and move into it
+              createAndMoveIntoHole(prev, index);
+            }
+          } else {
+            // Convert the predecessor to an msubsup
+            var msubsup = MML.msubsup();
+            msubsup.SetData(0, prev);
+            this.node.SetData(this.position - 1, msubsup);
+            createAndMoveIntoHole(msubsup, index);
+          }
+
+          recall();
+          this.refocus();
+          this.draw();
+
+          return;
 
         } else if (c === " ") {
           if (this.mode === this.BACKSLASH) {
@@ -6643,6 +6788,11 @@
             var myIndex = parent.data.indexOf(mrow);
 
             // TODO: make sure this is loaded
+            // Code looks something like this:
+            // if (delim.load) {
+            //   HUB.RestartAfter(AJAX.Require(this.fontDir + "/fontdata-" + delim.load + ".js"))
+            // }
+
             var def = MathJax.InputJax.TeX.Definitions;
             var withoutSlash = latex.substr(1);
 
@@ -6695,18 +6845,16 @@
 
     },
 
-    clearBoxes: function() {
-      if (this.boxes) {
-        this.boxes.forEach(function(elem) {
-          elem.remove();
-        })
-      }
-      this.boxes = []
-    },
-
     highlightBoxes: function(svg) {
       var cur = this.node;
-      this.clearBoxes()
+
+      if (typeof(this.boxes) !== 'undefined') {
+        this.boxes.forEach(function(elem) {
+          elem.remove();
+        });
+      }
+
+      this.boxes = [];
 
       while (cur) {
         if (cur.cursorable) {
@@ -6718,13 +6866,9 @@
       }
     },
 
-    findElement: function() {
-      return document.getElementById('cursor-'+this.id)
-    },
-
-    drawAt: function(svgelem, x, y, height, skipScroll) {
+    drawAt: function(svgelem, x, y, height) {
       this.renderedPosition = {x: x, y: y, height: height}
-      var celem = this.findElement()
+      var celem = svgelem.getElementById('cursor-'+this.id)
       if (!celem) {
         celem = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
         celem.setAttribute('fill', '#777777')
@@ -6747,44 +6891,8 @@
       this.highlightBoxes(svgelem);
 
       jax = MathJax.Hub.getAllJax('#' + svgelem.parentNode.id)[0];
-      SVG.visualizeJax(jax, $('#mmlviz'));
-
-      if (!skipScroll) this.scrollIntoView(svgelem)
-    },
-
-    scrollIntoView: function(svgelem) {
-      if (!this.renderedPosition) return false
-      var x = this.renderedPosition.x
-      var y = this.renderedPosition.y
-      var height = this.renderedPosition.height
-      var clientPoint = SVG.elemCoordsToScreenCoords(svgelem, x, y+height/2)
-      var clientWidth = document.body.clientWidth
-      var clientHeight = document.body.clientHeight
-      var sx = 0, sy = 0
-      if (clientPoint.x < 0 || clientPoint.x > clientWidth) {
-        sx = clientPoint.x - clientWidth / 2
-      }
-      if (clientPoint.y < 0 || clientPoint.y > clientHeight) {
-        sy = clientPoint.y - clientHeight / 2
-      }
-      if (sx || sy) {
-        window.scrollBy(sx, sy)
-      }
-    },
-
-    remove: function() {
-      var cursor = this.findElement()
-      if (cursor) cursor.remove()
-    },
-
-    blur: function(event) {
-      this.remove()
-      this.clearBoxes()
-    },
-
-    focus: function() {
-      this.draw()
-    },
+      SVG.visualizeJax(jax, $('#mmlviz'), this);
+    }
   })
 
   HUB.Browser.Select({
