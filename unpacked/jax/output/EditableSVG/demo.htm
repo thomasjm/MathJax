@@ -2,10 +2,21 @@
     <head>
         <meta charset="utf-8">
         <script type="text/javascript"
-                src="MathJax.js?config=TeX-AMS-MML_EditableSVG">
+                src="/MathJax.js?config=TeX-AMS-MML_EditableSVG">
         </script>
 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+
+        <style>
+         #mmlviz {
+             font-size: 5px;
+             ul {
+                 line-height: 5px;
+             }
+         }
+        </style>
     </head>
     <body>
         <script>
@@ -27,7 +38,7 @@
                 } catch (e) {
                     texarea.val('INVALID')
                 }
-                MathJax.OutputJax.EditableSVG.visualizeJax(found, $('#mmlviz'))
+                 /* MathJax.OutputJax.EditableSVG.visualizeJax(found, $('#mmlviz')) */
              })
              texarea.on('keyup', function() {
                 var $script = $('#'+inputID)
@@ -53,6 +64,10 @@
         </style>
 
         <div class="main-input-box"><h5>Math</h5>$$x$$</div>
+
+        <h2>MML visualization:</h2>
+        <ul id="mmlviz"></ul>
+
         <div class="main-input-box"><h5>TeX</h5><textarea rows="5" id="tex" style="width: 100%; font-family: monospace">x</textarea></div>
     </body>
 </html>
