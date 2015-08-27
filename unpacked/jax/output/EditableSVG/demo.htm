@@ -52,22 +52,79 @@
                 found.root.rerender()
              })
          });
+
+         document.onkeydown = keydown;
+
+         var ie = (typeof document.selection != "undefined" && document.selection.type != "Control") && true;
+         var w3 = (typeof window.getSelection != "undefined") && true;
+         function getCaretPosition(element) {
+             var caretOffset = 0;
+             if (w3) {
+                 var range = window.getSelection().getRangeAt(0);
+                 var preCaretRange = range.cloneRange();
+                 preCaretRange.selectNodeContents(element);
+                 preCaretRange.setEnd(range.endContainer, range.endOffset);
+                 caretOffset = preCaretRange.toString().length;
+             } else if (ie) {
+                 var textRange = document.selection.createRange();
+                 var preCaretTextRange = document.body.createTextRange();
+                 preCaretTextRange.moveToElementText(element);
+                 preCaretTextRange.setEndPoint("EndToEnd", textRange);
+                 caretOffset = preCaretTextRange.text.length;
+             }
+             return caretOffset;
+         }
+
+         function keydown(evt){
+             if (!evt) evt = event; // TODO: huh?
+             if (evt.ctrlKey && !evt.shiftKey && evt.keyCode === 77) {
+                 console.log('queueing typeset!');
+                 MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+             } else if (evt.ctrlKey && evt.shiftKey && evt.keyCode === 77) {
+                 // Split the parent contenteditable into two and insert a new thing in the middle
+                 var focused = $(':focus');
+                 console.log('focused: ', focused);
+                 if (focused.attr('contenteditable')) {
+                     var pos = getCaretPosition(focused.get(0));
+                     console.log('cursor pos: ', pos);
+                     var html = focused.html();
+                     var beginning = html.substr(0, pos);
+                     var end = html.substr(pos);
+                     console.log('beginning: ', beginning);
+                     console.log('end: ', end);
+                     focused.html(beginning);
+                     focused.after("<div contenteditable='true'>" + end + "</div>");
+                     focused.after("<p>" + "$$\\alpha$$" + "</p>");
+                     MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+                 }
+             }
+         }
         </script>
 
         <style>
-            .main-input-box {
-                height: 50%;
-            }
-            h5 {
-                margin: 0;
-            }
         </style>
 
-        <div class="main-input-box"><h5>Math</h5>$$x$$</div>
+        <div class="main-input-box">
+	  <h2>Editable Math!</h2>
+	  $$\nabla \times B={\mu}_0(J+{\epsilon}_0 \frac{\partial E}{\partial t})$$
+
+      <div contenteditable="true">Here is a content editable div!</div>
+	</div>
+
+	<h3>Tips:</h3>
+	<ul>
+	  <li>Use backslash to enter LaTeX commands</li>
+	  <li>TODO: add hotkeys here once they work</li>
+      <li>Press Ctrl+m to make a new inline math box, and Ctrl+shift+m to make a new block math box</li>
+	</ul>
+
+        <div class="main-input-box">
+	  <h2>TeX</h2>
+	  <textarea rows="5" id="tex" style="width: 100%; font-family: monospace">x</textarea>
+	</div>
 
         <h2>MML visualization:</h2>
         <ul id="mmlviz"></ul>
 
-        <div class="main-input-box"><h5>TeX</h5><textarea rows="5" id="tex" style="width: 100%; font-family: monospace">x</textarea></div>
     </body>
 </html>
