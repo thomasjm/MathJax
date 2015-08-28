@@ -1,6 +1,10 @@
 /// <reference path="mbase_mixin.ts" />
+/// <reference path="../bbox/g.ts" />
 
 class MUnderOverMixin extends MBaseMixin {
+    over: any;
+    under: any;
+
     toSVG(HW, D) {
         this.SVGgetStyles();
         var values = this.getValues("displaystyle", "accent", "accentunder", "align");
@@ -8,8 +12,8 @@ class MUnderOverMixin extends MBaseMixin {
             this.data[this.base].CoreMO().Get("movablelimits")) {
             return this.MML.msubsup.prototype.toSVG.call(this)
         }
-        var svg  = new this.SVG(),
-        scale = this.SVGgetScale(svg);
+        var svg  = new BBOX();
+        var scale = this.SVGgetScale(svg);
         this.SVGhandleSpace(svg);
         var boxes = [],
         stretch = [],
@@ -76,9 +80,9 @@ class MUnderOverMixin extends MBaseMixin {
                 var accent = (i != this.base && values[this.ACCENTS[i]]);
                 if (accent && box.w <= 1) {
                     box.x = -box.l;
-                    boxes[i] = BBOX.G().With({
+                    boxes[i] = (new BBOX_G()).With({
                         removeable: false
-                    });
+                    }, this.HUB);
                     boxes[i].Add(box);
                     boxes[i].Clean();
                     boxes[i].w = -box.l;

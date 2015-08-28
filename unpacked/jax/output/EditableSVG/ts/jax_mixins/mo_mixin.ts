@@ -1,9 +1,12 @@
 /// <reference path="mbase_mixin.ts" />
 
 class MoMixin extends MBaseMixin {
-    toSVG(HW, D) {
+
+    svg: any;
+
+    toSVG(HW = null, D = null) {
         this.SVGgetStyles();
-        var svg = this.svg  = new this.SVG();
+        var svg = this.svg  = new BBOX();
         var scale = this.SVGgetScale(svg);
         this.SVGhandleSpace(svg);
         if (this.data.length == 0) {
@@ -16,7 +19,7 @@ class MoMixin extends MBaseMixin {
         if (D != null) {
             return this.SVGstretchV(HW, D)
         } else if (HW != null) {
-            return this.EditableSVG.strechH(HW)
+            return this.SVGstretchH(HW)
         }
 
         //  Get the variant, and check for operator size
@@ -27,10 +30,10 @@ class MoMixin extends MBaseMixin {
         }
 
         //  Get character translation for superscript and accents
-        var parent = this.CoreParent(),
-        isScript = (parent && parent.isa(MML.msubsup) && this !== parent.data[0]),
-        mapchars = (isScript ? this.remapChars : null);
-        if (this.data.join("").length === 1 && parent && parent.isa(MML.munderover) &&
+        var parent = this.CoreParent();
+        var isScript = (parent && parent.isa(this.MML.msubsup) && this !== parent.data[0]);
+        var mapchars = (isScript ? this.remapChars : null);
+        if (this.data.join("").length === 1 && parent && parent.isa(this.MML.munderover) &&
             this.CoreText(parent.data[parent.base]).length === 1) {
             var over = parent.data[parent.over],
             under = parent.data[parent.under];
@@ -91,7 +94,7 @@ class MoMixin extends MBaseMixin {
             return false
         }
         var parent = this.CoreParent();
-        if (parent && parent.isa(MML.munderover) &&
+        if (parent && parent.isa(this.MML.munderover) &&
             this.CoreText(parent.data[parent.base]).length === 1) {
             var over = parent.data[parent.over],
             under = parent.data[parent.under];
@@ -104,7 +107,7 @@ class MoMixin extends MBaseMixin {
         c = EditableSVG.FONTDATA.DELIMITERS[c.charCodeAt(0)];
         var can = (c && c.dir == direction.substr(0, 1));
         if (!can) {
-            delete this.svg
+            delete this.svg;
         }
         this.forceStretch = can && (this.Get("minsize", true) || this.Get("maxsize", true));
         return can;
