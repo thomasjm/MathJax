@@ -8,7 +8,7 @@ class MathMixin extends MBaseMixin {
     })
 
     toSVG(span, div) {
-        var CONFIG = this.SVG.config;
+        var CONFIG = EditableSVGConfig.config;
 
         //  All the data should be in an inferred row
         if (this.data[0]) {

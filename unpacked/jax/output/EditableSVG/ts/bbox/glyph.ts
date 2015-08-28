@@ -2,16 +2,18 @@
 
 class BBOX_GLYPH extends BBOX {
 
-    constructor(scale, id, h, d, w, l, r, p) {
+    constructor(scale, id, h, d, w, l, r, p, SVG, HUB) {
         this.type = "path";
         this.removeable = false;
 
-        var def, t = SVG.config.blacker,
+        var def;
+        var t = SVG.config.blacker;
         var cache = SVG.config.useFontCache;
         var transform = (scale === 1 ? null : "scale(" + SVG.Fixed(scale) + ")");
         if (cache && !SVG.config.useGlobalCache) {
             id = "E" + this.n + "-" + id
         }
+
         if (!cache || !this.glyphs[id]) {
             def = {
                 "stroke-width": t
@@ -22,7 +24,7 @@ class BBOX_GLYPH extends BBOX {
                 def.transform = transform
             }
             def.d = (p ? "M" + p + "Z" : "");
-            super(def);
+            super(SVG, HUB, def);
             if (cache) {
                 this.defs.appendChild(this.element);
                 this.glyphs[id] = true;
@@ -34,7 +36,7 @@ class BBOX_GLYPH extends BBOX {
                 def.transform = transform
             }
             this.element = SVG.Element("use", def);
-            this.element.setAttributeNS(XLINKNS, "href", "#" + id);
+            this.element.setAttributeNS(Util.XLINKNS, "href", "#" + id);
         }
         this.h = (h + t) * scale;
         this.d = (d + t) * scale;

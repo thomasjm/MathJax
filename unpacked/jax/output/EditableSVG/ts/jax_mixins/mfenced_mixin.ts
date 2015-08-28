@@ -1,11 +1,10 @@
 /// <reference path="mbase_mixin.ts" />
 
 class MFencedMixin extends MBaseMixin {
-    SVG = BBOX_ROW;
 
     toSVG() {
         this.SVGgetStyles();
-        var svg  = new this.SVG();
+        var svg  = new BBOX_ROW(this.SVG, this.HUB);
         this.SVGhandleSpace(svg);
         if (this.data.open) {
             svg.Check(this.data.open)
