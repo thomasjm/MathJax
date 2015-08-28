@@ -1,15 +1,14 @@
 /// <reference path="mbase_mixin.ts" />
+/// <reference path="../editable_svg_config.ts" />
 
 class MRowMixin extends MBaseMixin {
-    SVG = BBOX_ROW;
-
     focus() {
         console.log('focus!')
     }
 
     toSVG(h, d) {
         this.SVGgetStyles();
-        var svg  = new this.SVG();
+        var svg  = new BBOX_ROW(this.svg, this.hub);
         this.SVGhandleSpace(svg);
         if (d != null) {
             svg.sh = h;
@@ -43,8 +42,8 @@ class MRowMixin extends MBaseMixin {
         if (!this.parent.linebreakContainer) {
             return false
         }
-        return (SVG.config.linebreaks.automatic &&
-                svg.w > this.SVG.linebreakWidth) || this.hasNewline();
+        return (EditableSVGConfig.config.linebreaks.automatic &&
+                svg.w > this.EditableSVG.linebreakWidth) || this.hasNewline();
     }
 
     SVGmultiline(span) {
@@ -52,7 +51,7 @@ class MRowMixin extends MBaseMixin {
     }
 
     SVGstretchH(w) {
-        var svg  = new this.SVG();
+        var svg  = new BBOX_ROW(this.EditableSVG, this.hub);
         this.SVGhandleSpace(svg);
         for (var i = 0, m = this.data.length; i < m; i++) {
             svg.Add(this.EditableSVGdataStretched(i, w), svg.w, 0)

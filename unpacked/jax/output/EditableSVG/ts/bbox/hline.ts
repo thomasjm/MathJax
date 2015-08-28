@@ -14,7 +14,7 @@ class BBOX_HLINE extends BBOX {
             def.stroke = color
         }
 
-        def["stroke-width"] = SVG.Fixed(t, 2);
+        def["stroke-width"] = Util.Fixed(t, 2);
         def.x1 = def.y1 = def.y2 = Math.floor(t / 2);
         def.x2 = Math.floor(w - t / 2);
         if (dash === "dashed") {

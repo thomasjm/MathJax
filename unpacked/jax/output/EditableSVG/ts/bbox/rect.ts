@@ -1,7 +1,7 @@
 /// <reference path="bbox.ts" />
 
 class BBOX_RECT extends BBOX {
-    constructor(h, d, w, def) {
+    constructor(h, d, w, def = null) {
         this.type = "rect";
         this.removeable = false;
 

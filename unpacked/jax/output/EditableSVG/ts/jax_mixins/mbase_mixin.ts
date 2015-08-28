@@ -1,34 +1,35 @@
 /// <reference path="../bbox/bbox.ts" />
 /// <reference path="../bbox/rect.ts" />
 
-interface ElementJax {
-    Get: any;
-    getValues(): any;
+class ElementJax {
+    Get(...values): any;
+    getValues(...values): any;
 }
 
-class MBaseMixin implements ElementJax {
-    SVG = BBOX;
+class MBaseMixin extends ElementJax {
     HUB: any;
     MML: any;
+    AJAX: any;
+    HTML: any;
+    EditableSVG: any;
 
-    public SVGsaveData(svg: any): any;
     data: any;
     base: any;
     EditableSVGdata: any;
     EditableSVGelem: any;
     mscale: any;
-    toSVG(): any;
 
     Core: any;
-    Get(): any;
+    CoreParent: any;
+    CoreText: any;
     Parent: any;
+    parent: any;
     attr: any;
     attrNames: any;
     background: any;
     defaults: any;
     fontWeight: any;
     forceStretch: any;
-    getValues(): any;
     hasValue: any;
     href: any;
     id: any;
@@ -37,6 +38,8 @@ class MBaseMixin implements ElementJax {
     mathbackground: any;
     mathcolor: any;
     mathsize: any;
+    remap: any;
+    remapChars: any;
     scale: any;
     style: any;
     styles: any;
@@ -55,14 +58,16 @@ class MBaseMixin implements ElementJax {
         return elem.getBBox();
     }
 
-    static getMethods() {
-        // TODO: return a dict suitable for using with Mathjax Augment method
+    static getMethods(AJAX, HUB, HTML, EditableSVG) {
+        // TODO: put the args into the dict so they get stuck onto the objects
+
     }
 
+    toSVG(...args): any;
     toSVG() {
         this.SVGgetStyles();
         var variant = this.SVGgetVariant();
-        var svg = new this.SVG();
+        var svg = new BBOX();
         this.SVGgetScale(svg);
         this.SVGhandleSpace(svg);
         for (var i = 0, m = this.data.length; i < m; i++) {
@@ -89,16 +94,16 @@ class MBaseMixin implements ElementJax {
     }
 
     SVGchildSVG(i) {
-        return (this.data[i] ? this.data[i].toSVG() : new BBOX(this.HUB));
+        return (this.data[i] ? this.data[i].toSVG() : new BBOX(this.EditableSVG, this.HUB));
     }
 
-    EditableSVGdataStretched(i, HW, D) {
+    EditableSVGdataStretched(i, HW, D = null) {
         this.EditableSVGdata = {
             HW: HW,
             D: D
         };
         if (!this.data[i]) {
-            return new BBOX(this.HUB);
+            return new BBOX(this.EditableSVG, this.HUB);
         }
         if (D != null) {
             return this.data[i].SVGstretchV(HW, D)
@@ -149,9 +154,9 @@ class MBaseMixin implements ElementJax {
             var a = EditableSVG.Element("a", {
                 "class": "mjx-svg-href"
             });
-            a.setAttributeNS(XLINKNS, "href", this.href);
+            a.setAttributeNS(Util.XLINKNS, "href", this.href);
             a.onclick = this.SVGlink;
-            EditableSVG.addElement(a, "rect", {
+            this.EditableSVG.addElement(a, "rect", {
                 width: svg.w,
                 height: svg.h + svg.d,
                 y: -svg.d,
@@ -172,10 +177,12 @@ class MBaseMixin implements ElementJax {
             }
             svg.removeable = false;
         }
-        if (EditableSVG.config.addMMLclasses) {
+
+        if (EditableSVGConfig.config.addMMLclasses) {
             this.SVGaddClass(svg.element, "mjx-svg-" + this.type);
             svg.removeable = false;
         }
+
         var style = this.style;
         if (style && svg.element) {
             svg.element.style.cssText = style;
@@ -187,21 +194,23 @@ class MBaseMixin implements ElementJax {
                 svg.removeable = (svg.element.style.cssText === "")
             }
         }
+
         this.SVGaddAttributes(svg);
     }
+
     SVGaddClass(node, name) {
         var classes = node.getAttribute("class");
         node.setAttribute("class", (classes ? classes + " " : "") + name);
     }
+
     SVGaddAttributes(svg) {
-        //
+
         //  Copy RDFa, aria, and other tags from the MathML to the HTML-CSS
         //  output spans Don't copy those in the MML.nocopyAttributes list,
         //  the ignoreMMLattributes configuration list, or anything tha
         //  already exists as a property of the span (e.g., no "onlick", etc.)
         //  If a name in the ignoreMMLattributes object is set to false, then
         //  the attribute WILL be copied.
-        //
         if (this.attrNames) {
             var copy = this.attrNames,
             skip = this.MML.nocopyAttributes,
@@ -217,14 +226,13 @@ class MBaseMixin implements ElementJax {
             }
         }
     }
-    //
+
     //  WebKit currently scrolls to the BOTTOM of an svg element if it contains the
     //  target of the link, so implement link by hand, to the containing span element.
-    //
     SVGlink() {
         var href = this.href.animVal;
         if (href.charAt(0) === "#") {
-            var target = EditableSVG.hashCheck(document.getElementById(href.substr(1)));
+            var target = Util.hashCheck(document.getElementById(href.substr(1)));
             if (target && target.scrollIntoView) {
                 setTimeout(function() {
                     target.parentNode.scrollIntoView(true)
@@ -236,15 +244,16 @@ class MBaseMixin implements ElementJax {
 
     SVGgetStyles() {
         if (this.style) {
-            var span = HTML.Element("span");
+            var span = this.HTML.Element("span");
             span.style.cssText = this.style;
             this.styles = this.SVGprocessStyles(span.style);
         }
     }
+
     SVGprocessStyles(style) {
         var styles = {
-            border: EditableSVG.getBorders(style),
-            padding: EditableSVG.getPadding(style)
+            border: Util.getBorders(style),
+            padding: Util.getPadding(style)
         };
         if (!styles.border) {
             delete styles.border
@@ -329,10 +338,9 @@ class MBaseMixin implements ElementJax {
         values.background = (this.mathbackground || this.background ||
                              (this.styles || {}).background || this.MML.COLOR.TRANSPARENT);
         if (bleft + pleft) {
-            //
+
             //  Make a box and move the contents of svg to it,
             //    then add it back into svg, but offset by the left amount
-            //
             var dup = new BBOX(this.HUB);
             for (id in svg) {
                 if (svg.hasOwnProperty(id)) {
@@ -345,9 +353,8 @@ class MBaseMixin implements ElementJax {
             svg.removeable = true;
             svg.Add(dup, bleft + pleft, 0);
         }
-        //
+
         //  Adjust size by padding and dashed borders (left is taken care of above)
-        //
         if (padding) {
             svg.w += padding.right || 0;
             svg.h += padding.top || 0;
@@ -358,13 +365,12 @@ class MBaseMixin implements ElementJax {
             svg.h += borders.top || 0;
             svg.d += borders.bottom || 0
         }
-        //
+
         //  Add background color
-        //
         if (values.background !== this.MML.COLOR.TRANSPARENT) {
             var nodeName = svg.element.nodeName.toLowerCase();
             if (nodeName !== "g" && nodeName !== "svg") {
-                var g = EditableSVG.Element("g");
+                var g = this.EditableSVG.Element("g");
                 g.appendChild(svg.element);
                 svg.element = g;
                 svg.removeable = true;
@@ -487,7 +493,7 @@ class MBaseMixin implements ElementJax {
         return EditableSVG.FONTDATA.VARIANT[variant];
     }
 
-    SVGgetScale(svg) {
+    SVGgetScale(svg?) {
         var scale = 1;
         if (this.mscale) {
             scale = this.scale;
@@ -573,14 +579,19 @@ class MBaseMixin implements ElementJax {
         return false
     }
 
+    constructor(AJAX) {
+        super()
+        this.AJAX = AJAX;
+    }
+
     // TODO: these two go in the second argument to Augment
     SVGautoload() {
         var file = EditableSVG.autoloadDir + "/" + this.type + ".js";
-        this.HUB.RestartAfter(AJAX.Require(file));
+        this.HUB.RestartAfter(this.AJAX.Require(file));
     }
 
     SVGautoloadFile(name) {
         var file = EditableSVG.autoloadDir + "/" + name + ".js";
-        this.HUB.RestartAfter(AJAX.Require(file));
+        this.HUB.RestartAfter(this.AJAX.Require(file));
     }
 }

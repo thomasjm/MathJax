@@ -29,7 +29,7 @@ class MErrorMixin extends MBaseMixin {
 
     SVGgetStyles() {
         var span = HTML.Element("span", {
-            style: this.SVG.config.merrorStyle
+            style: EditableSVGConfig.config.merrorStyle
         });
         this.styles = this.SVGprocessStyles(span.style);
         if (this.style) {

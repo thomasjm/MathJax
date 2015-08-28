@@ -5,14 +5,12 @@ class BBOX {
     type = "g";
     removeable = true;
 
+    EditableSVG: any;
+
     // Stuff needed for the GLYPH element
     glyphs = {}; // which glpyhs have been used
     defs = null; // the SVG <defs> element where glyphs are stored
     n = 0; // the ID for local <defs> for self-contained SVG elements
-
-    HUB: any;
-
-    svg: any;
 
     h: number;
     w: number;
@@ -23,6 +21,7 @@ class BBOX {
     r: number;
     x: number;
     y: number;
+    skew: any;
     scale: number;
     element: any;
 
@@ -34,7 +33,7 @@ class BBOX {
 
     hasIndent: boolean;
 
-    constructor(HUB, def = null) {
+    constructor(def = null) {
         this.h = this.d = -Util.BIGDIMEN;
         this.H = this.D = 0;
         this.w = this.r = 0;
@@ -42,14 +41,14 @@ class BBOX {
         this.x = this.y = 0;
         this.scale = 1;
         this.n = 0;
-        this.HUB = hub;
+        this.EditableSVG = svg;
         if (this.type) {
             this.element = EditableSVG.Element(this.type, def);
         }
     }
 
-    With(def) {
-        return this.HUB.Insert(this, def);
+    With(def, HUB) {
+        return HUB.Insert(this, def);
     }
 
     Add(svg, dx, dy, forcew?, infront?) {
@@ -158,7 +157,7 @@ class BBOX {
         return svg;
     }
 
-    Align(svg, align, dx, dy, shift) {
+    Align(svg, align, dx, dy, shift = null) {
         dx = ({
             left: dx,
             center: (this.w - svg.w) / 2,
