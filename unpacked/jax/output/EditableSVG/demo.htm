@@ -77,25 +77,39 @@
 
          function keydown(evt){
              if (!evt) evt = event; // TODO: huh?
-             if (evt.ctrlKey && !evt.shiftKey && evt.keyCode === 77) {
-                 console.log('queueing typeset!');
-                 MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-             } else if (evt.ctrlKey && evt.shiftKey && evt.keyCode === 77) {
+
+             if (evt.ctrlKey && evt.keyCode === 77) {
                  // Split the parent contenteditable into two and insert a new thing in the middle
                  var focused = $(':focus');
                  console.log('focused: ', focused);
                  if (focused.attr('contenteditable')) {
                      var pos = getCaretPosition(focused.get(0));
-                     console.log('cursor pos: ', pos);
                      var html = focused.html();
                      var beginning = html.substr(0, pos);
                      var end = html.substr(pos);
-                     console.log('beginning: ', beginning);
-                     console.log('end: ', end);
-                     focused.html(beginning);
-                     focused.after("<div contenteditable='true'>" + end + "</div>");
-                     focused.after("<p>" + "$$\\alpha$$" + "</p>");
-                     MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+
+                     if (evt.shiftKey) {
+                         focused.html(beginning);
+                         focused.after("<div contenteditable='true'>" + end + "</div>");
+                         focused.after("<p>$$$$</p>");
+                     } else {
+                         focused.html(beginning + " $x^2$ " + end);
+                     }
+
+                     var focus = function() {
+                         var jax = MathJax.Hub.getJaxFor($(focused.next()).find('.MathJax_SVG').get(0));
+                         console.log('next: ', $(focused.next()))
+                         console.log('jax: ', jax);
+                         var span = $(focused.next()).find('.MathJax_SVG').get(0);
+                         $(span).focus();
+                         jax.root.cursor.focusFirstHole(jax.root);
+                     }
+
+                     if (evt.shiftKey) {
+                         MathJax.Hub.Queue(["Typeset", MathJax.Hub], [focus]);
+                     } else {
+                         MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+                     }
                  }
              }
          }
@@ -115,7 +129,7 @@
 	<ul>
 	  <li>Use backslash to enter LaTeX commands</li>
 	  <li>TODO: add hotkeys here once they work</li>
-      <li>Press Ctrl+m to make a new inline math box, and Ctrl+shift+m to make a new block math box</li>
+      <li>Press Ctrl+m to make a new inline math box, and Ctrl+Shift+m to make a new block math box</li>
 	</ul>
 
         <div class="main-input-box">

@@ -595,7 +595,7 @@
       }
       function handler(e) {
         if (math.cursor[e.type]) {
-          math.cursor[e.type](e, rerender)
+          math.cursor[e.type](e, rerender);
         }
       }
       span.addEventListener('keydown', handler)
@@ -621,6 +621,14 @@
           div = (jax.SVG.display ? (span || {}).parentNode : span),
           localCache = (SVG.config.useFontCache && !SVG.config.useGlobalCache);
       if (!div) return;
+
+      if (jax.root.data.length === 1) {
+        if (jax.root.data[0].type === 'mrow') {
+          if (jax.root.data[0].data.length === 0) {
+            jax.root.data[0].SetData(0, MML.hole());
+          }
+        }
+      }
 
       //  Set the font metrics
       this.em = MML.mbase.prototype.em = jax.SVG.em;
@@ -657,21 +665,18 @@
         script.parentNode.insertBefore(div, script);
       }
       div.className = div.className.split(/ /)[0];
-      //
+
       //  Check if we are hiding the math until more is processed
-      //
       if (this.hideProcessedMath) {
-        //
+
         //  Hide the math and don't let its preview be removed
-        //
         div.className += " MathJax_SVG_Processed";
         if (script.MathJax.preview) {
           jax.SVG.preview = script.MathJax.preview;
           delete script.MathJax.preview;
         }
-        //
+
         //  Check if we should show this chunk of equations
-        //
         state.SVGeqn += (state.i - state.SVGi);
         state.SVGi = state.i;
         if (state.SVGeqn >= state.SVGlast + state.SVGchunk) {
@@ -685,20 +690,17 @@
     postTranslate: function(state, partial) {
       var scripts = state.jax[this.id];
       if (!this.hideProcessedMath) return;
-      //
+
       //  Reveal this chunk of math
-      //
       for (var i = state.SVGlast, m = state.SVGeqn; i < m; i++) {
         var script = scripts[i];
         if (script && script.MathJax.elementJax) {
-          //
+
           //  Remove the processed marker
-          //
           script.previousSibling.className = script.previousSibling.className.split(/ /)[0];
           var data = script.MathJax.elementJax.SVG;
-          //
+
           //  Remove the preview, if any
-          //
           if (data.preview) {
             data.preview.innerHTML = "";
             script.MathJax.preview = data.preview;
@@ -706,9 +708,8 @@
           }
         }
       }
-      //
+
       //  Save our place so we know what is revealed
-      //
       state.SVGlast = state.SVGeqn;
     },
 
@@ -4702,13 +4703,30 @@
     },
 
     blur: function(event) {
-      this.remove()
-      this.clearBoxes()
+      this.remove();
+      this.clearBoxes();
     },
 
     focus: function() {
-      this.draw()
+      this.draw();
     },
+
+    focusFirstHole: function(root) {
+      if (!root) return;
+
+      if (root.type === "hole") {
+        this.node = root;
+        this.position = 0;
+        this.draw();
+        return true;
+      }
+
+      for (var i = 0; i < root.data.length; i++) {
+        if (this.focusFirstHole(root.data[i])) return true;
+      }
+
+      return false;
+    }
   })
 
   HUB.Browser.Select({
