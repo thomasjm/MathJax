@@ -4,6 +4,9 @@
 class Util {
     static MML: any;
 
+    static SVGNS = "http://www.w3.org/2000/svg";
+    static XLINKNS = "http://www.w3.org/1999/xlink";
+
     // TODO: this needs to be set by the code in Translate
     static em: number;
     static ex: number;
@@ -30,14 +33,38 @@ class Util {
 
     static NBSP = "\u00A0";
 
-    Fixed(m, n) {
+    static Fixed(m, n?) {
         if (Math.abs(m) < 0.0006) {
             return "0";
         }
         return m.toFixed(n || 3).replace(/\.?0+$/, "");
     }
 
-    static length2em(length, mu, size=null) {
+    //  Return the containing HTML element rather than the SVG element, since
+    //  most browsers can't position to an SVG element properly.
+    static hashCheck(target) {
+        if (target && target.nodeName.toLowerCase() === "g") {
+            do {
+                target = target.parentNode;
+            } while (target && target.firstChild.nodeName !== "svg");
+        }
+        return target;
+    }
+
+    Element(type, def) {
+        var obj = (typeof(type) === "string" ? document.createElementNS(Util.SVGNS, type) : type);
+        obj.isMathJax = true;
+        if (def) {
+            for (var id in def) {
+                if (def.hasOwnProperty(id)) {
+                    obj.setAttribute(id, def[id].toString());
+                }
+            }
+        }
+        return obj;
+    }
+
+    static length2em(length, mu=null, size=null) {
         if (typeof(length) !== "string") {
             length = length.toString();
         }
@@ -59,7 +86,7 @@ class Util {
         if (length.match(/mathspace$/)) {
             return 1000 * this.MATHSPACE[length];
         }
-        var emFactor = (this.zoomScale || 1) / Util.em;
+        var emFactor = (EditableSVG.zoomScale || 1) / Util.em;
         var match = length.match(/^\s*([-+]?(?:\.\d+|\d+(?:\.\d*)?))?(pt|em|ex|mu|px|pc|in|mm|cm|%)?/);
         var m = parseFloat(match[1] || "1") * 1000,
         unit = match[2];
@@ -100,6 +127,55 @@ class Util {
             return m / 18 * mu;
         }
         return m * size / 1000; // relative to given size (or 1em as default)
+    }
+
+    static getPadding(styles) {
+        var padding = {
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0
+        };
+        var has = false;
+
+        for (var id in padding) {
+            if (padding.hasOwnProperty(id)) {
+                var pad = styles["padding" + id.charAt(0).toUpperCase() + id.substr(1)];
+                if (pad) {
+                    padding[id] = Util.length2em(pad);
+                    has = true;
+                }
+            }
+        }
+        return (has ? padding : false);
+    }
+
+    static getBorders(styles) {
+        var border = {
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0
+        },
+        has = false;
+        for (var id in border) {
+            if (border.hasOwnProperty(id)) {
+                var ID = "border" + id.charAt(0).toUpperCase() + id.substr(1);
+                var style = styles[ID + "Style"];
+                if (style && style !== "none") {
+                    has = true;
+                    border[id] = Util.length2em(styles[ID + "Width"]);
+                    border[id + "Style"] = styles[ID + "Style"];
+                    border[id + "Color"] = styles[ID + "Color"];
+                    if (border[id + "Color"] === "initial") {
+                        border[id + "Color"] = "";
+                    }
+                } else {
+                    delete border[id];
+                }
+            }
+        }
+        return (has ? border : false);
     }
 
     static thickness2em(length, mu) {

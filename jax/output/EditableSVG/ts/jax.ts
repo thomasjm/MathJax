@@ -38,11 +38,8 @@ class EditableSVG implements OutputJax {
     SVG = MathJax.OutputJax.EditableSVG;
 
 
-
-    SVGNS = "http://www.w3.org/2000/svg";
-    XLINKNS = "http://www.w3.org/1999/xlink";
-
     // Bunch of properties being added to make the build happy
+    autoloadDir: any;
     ContextMenu: any;
     EVENT: any;
     FONTDATA: any;
@@ -192,61 +189,6 @@ class EditableSVG implements OutputJax {
         TOUCH = MathJax.Extension.MathEvents.Touch;
         HOVER = MathJax.Extension.MathEvents.Hover;
         this.ContextMenu = this.EVENT.ContextMenu;
-        this.Mousedown = function(event) {
-            /* TODOTODOTODO
-               Note: use test3.htm!!!
-
-               What I'm trying to do here is detect which node has been clicked.
-
-               I did this by augmenting several classes (mfrac, mrow, etc.) with a property EditableSVGelem,
-               which is the SVG elem corresponding to that element.
-
-               Given a mouse event with some click coordinates, the code below tries to find all the element(s)
-               that the click overlaps. By finding the deepest such element in the tree, we can decide where to
-               render the cursor.
-
-               Something's wrong right now with how I transform coordinate systems: one or more of the
-               click coordinates or bounding box X and Y values is wrong; too tired to figure it out atm.
-
-               Note that this function also calls "visualizeJax" which renders a tree of what the jax looks like
-               to a special div I made. You can *click* the list items and they will print information about the node
-               in question; you can edit what information is printed inside the click handlers installed in
-               visualizeJax.
-            */
-            console.log('got mousedown!');
-            // TODO: if we're not rendered yet, ignore
-
-            var svg = $(event.target).closest('svg').get()[0];
-            if (!svg) return;
-
-            // Convert the click coordinates to viewport coordinates
-            var pt = svg.createSVGPoint();
-            var offset = svg.getBoundingClientRect();
-            pt.x = event.clientX;
-            pt.y = event.clientY;
-            console.log('click in client coords: ', event.clientX, event.clientY);
-            var cp = pt.matrixTransform(svg.getScreenCTM().inverse());
-            console.log('cp: ', cp.x, cp.y);
-
-            jax = MathJax.Hub.getAllJax('#' + event.target.parentElement.id)[0];
-            // this.visualizeJax(jax, $('#mmlviz'));
-
-            // Get a flat list of all nodes in the tree
-            var nodes = this.getNodesAsFlatList(jax.root);
-
-            // Filter the nodes to find the ones we want
-            var ncp = this.nodeContainsPoint.bind(this);
-            var matchingNodes = _.filter(nodes, function(node) {
-                return ncp(svg, node, cp);
-            });
-
-            // TODO: this should be correct
-            console.log('matching nodes: ', matchingNodes);
-            _.each(matchingNodes, function(node) {
-                console.log(node.type, node);
-            });
-        };
-
         this.Mouseover = HOVER.Mouseover;
         this.Mouseout = HOVER.Mouseout;
         this.Mousemove = HOVER.Mousemove;
@@ -583,17 +525,6 @@ class EditableSVG implements OutputJax {
         }
     }
 
-    //  Return the containing HTML element rather than the SVG element, since
-    //  most browsers can't position to an SVG element properly.
-    hashCheck(target) {
-        if (target && target.nodeName.toLowerCase() === "g") {
-            do {
-                target = target.parentNode;
-            } while (target && target.firstChild.nodeName !== "svg");
-        }
-        return target;
-    }
-
     getJaxFromMath(math) {
         if (math.parentNode.className === "MathJax_SVG_Display") {
             math = math.parentNode;
@@ -688,81 +619,18 @@ class EditableSVG implements OutputJax {
         delete jax.SVG;
     }
 
-
-    getPadding(styles) {
-        var padding = {
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0
-        };
-        var has = false;
-
-        for (var id in padding) {
-            if (padding.hasOwnProperty(id)) {
-                var pad = styles["padding" + id.charAt(0).toUpperCase() + id.substr(1)];
-                if (pad) {
-                    padding[id] = this.length2em(pad);
-                    has = true;
-                }
-            }
-        }
-        return (has ? padding : false);
-    }
-
-    getBorders(styles) {
-        var border = {
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0
-        },
-        has = false;
-        for (var id in border) {
-            if (border.hasOwnProperty(id)) {
-                var ID = "border" + id.charAt(0).toUpperCase() + id.substr(1);
-                var style = styles[ID + "Style"];
-                if (style && style !== "none") {
-                    has = true;
-                    border[id] = this.length2em(styles[ID + "Width"]);
-                    border[id + "Style"] = styles[ID + "Style"];
-                    border[id + "Color"] = styles[ID + "Color"];
-                    if (border[id + "Color"] === "initial") {
-                        border[id + "Color"] = "";
-                    }
-                } else {
-                    delete border[id];
-                }
-            }
-        }
-        return (has ? border : false);
-    }
-
-    Element(type, def) {
-        var obj = (typeof(type) === "string" ? document.createElementNS(SVGNS, type) : type);
-        obj.isMathJax = true;
-        if (def) {
-            for (var id in def) {
-                if (def.hasOwnProperty(id)) {
-                    obj.setAttribute(id, def[id].toString());
-                }
-            }
-        }
-        return obj;
-    }
-
     addElement(parent, type, def) {
         return parent.appendChild(this.Element(type, def))
     }
 
-    HandleVariant(variant, scale, text) {
+    static HandleVariant(variant, scale, text) {
         var svg = new BBOX_G();
         var n, N, c, font, VARIANT, i, m, id, M, RANGES;
         if (!variant) {
             variant = this.FONTDATA.VARIANT[MML.VARIANT.NORMAL];
         }
         if (variant.forceFamily) {
-            text = new BBOX_TEXT(scale, text, variant.font);
+            text = new BBOX_TEXT(this.HTML, scale, text, variant.font);
             if (variant.h !== null) {
                 text.h = variant.h;
             }
@@ -843,7 +711,7 @@ class EditableSVG implements OutputJax {
                     N = n - 0x10000;
                     c = String.fromCharCode((N >> 10) + 0xD800) + String.fromCharCode((N & 0x3FF) + 0xDC00);
                 }
-                var box = new BBOX_TEXT(scale * 100 / SVG.config.scale, c, {
+                var box = new BBOX_TEXT(this.HTML, scale * 100 / SVG.config.scale, c, {
                     "font-family": variant.defaultFamily || SVG.config.undefinedFamily,
                     "font-style": (variant.italic ? "italic" : ""),
                     "font-weight": (variant.bold ? "bold" : "")
@@ -874,7 +742,7 @@ class EditableSVG implements OutputJax {
         return svg;
     }
 
-    lookupChar(variant, n) {
+    static lookupChar(variant, n) {
         var i, m;
         if (!variant.FONTS) {
             var FONTS = this.FONTDATA.FONTS;
@@ -909,7 +777,7 @@ class EditableSVG implements OutputJax {
         };
     }
 
-    findBlock(font, c) {
+    static findBlock(font, c) {
         if (font.Ranges) {
             // FIXME:  do binary search?
             for (var i = 0, m = font.Ranges.length; i < m; i++) {
@@ -927,11 +795,11 @@ class EditableSVG implements OutputJax {
         }
     }
 
-    loadFont(file) {
+    static loadFont(file) {
         this.HUB.RestartAfter(AJAX.Require(this.fontDir + "/" + file));
     }
 
-    createDelimiter(code, HW, scale, font) {
+    static createDelimiter(code, HW, scale = null, font = null) {
         if (!scale) {
             scale = 1
         };
@@ -972,7 +840,7 @@ class EditableSVG implements OutputJax {
                 }
                 return this.createChar(scale, [code, delim.HW[i][1]], font).With({
                     stretched: true
-                });
+                }, this.HUB);
             }
         }
         if (delim.stretch) {
@@ -981,7 +849,7 @@ class EditableSVG implements OutputJax {
         return svg;
     }
 
-    createChar(scale, data, font) {
+    static createChar(scale, data, font) {
         var text = "",
         variant = {
             fonts: [data[1]],
@@ -1019,7 +887,7 @@ class EditableSVG implements OutputJax {
         return svg;
     }
 
-    extendDelimiterV(svg, H, delim, scale, font) {
+    static extendDelimiterV(svg, H, delim, scale, font) {
         var top = this.createChar(scale, (delim.top || delim.ext), font);
         var bot = this.createChar(scale, (delim.bot || delim.ext), font);
         var h = top.h + top.d + bot.h + bot.d;
@@ -1063,7 +931,7 @@ class EditableSVG implements OutputJax {
         svg.isMultiChar = true;
     }
 
-    extendDelimiterH(svg, W, delim, scale, font) {
+    static extendDelimiterH(svg, W, delim, scale, font) {
         var left = this.createChar(scale, (delim.left || delim.rep), font);
         var right = this.createChar(scale, (delim.right || delim.rep), font);
         svg.Add(left, -left.l, 0);
@@ -1126,32 +994,33 @@ class EditableSVG implements OutputJax {
 
             MML = MathJax.ElementJax.mml;
 
-            this.MML.mbase.Augment(MBaseMixin.getMethods());
-            this.MML.chars.Augment(CharsMixin.getMethods());
-            this.MML.entity.Augment(EntityMixin.getMethods());
-            this.MML.mo.Augment(MoMixin.getMethods());
-            this.MML.mtext.Augment(MTextMixin.getMethods());
-            this.MML.merror.Augment(MErrorMixin.getMethods());
-            this.MML.ms.Augment(MsMixin.getMethods());
-            this.MML.mglyph.Augment(MGlyphMixin.getMethods());
-            this.MML.mspace.Augment(MSpaceMixin.getMethods());
-            this.MML.mphantom.Augment(MPhantomMixin.getMethods());
-            this.MML.mpadded.Augment(MPaddedMixin.getMethods());
-            this.MML.mrow.Augment(MRowMixin.getMethods());
-            this.MML.mstyle.Augment(MStyleMixin.getMethods());
-            this.MML.mfrac.Augment(MFracMixin.getMethods());
-            this.MML.msqrt.Augment(MSqrtMixin.getMethods());
-            this.MML.mroot.Augment(MRootMixin.getMethods());
-            this.MML.mfenced.Augment(MFencedMixin.getMethods());
-            this.MML.menclose.Augment(MEncloseMixin.getMethods());
-            this.MML.maction.Augment(MActionMixin.getMethods());
-            this.MML.semantics.Augment(SemanticsMixin.getMethods());
-            this.MML.munderover.Augment(MUnderOverMixin.getMethods());
-            this.MML.msubsup.Augment(MSubSupMixin.getMethods());
-            this.MML.mmultiscripts.Augment(MMultiScriptsMixin.getMethods());
-            this.MML.mtable.Augment(MTableMixin.getMethods());
-            this.MML.math.Augment(MathMixin.getMethods());
-            this.MML.TeXAtom.Augment(TeXAtomMixin.getMethods());
+
+            this.MML.mbase.Augment(MBaseMixin.getMethods(this.AJAX, this.HUB, this.HTML, this));
+            this.MML.chars.Augment(CharsMixin.getMethods(this.AJAX, this.HUB, this.HTML, this));
+            this.MML.entity.Augment(EntityMixin.getMethods(this.AJAX, this.HUB, this.HTML, this));
+            this.MML.mo.Augment(MoMixin.getMethods(this.AJAX, this.HUB, this.HTML, this));
+            this.MML.mtext.Augment(MTextMixin.getMethods(this.AJAX, this.HUB, this.HTML, this));
+            this.MML.merror.Augment(MErrorMixin.getMethods(this.AJAX, this.HUB, this.HTML, this));
+            this.MML.ms.Augment(MsMixin.getMethods(this.AJAX, this.HUB, this.HTML, this));
+            this.MML.mglyph.Augment(MGlyphMixin.getMethods(this.AJAX, this.HUB, this.HTML, this));
+            this.MML.mspace.Augment(MSpaceMixin.getMethods(this.AJAX, this.HUB, this.HTML, this));
+            this.MML.mphantom.Augment(MPhantomMixin.getMethods(this.AJAX, this.HUB, this.HTML, this));
+            this.MML.mpadded.Augment(MPaddedMixin.getMethods(this.AJAX, this.HUB, this.HTML, this));
+            this.MML.mrow.Augment(MRowMixin.getMethods(this.AJAX, this.HUB, this.HTML, this));
+            this.MML.mstyle.Augment(MStyleMixin.getMethods(this.AJAX, this.HUB, this.HTML, this));
+            this.MML.mfrac.Augment(MFracMixin.getMethods(this.AJAX, this.HUB, this.HTML, this));
+            this.MML.msqrt.Augment(MSqrtMixin.getMethods(this.AJAX, this.HUB, this.HTML, this));
+            this.MML.mroot.Augment(MRootMixin.getMethods(this.AJAX, this.HUB, this.HTML, this));
+            this.MML.mfenced.Augment(MFencedMixin.getMethods(this.AJAX, this.HUB, this.HTML, this));
+            this.MML.menclose.Augment(MEncloseMixin.getMethods(this.AJAX, this.HUB, this.HTML, this));
+            this.MML.maction.Augment(MActionMixin.getMethods(this.AJAX, this.HUB, this.HTML, this));
+            this.MML.semantics.Augment(SemanticsMixin.getMethods(this.AJAX, this.HUB, this.HTML, this));
+            this.MML.munderover.Augment(MUnderOverMixin.getMethods(this.AJAX, this.HUB, this.HTML, this));
+            this.MML.msubsup.Augment(MSubSupMixin.getMethods(this.AJAX, this.HUB, this.HTML, this));
+            this.MML.mmultiscripts.Augment(MMultiScriptsMixin.getMethods(this.AJAX, this.HUB, this.HTML, this));
+            this.MML.mtable.Augment(MTableMixin.getMethods(this.AJAX, this.HUB, this.HTML, this));
+            this.MML.math.Augment(MathMixin.getMethods(this.AJAX, this.HUB, this.HTML, this));
+            this.MML.TeXAtom.Augment(TeXAtomMixin.getMethods(this.AJAX, this.HUB, this.HTML, this));
 
             MML["annotation-xml"].Augment({
                 toSVG: this.MML.mbase.SVGautoload

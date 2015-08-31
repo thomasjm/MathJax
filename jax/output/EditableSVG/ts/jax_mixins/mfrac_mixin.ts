@@ -4,13 +4,13 @@
 class MFracMixin extends MBaseMixin {
     static name = "mfrac";
 
-    toSVG() {
-        console.log('mfrac toSVG called!');
+    texWithDelims: any;
 
+    toSVG() {
         this.SVGgetStyles();
-        var svg  = new this.SVG();
+        var svg  = new BBOX();
         var scale = this.SVGgetScale(svg);
-        var frac = new BBOX(this.HUB);
+        var frac = new BBOX();
         frac.scale = svg.scale;
         this.SVGhandleSpace(frac);
         var num = this.SVGchildSVG(0),
@@ -21,15 +21,15 @@ class MFracMixin extends MBaseMixin {
         if (values.bevelled) {
             var delta = (isDisplay ? 400 : 150);
             var H = Math.max(num.h + num.d, den.h + den.d) + 2 * delta;
-            var bevel = this.SVG.createDelimiter(0x2F, H);
+            var bevel = EditableSVG.createDelimiter(0x2F, H);
             frac.Add(num, 0, (num.d - num.h) / 2 + a + delta);
             frac.Add(bevel, num.w - delta / 2, (bevel.d - bevel.h) / 2 + a);
             frac.Add(den, num.w + bevel.w - delta, (den.d - den.h) / 2 + a - delta);
         } else {
             var W = Math.max(num.w, den.w);
-            var t = this.SVG.thickness2em(values.linethickness, this.scale) * this.mscale,
+            var t = Util.thickness2em(values.linethickness, this.scale) * this.mscale,
             p, q, u, v;
-            var mt = Util.TeX.min_rule_thickness / this.SVG.em * 1000;
+            var mt = Util.TeX.min_rule_thickness / Util.em * 1000;
             if (isDisplay) {
                 u = Util.TeX.num1;
                 v = Util.TeX.denom1

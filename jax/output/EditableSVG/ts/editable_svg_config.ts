@@ -4,7 +4,7 @@ interface Config {
 }
 
 class EditableSVGConfig {
-    config = {
+    static config = {
         styles: {
             ".MathJax_SVG": {
                 "display": "inline",

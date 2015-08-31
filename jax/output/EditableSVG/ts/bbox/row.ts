@@ -4,6 +4,8 @@ class BBOX_ROW extends BBOX {
 
     sh: number;
     sd: number;
+    ic: number;
+    svg: any;
 
     constructor() {
         super.apply(arguments); // TODO: typescript apply super
