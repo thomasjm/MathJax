@@ -8,7 +8,7 @@ class MSpaceMixin extends MBaseMixin {
         if (this.background && !this.mathbackground) {
             values.mathbackground = this.background
         }
-        var svg  = new this.SVG();
+        var svg  = new BBOX();
         this.SVGgetScale(svg);
         var scale = this.mscale,
         mu = this.SVGgetMu(svg);

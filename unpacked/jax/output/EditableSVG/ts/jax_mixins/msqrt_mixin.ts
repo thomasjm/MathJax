@@ -3,8 +3,9 @@
 class MSqrtMixin extends MBaseMixin {
     toSVG() {
         this.SVGgetStyles();
-        var svg  = new this.SVG(),
-        scale = this.SVGgetScale(svg);
+        var svg  = new BBOX();
+        var scale = this.SVGgetScale(svg);
+
         this.SVGhandleSpace(svg);
         var base = this.SVGchildSVG(0),
         rule, surd;

@@ -4,7 +4,8 @@
 class SemanticsMixin extends MBaseMixin {
     toSVG() {
         this.SVGgetStyles();
-        var svg  = new this.SVG();
+        var svg  = new BBOX();
+
         if (this.data[0] != null) {
             this.SVGhandleSpace(svg);
             svg.Add(this.data[0].toSVG());
@@ -12,6 +13,7 @@ class SemanticsMixin extends MBaseMixin {
         } else {
             svg.Clean()
         }
+
         this.SVGsaveData(svg);
         return svg;
     }

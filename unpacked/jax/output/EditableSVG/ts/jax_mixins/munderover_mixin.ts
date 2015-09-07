@@ -4,6 +4,7 @@
 class MUnderOverMixin extends MBaseMixin {
     over: any;
     under: any;
+    ACCENTS: any;
 
     toSVG(HW, D) {
         this.SVGgetStyles();

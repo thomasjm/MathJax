@@ -5,17 +5,17 @@ class BBOX_ROW extends BBOX {
     sh: number;
     sd: number;
     ic: number;
-    svg: any;
+    editableSVG: any;
 
-    constructor() {
-        super.apply(arguments); // TODO: typescript apply super
-        this.svg = [];
+    constructor(editableSVG) {
+        super();
+        this.editableSVG = editableSVG;
         this.sh = this.sd = 0;
     }
 
     Check(data) {
         var svg = data.toSVG();
-        this.svg.push(svg);
+        this.editableSVG.push(svg);
         if (data.SVGcanStretch("Vertical")) {
             svg.mml = data
         }
@@ -29,8 +29,8 @@ class BBOX_ROW extends BBOX {
     }
 
     Stretch() {
-        for (var i = 0, m = this.svg.length; i < m; i++) {
-            var svg = this.svg[i],
+        for (var i = 0, m = this.editableSVG.length; i < m; i++) {
+            var svg = this.editableSVG[i],
             mml = svg.mml;
             if (mml) {
                 if (mml.forceStretch || mml.EditableSVGdata.h !== this.sh || mml.EditableSVGdata.d !== this.sd) {
@@ -46,6 +46,7 @@ class BBOX_ROW extends BBOX {
             }
             this.Add(svg, this.w, 0, true);
         }
-        delete this.svg;
+
+        delete this.editableSVG; // TODO: huh?
     }
 }

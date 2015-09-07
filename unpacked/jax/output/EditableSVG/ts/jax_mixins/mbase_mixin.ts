@@ -1,5 +1,6 @@
 /// <reference path="../bbox/bbox.ts" />
 /// <reference path="../bbox/rect.ts" />
+/// <reference path="../editable_svg_config.ts" />
 
 class ElementJax {
     Get(...values): any;
@@ -11,7 +12,7 @@ class MBaseMixin extends ElementJax {
     MML: any;
     AJAX: any;
     HTML: any;
-    EditableSVG: any;
+    editableSVG: any;
 
     data: any;
     base: any;
@@ -30,6 +31,7 @@ class MBaseMixin extends ElementJax {
     defaults: any;
     fontWeight: any;
     forceStretch: any;
+    hasNewline: any;
     hasValue: any;
     href: any;
     id: any;
@@ -48,6 +50,10 @@ class MBaseMixin extends ElementJax {
     useMMLspacing: any;
     variantForm: any;
 
+    displayIndent: any;
+    isMultiline: any;
+    displayAlign: any;
+
     getBB(relativeTo) {
         var elem = this.EditableSVGelem;
         if (!elem) {
@@ -58,9 +64,15 @@ class MBaseMixin extends ElementJax {
         return elem.getBBox();
     }
 
-    static getMethods(AJAX, HUB, HTML, EditableSVG) {
+    static getMethods(AJAX, HUB, HTML, MML, editableSVG) {
         // TODO: put the args into the dict so they get stuck onto the objects
-
+        var other = {
+            AJAX: AJAX,
+            HUB: HUB,
+            HTML: HTML,
+            MML: MML,
+            editableSVG: editableSVG
+        }
     }
 
     toSVG(...args): any;
@@ -94,7 +106,7 @@ class MBaseMixin extends ElementJax {
     }
 
     SVGchildSVG(i) {
-        return (this.data[i] ? this.data[i].toSVG() : new BBOX(this.EditableSVG, this.HUB));
+        return (this.data[i] ? this.data[i].toSVG() : new BBOX());
     }
 
     EditableSVGdataStretched(i, HW, D = null) {
@@ -103,7 +115,7 @@ class MBaseMixin extends ElementJax {
             D: D
         };
         if (!this.data[i]) {
-            return new BBOX(this.EditableSVG, this.HUB);
+            return new BBOX();
         }
         if (D != null) {
             return this.data[i].SVGstretchV(HW, D)
@@ -156,7 +168,7 @@ class MBaseMixin extends ElementJax {
             });
             a.setAttributeNS(Util.XLINKNS, "href", this.href);
             a.onclick = this.SVGlink;
-            this.EditableSVG.addElement(a, "rect", {
+            this.editableSVG.addElement(a, "rect", {
                 width: svg.w,
                 height: svg.h + svg.d,
                 y: -svg.d,
@@ -349,7 +361,7 @@ class MBaseMixin extends ElementJax {
             }
             dup.x = 0;
             dup.y = 0;
-            svg.element = EditableSVG.Element("g");
+            svg.element = this.editableSVG.Element("g");
             svg.removeable = true;
             svg.Add(dup, bleft + pleft, 0);
         }
@@ -370,7 +382,7 @@ class MBaseMixin extends ElementJax {
         if (values.background !== this.MML.COLOR.TRANSPARENT) {
             var nodeName = svg.element.nodeName.toLowerCase();
             if (nodeName !== "g" && nodeName !== "svg") {
-                var g = this.EditableSVG.Element("g");
+                var g = this.editableSVG.Element("g");
                 g.appendChild(svg.element);
                 svg.element = g;
                 svg.removeable = true;
@@ -586,12 +598,12 @@ class MBaseMixin extends ElementJax {
 
     // TODO: these two go in the second argument to Augment
     SVGautoload() {
-        var file = EditableSVG.autoloadDir + "/" + this.type + ".js";
+        var file = this.editableSVG.autoloadDir + "/" + this.type + ".js";
         this.HUB.RestartAfter(this.AJAX.Require(file));
     }
 
     SVGautoloadFile(name) {
-        var file = EditableSVG.autoloadDir + "/" + name + ".js";
+        var file = this.editableSVG.autoloadDir + "/" + name + ".js";
         this.HUB.RestartAfter(this.AJAX.Require(file));
     }
 }
