@@ -7,7 +7,7 @@ class MSubSupMixin extends MBaseMixin implements ElementJax {
 
     toSVG(HW, D) {
         this.SVGgetStyles();
-        var svg = new this.SVG(),
+        var svg = new BBOX(),
         scale = this.SVGgetScale(svg);
         this.SVGhandleSpace(svg);
         var mu = this.SVGgetMu(svg);
@@ -55,7 +55,7 @@ class MSubSupMixin extends MBaseMixin implements ElementJax {
             }
         } else {
             if (!sub) {
-                values = this.getValues("displaystyle", "texprimestyle");
+                var values = this.getValues("displaystyle", "texprimestyle");
                 p = Util.TeX[(values.displaystyle ? "sup1" : (values.texprimestyle ? "sup3" : "sup2"))];
                 u = Math.max(u, p * scale, sup.d + (1 / 4) * x_height, min.superscriptshift);
                 svg.Add(sup, x + delta, u);

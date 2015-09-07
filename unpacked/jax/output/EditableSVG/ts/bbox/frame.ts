@@ -16,7 +16,7 @@ class BBOX_FRAME extends BBOX {
         if (dash === "dashed") {
             def["stroke-dasharray"] = [Math.floor(6 * Util.em), Math.floor(6 * Util.em)].join(" ")
         }
-        super(svg, hub, def);
+        super(def);
         this.w = this.r = w;
         this.h = this.H = h;
         this.d = this.D = d;

@@ -1,9 +1,10 @@
 /// <reference path="mbase_mixin.ts" />
+/// <reference path="../bbox/null.ts" />
 
 class MStyleMixin extends MBaseMixin {
     toSVG() {
         this.SVGgetStyles();
-        var svg  = new this.SVG();
+        var svg  = new BBOX();
         if (this.data[0] != null) {
             this.SVGhandleSpace(svg);
             var math = svg.Add(this.data[0].toSVG());
@@ -18,10 +19,10 @@ class MStyleMixin extends MBaseMixin {
     }
 
     SVGstretchH(w) {
-        return (this.data[0] != null ? this.data[0].SVGstretchH(w) : BBOX.NULL());
+        return (this.data[0] != null ? this.data[0].SVGstretchH(w) : new BBOX_NULL());
     }
 
     SVGstretchV(h, d) {
-        return (this.data[0] != null ? this.data[0].SVGstretchV(h, d) : BBOX.NULL());
+        return (this.data[0] != null ? this.data[0].SVGstretchV(h, d) : new BBOX_NULL());
     }
 }

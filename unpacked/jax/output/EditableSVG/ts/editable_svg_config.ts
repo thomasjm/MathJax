@@ -5,6 +5,18 @@ interface Config {
 
 class EditableSVGConfig {
     static config = {
+        // Will be filled in by MathJax
+        linebreaks: null,
+        merrorStyle: null,
+        addMMLclasses: null,
+        useFontCache: null,
+        useGlobalCache: null,
+        scale: null,
+        mtextFontInherit: null,
+        font: null,
+        EqnChunk: null,
+        EqnChunkDelay: null,
+
         styles: {
             ".MathJax_SVG": {
                 "display": "inline",

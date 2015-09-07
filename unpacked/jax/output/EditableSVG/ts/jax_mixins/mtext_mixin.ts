@@ -34,7 +34,7 @@ class MTextMixin extends MBaseMixin {
             this.SVGsaveData(svg);
             return svg;
         } else {
-            return this.SUPER(arguments).toSVG.call(this);
+            return super.toSVG.call(this); // TODO: make sure this works properly
         }
     }
 }

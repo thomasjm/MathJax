@@ -24,9 +24,9 @@ class BBOX_GLYPH extends BBOX {
                 def.transform = transform
             }
             def.d = (p ? "M" + p + "Z" : "");
-            super(SVG, HUB, def);
+            super(def);
             if (cache) {
-                this.defs.appendChild(this.element);
+                BBOX.defs.appendChild(this.element);
                 this.glyphs[id] = true;
             }
         }

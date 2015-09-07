@@ -1,16 +1,17 @@
 /// <reference path="mbase_mixin.ts" />
+/// <reference path="../editable_svg_config.ts" />
 
 class MErrorMixin extends MBaseMixin {
 
     toSVG(HW, D) {
         this.SVGgetStyles();
-        var svg  = new this.SVG(),
+        var svg  = new BBOX(),
         scale = Util.length2em(this.styles.fontSize || 1) / 1000;
         this.SVGhandleSpace(svg);
         var def = (scale !== 1 ? {
-            transform: "scale(" + this.SVG.Fixed(scale) + ")"
+            transform: "scale(" + this.editableSVG.Fixed(scale) + ")"
         } : {});
-        var bbox = new BBOX(this.HUB, def);
+        var bbox = new BBOX(def);
         bbox.Add(this.SVGchildSVG(0));
         bbox.Clean();
         if (scale !== 1) {
@@ -28,7 +29,7 @@ class MErrorMixin extends MBaseMixin {
     }
 
     SVGgetStyles() {
-        var span = HTML.Element("span", {
+        var span = this.HTML.Element("span", {
             style: EditableSVGConfig.config.merrorStyle
         });
         this.styles = this.SVGprocessStyles(span.style);

@@ -5,7 +5,8 @@ class TeXAtomMixin extends MBaseMixin {
 
     toSVG(HW, D) {
         this.SVGgetStyles();
-        var svg = new this.SVG();
+        var svg = new BBOX();
+
         this.SVGhandleSpace(svg);
         if (this.data[0] != null) {
             var box = this.EditableSVGdataStretched(0, HW, D),

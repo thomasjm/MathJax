@@ -9,8 +9,8 @@ class BBOX {
 
     // Stuff needed for the GLYPH element
     glyphs = {}; // which glpyhs have been used
-    defs = null; // the SVG <defs> element where glyphs are stored
-    n = 0; // the ID for local <defs> for self-contained SVG elements
+    static defs = null; // the SVG <defs> element where glyphs are stored
+    static n = 0; // the ID for local <defs> for self-contained SVG elements
 
     h: number;
     w: number;
@@ -27,6 +27,8 @@ class BBOX {
 
     tw: number;
 
+    ic: number; // set by MStyleMixin
+
     childX: number;
     childY: number;
     childScale: number;
@@ -40,7 +42,6 @@ class BBOX {
         this.l = Util.BIGDIMEN;
         this.x = this.y = 0;
         this.scale = 1;
-        this.n = 0;
         this.EditableSVG = svg;
         if (this.type) {
             this.element = EditableSVG.Element(this.type, def);
@@ -51,7 +52,7 @@ class BBOX {
         return HUB.Insert(this, def);
     }
 
-    Add(svg, dx, dy, forcew?, infront?) {
+    Add(svg, dx?, dy?, forcew?, infront?) {
         if (dx) {
             svg.x += dx
         };

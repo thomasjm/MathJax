@@ -5,7 +5,7 @@ class MPaddedMixin extends MBaseMixin {
 
     toSVG(HW, D) {
         this.SVGgetStyles();
-        var svg  = new this.SVG();
+        var svg  = new BBOX();
         if (this.data[0] != null) {
             this.SVGgetScale(svg);
             this.SVGhandleSpace(svg);
@@ -15,10 +15,10 @@ class MPaddedMixin extends MBaseMixin {
             X = 0,
             Y = 0;
             if (values.lspace) {
-                X = this.SVGlength2em(pad, values.lspace, mu)
+                X = this.editableSVG.SVGlength2em(pad, values.lspace, mu)
             }
             if (values.voffset) {
-                Y = this.SVGlength2em(pad, values.voffset, mu)
+                Y = this.editableSVG.SVGlength2em(pad, values.voffset, mu)
             }
             var h = pad.h,
             d = pad.d,
