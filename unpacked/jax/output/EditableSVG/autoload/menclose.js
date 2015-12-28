@@ -4,19 +4,19 @@
 /*************************************************************
  *
  *  MathJax/jax/output/SVG/autoload/menclose.js
- *  
+ *
  *  Implements the SVG output for <menclose> elements.
  *
  *  ---------------------------------------------------------------------
- *  
+ *
  *  Copyright (c) 2011-2015 The MathJax Consortium
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,12 +24,12 @@
  *  limitations under the License.
  */
 
-MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
+MathJax.Hub.Register.StartupHook("EditableSVG Jax Ready",function () {
   var VERSION = "2.5.0";
   var MML = MathJax.ElementJax.mml,
       SVG = MathJax.OutputJax.EditableSVG,
       BBOX = SVG.BBOX;
-      
+
   BBOX.ELLIPSE = BBOX.Subclass({
     type: "ellipse", removeable: false,
     Init: function (h,d,w,t,color,def) {
@@ -43,7 +43,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       this.d = this.D = d; this.l = 0;
     }
   });
-  
+
   BBOX.DLINE = BBOX.Subclass({
     type: "line", removeable: false,
     Init: function (h,d,w,t,color,updown,def) {
@@ -62,7 +62,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       this.d = this.D = d; this.l = 0;
     }
   });
-  
+
   BBOX.FPOLY = BBOX.Subclass({
     type: "polygon", removeable: false,
     Init: function (points,color,def) {
@@ -94,7 +94,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       this.d = this.D = this.l = 0; this.y = -d;
     }
   });
-  
+
   MML.menclose.Augment({
     toSVG: function (HW,DD) {
       this.SVGgetStyles();
@@ -119,7 +119,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       var nl = MathJax.Hub.SplitList(values.notation), notation = {};
       for (i = 0, m = nl.length; i < m; i++) notation[nl[i]] = true;
       if (notation[MML.NOTATION.UPDIAGONALARROW]) notation[MML.NOTATION.UPDIAGONALSTRIKE] = false;
-      
+
       for (var n in notation) {
         if (!notation.hasOwnProperty(n) || !notation[n]) continue;
         switch (n) {
@@ -131,7 +131,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
             svg.Add(BBOX.FRAME(H,D,W,t,"solid",values.mathcolor,
                      {rx:Math.floor(Math.min(H+D-t,W-t)/4)}));
             break;
-            
+
           case MML.NOTATION.CIRCLE:
             svg.Add(BBOX.ELLIPSE(H,D,W,t,values.mathcolor));
             break;
@@ -145,19 +145,19 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
           case MML.NOTATION.LEFT:
             borders[3] = true;
             break;
-            
+
           case MML.NOTATION.TOP:
             borders[0] = true;
             break;
-            
+
           case MML.NOTATION.BOTTOM:
             borders[2] = true;
             break;
-            
+
           case MML.NOTATION.VERTICALSTRIKE:
             svg.Add(BBOX.VLINE(H+D,t,"solid",values.mathcolor),(W-t)/2,-D);
             break;
-            
+
           case MML.NOTATION.HORIZONTALSTRIKE:
             svg.Add(BBOX.HLINE(W,t,"solid",values.mathcolor),0,(H+D-t)/2-D);
             break;
@@ -178,7 +178,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
           case MML.NOTATION.DOWNDIAGONALSTRIKE:
             svg.Add(BBOX.DLINE(H,D,W,t,values.mathcolor,"down"));
             break;
-            
+
           case MML.NOTATION.PHASORANGLE:
             borders[2] = true; W -= 2*p; p = (H+D)/2; W += p;
             svg.Add(BBOX.DLINE(H,D,p,t,values.mathcolor,"up"));
@@ -197,7 +197,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
               t,values.mathcolor),0,t);
             dx = p;
             break;
-            
+
           case MML.NOTATION.LONGDIV:
             svg.Add(BBOX.PPATH(H,D,W,
               "M "+this.SVGxy(t/2,t/2) +
@@ -222,13 +222,12 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       this.SVGsaveData(svg);
       return svg;
     },
-    
-    SVGxy: function (x,y) {return Math.floor(x)+","+Math.floor(y)}
-    
-  });
-  
-  MathJax.Hub.Startup.signal.Post("SVG menclose Ready");
-  MathJax.Ajax.loadComplete(SVG.autoloadDir+"/menclose.js");
-  
-});
 
+    SVGxy: function (x,y) {return Math.floor(x)+","+Math.floor(y)}
+
+  });
+
+  MathJax.Hub.Startup.signal.Post("EditableSVG menclose Ready");
+  MathJax.Ajax.loadComplete(SVG.autoloadDir+"/menclose.js");
+
+});

@@ -4,19 +4,19 @@
 /*************************************************************
  *
  *  MathJax/jax/output/SVG/autoload/mmultiscripts.js
- *  
+ *
  *  Implements the SVG output for <mmultiscripts> elements.
  *
  *  ---------------------------------------------------------------------
- *  
+ *
  *  Copyright (c) 2011-2015 The MathJax Consortium
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,11 +24,11 @@
  *  limitations under the License.
  */
 
-MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
+MathJax.Hub.Register.StartupHook("EditableSVG Jax Ready",function () {
   var VERSION = "2.5.0";
   var MML = MathJax.ElementJax.mml,
       SVG = MathJax.OutputJax.EditableSVG;
-  
+
   MML.mmultiscripts.Augment({
     toSVG: function (HW,D) {
       this.SVGgetStyles();
@@ -93,7 +93,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       this.SVGhandleColor(svg);
       this.SVGsaveData(svg);
       var data = this.SVGdata;
-      data.dx = dx; data.s = s; data.u = u, data.v = v; data.delta = delta;      
+      data.dx = dx; data.s = s; data.u = u, data.v = v; data.delta = delta;
       return svg;
     },
     SVGgetScripts: function (s) {
@@ -117,9 +117,8 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       return BOX;
     }
   });
-  
-  MathJax.Hub.Startup.signal.Post("SVG mmultiscripts Ready");
+
+  MathJax.Hub.Startup.signal.Post("EditableSVG mmultiscripts Ready");
   MathJax.Ajax.loadComplete(SVG.autoloadDir+"/mmultiscripts.js");
 
 });
-
