@@ -4,19 +4,19 @@
 /*************************************************************
  *
  *  MathJax/jax/output/SVG/autoload/multiline.js
- *  
+ *
  *  Implements the SVG output for <mrow>'s that contain line breaks.
  *
  *  ---------------------------------------------------------------------
- *  
+ *
  *  Copyright (c) 2011-2015 The MathJax Consortium
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,12 +24,12 @@
  *  limitations under the License.
  */
 
-MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
+MathJax.Hub.Register.StartupHook("EditableSVG Jax Ready",function () {
   var VERSION = "2.5.0";
   var MML = MathJax.ElementJax.mml,
       SVG = MathJax.OutputJax.EditableSVG,
       BBOX = SVG.BBOX;
-      
+
   //
   //  Penalties for the various line breaks
   //
@@ -39,7 +39,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
     goodbreak:   [-200],
     badbreak:    [+200],
     auto:           [0],
-    
+
     toobig:        800,
     nestfactor:    400,
     spacefactor:  -100,
@@ -48,12 +48,12 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
     fence:         500,
     close:         500
   };
-  
+
   var ENDVALUES = {linebreakstyle: "after"};
 
-  
+
   /**************************************************************************/
-  
+
   MML.mrow.Augment({
     //
     // Handle breaking an mrow into separate lines
@@ -69,7 +69,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       var isTop = ((parent.type === "math" && parent.Get("display") === "block") ||
                     parent.type === "mtd");
       parent.isMultiline = true;
-      
+
       //
       //  Default values for the line-breaking parameters
       //
@@ -79,7 +79,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
         "indentalignfirst","indentshiftfirst",
         "indentalignlast","indentshiftlast"
       );
-      if (VALUES.linebreakstyle === MML.LINEBREAKSTYLE.INFIXLINEBREAKSTYLE) 
+      if (VALUES.linebreakstyle === MML.LINEBREAKSTYLE.INFIXLINEBREAKSTYLE)
         {VALUES.linebreakstyle = this.Get("infixlinebreakstyle")}
       VALUES.lineleading = SVG.length2em(VALUES.lineleading,1,0.5);
 
@@ -110,11 +110,11 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
             nest: 0
           },
           broken = false;
-          
+
       //
       //  Break the expression at its best line breaks
       //
-      while (this.SVGbetterBreak(end,state) && 
+      while (this.SVGbetterBreak(end,state) &&
              (end.scanW >= SVG.linebreakWidth || end.penalty === PENALTY.newline)) {
         this.SVGaddLine(svg,start,end.index,state,end.values,broken);
         start = end.index.slice(0); broken = true;
@@ -134,7 +134,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       return svg;
     }
   });
-  
+
   /**************************************************************************/
 
   MML.mbase.Augment({
@@ -189,7 +189,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       }
       return scanW;
     },
-    
+
     /****************************************************************/
     //
     //  Create a new line and move the required elements into it
@@ -228,7 +228,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       //
       state.d = line.d; state.values = values; state.n++;
     },
-    
+
     /****************************************************************/
     //
     //  Get alignment and shift values from the given data
@@ -256,13 +256,13 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       }
       return shift;
     },
-    
+
     /****************************************************************/
     //
     //  Move the selected elements into the new line,
     //    moving whole items when possible, and parts of ones
     //    that are split by a line break.
-    //  
+    //
     SVGmoveLine: function (start,end,svg,state,values) {
       var i = start[0], j = end[0];
       if (i == null) {i = -1}; if (j == null) {j = this.data.length-1}
@@ -295,7 +295,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
         }
       }
     },
-    
+
     /****************************************************************/
     //
     //  Split an element and copy the selected items into the new part
@@ -338,7 +338,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
         else {delete state.nextIsFirst}
     }
   });
-      
+
   /**************************************************************************/
 
   MML.mfenced.Augment({
@@ -420,9 +420,9 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
         }
       }
     }
-    
+
   });
-  
+
   /**************************************************************************/
 
   MML.msubsup.Augment({
@@ -454,7 +454,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       info.index = []; if (better) {info.W = W; info.w = w; info.index = index}
       return better;
     },
-    
+
     SVGmoveLine: function (start,end,svg,state,values) {
       //
       //  Move the proper part of the base
@@ -480,7 +480,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
     }
 
   });
-  
+
   /**************************************************************************/
 
   MML.mmultiscripts.Augment({
@@ -499,7 +499,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       var dw = this.SVGdata.w - this.data[this.base].SVGdata.w - this.SVGdata.dx;
       //
       //  Add in the prescripts
-      //  
+      //
       info.scanW += this.SVGdata.dx; scanW = info.scanW;
       //
       //  Check if the base can be broken (but don't break between prescripts and base)
@@ -516,7 +516,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       info.index = []; if (better) {info.W = W; info.w = w; info.index = index}
       return better;
     },
-    
+
     SVGmoveLine: function (start,end,svg,state,values) {
       var dx, data = this.SVGdata;
       //
@@ -551,7 +551,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
     }
 
   });
-  
+
   /**************************************************************************/
 
   MML.mo.Augment({
@@ -567,7 +567,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
         "indentalignlast","indentshiftlast",
         "texClass", "fence"
       );
-      if (values.linebreakstyle === MML.LINEBREAKSTYLE.INFIXLINEBREAKSTYLE) 
+      if (values.linebreakstyle === MML.LINEBREAKSTYLE.INFIXLINEBREAKSTYLE)
         {values.linebreakstyle = this.Get("infixlinebreakstyle")}
       //
       //  Adjust nesting by TeX class (helps output that does not include
@@ -620,7 +620,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       return true;
     }
   });
-  
+
   /**************************************************************************/
 
   MML.mspace.Augment({
@@ -669,7 +669,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       return true;
     }
   });
-  
+
   //
   //  Hook into the mathchoice extension
   //
@@ -683,7 +683,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       }
     });
   });
-  
+
   //
   //  Have maction process only the selected item
   //
@@ -695,7 +695,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       return this.Core().SVGmoveSlice(start,end,svg,state,values);
     },
   });
-  
+
   //
   //  Have semantics only do the first element
   //  (FIXME:  do we need to do anything special about annotation-xml?)
@@ -708,11 +708,10 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       return (this.data[0] ? this.data[0].SVGmoveSlice(start,end,svg,state,values) : null);
     }
   });
-  
+
   /**************************************************************************/
 
-  MathJax.Hub.Startup.signal.Post("SVG multiline Ready");
+  MathJax.Hub.Startup.signal.Post("EditableSVG multiline Ready");
   MathJax.Ajax.loadComplete(SVG.autoloadDir+"/multiline.js");
-  
-});
 
+});

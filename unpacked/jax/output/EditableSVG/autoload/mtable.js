@@ -4,19 +4,19 @@
 /*************************************************************
  *
  *  MathJax/jax/output/SVG/autoload/mtable.js
- *  
- *  Implements the SVG output for <mtable> elements.
+ *
+ *  Implements the EditableSVG output for <mtable> elements.
  *
  *  ---------------------------------------------------------------------
- *  
+ *
  *  Copyright (c) 2011-2015 The MathJax Consortium
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,12 +24,12 @@
  *  limitations under the License.
  */
 
-MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
+MathJax.Hub.Register.StartupHook("EditableSVG Jax Ready",function () {
   var VERSION = "2.5.0";
   var MML = MathJax.ElementJax.mml,
       SVG = MathJax.OutputJax.EditableSVG,
       BBOX = SVG.BBOX;
-  
+
   MML.mtable.Augment({
     toSVG: function (span) {
       this.SVGgetStyles();
@@ -137,7 +137,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       }
 
       //  FIXME:  do background colors for entire cell (include half the intercolumn space?)
-      
+
       //
       //  Determine array total height
       //
@@ -195,7 +195,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
           axis:     SVG.TeX.axis_height*scale - HD/2 - fy
         })[values.align];
       }
-            
+
       var WW, WP = 0, Wt = 0, Wp = 0, p = 0, f = 0, P = [], F = [], Wf = 1;
       //
       if (values.equalcolumns && values.width !== "auto") {
@@ -247,7 +247,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
           for (j = 0; j <= J; j++) {W[j] = Wm}
         }
       }
-      
+
       //
       //  Lay out array columns
       //
@@ -291,7 +291,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       }
       svg.w += fx; svg.d = -fY; svg.h = fH+fY;
       fW = svg.w;
-      
+
       //
       //  Add frame
       //
@@ -312,14 +312,14 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
           {svg.Add(BBOX.HLINE(fW,lw,RLINES[i]),0,y-D[i]-(dy-D[i]-H[i+1])/2)}
         y -= dy;
       }
-      
+
       //
       //  Finish the table
       //
       svg.Clean();
       this.SVGhandleSpace(svg);
       this.SVGhandleColor(svg);
-      
+
       //
       //  Place the labels, if any
       //
@@ -343,7 +343,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
         svg.tw += C[LABEL].w + shift +
           (indent.indentalign === MML.INDENTALIGN.CENTER ? 8 : 4)*labelshift;
       }
-      
+
       this.SVGsaveData(svg);
       return svg;
     },
@@ -352,12 +352,12 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       this.SUPER(arguments).SVGhandleSpace.call(this,svg);
     }
   });
-  
+
   MML.mtd.Augment({
     toSVG: function (HW,D) {
       var svg = this.svg = this.SVG();
       if (this.data[0]) {
-        svg.Add(this.SVGdataStretched(0,HW,D));
+        svg.Add(this.EditableSVGdataStretched(0,HW,D));
         svg.Clean();
       }
       this.SVGhandleColor(svg);
@@ -366,8 +366,6 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
     }
   });
 
-  MathJax.Hub.Startup.signal.Post("SVG mtable Ready");
+  MathJax.Hub.Startup.signal.Post("EditableSVG mtable Ready");
   MathJax.Ajax.loadComplete(SVG.autoloadDir+"/mtable.js");
-  
 });
-

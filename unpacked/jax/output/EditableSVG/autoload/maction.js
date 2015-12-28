@@ -4,19 +4,19 @@
 /*************************************************************
  *
  *  MathJax/jax/output/SVG/autoload/maction.js
- *  
+ *
  *  Implements the SVG output for <maction> elements.
  *
  *  ---------------------------------------------------------------------
- *  
+ *
  *  Copyright (c) 2011-2015 The MathJax Consortium
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,11 +24,11 @@
  *  limitations under the License.
  */
 
-MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
+MathJax.Hub.Register.StartupHook("EditableSVG Jax Ready",function () {
   var VERSION = "2.5.0";
   var MML = MathJax.ElementJax.mml,
       SVG = MathJax.OutputJax["SVG"];
-  
+
   var currentTip, hover, clear;
 
   //
@@ -38,11 +38,11 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
     delayPost: 600, delayClear: 600,
     offsetX: 10, offsetY: 5
   },SVG.config.tooltip||{});
-  
-  
+
+
   MML.maction.Augment({
     SVGtooltip: MathJax.HTML.addElement(document.body,"div",{id:"MathJax_SVG_Tooltip"}),
-    
+
     toSVG: function (HW,D) {
       this.SVGgetStyles();
       var svg = this.SVG();
@@ -63,7 +63,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
     },
     SVGstretchH: MML.mbase.prototype.SVGstretchH,
     SVGstretchV: MML.mbase.prototype.SVGstretchV,
-    
+
     //
     //  Implementations for the various actions
     //
@@ -73,20 +73,20 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
         SVG.Element(frame,{cursor:"pointer"});
         frame.onclick = MathJax.Callback(["SVGclick",this]);
       },
-      
+
       statusline: function (svg,frame,selection) {
         frame.onmouseover = MathJax.Callback(["SVGsetStatus",this]),
         frame.onmouseout  = MathJax.Callback(["SVGclearStatus",this]);
         frame.onmouseover.autoReset = frame.onmouseout.autoReset = true;
       },
-      
+
       tooltip: function(svg,frame,selection) {
         frame.onmouseover = MathJax.Callback(["SVGtooltipOver",this]),
         frame.onmouseout  = MathJax.Callback(["SVGtooltipOut",this]);
         frame.onmouseover.autoReset = frame.onmouseout.autoReset = true;
       }
     },
-    
+
     //
     //  Handle a click on the maction element
     //    (remove the original rendering and rerender)
@@ -97,7 +97,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       var math = this; while (math.type !== "math") {math = math.inherit}
       var jax = MathJax.Hub.getJaxFor(math.inputID); //, hover = !!jax.hover;
       jax.Update();
-      /* 
+      /*
        * if (hover) {
        *   var span = document.getElementById(jax.inputID+"-Span");
        *   MathJax.Extension.MathEvents.Hover.Hover(jax,span);
@@ -105,7 +105,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
        */
       return MathJax.Extension.MathEvents.Event.False(event);
     },
-    
+
     //
     //  Set/Clear the window status message
     //
@@ -119,7 +119,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       if (this.messageID) {MathJax.Message.Clear(this.messageID,0)}
       delete this.messageID;
     },
-    
+
     //
     //  Handle tooltips
     //
@@ -191,8 +191,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
     }
   });
 
-  MathJax.Hub.Startup.signal.Post("SVG maction Ready");
+  MathJax.Hub.Startup.signal.Post("EditableSVG maction Ready");
   MathJax.Ajax.loadComplete(SVG.autoloadDir+"/maction.js");
-  
-});
 
+});

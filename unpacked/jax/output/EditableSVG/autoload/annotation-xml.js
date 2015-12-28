@@ -4,19 +4,19 @@
 /*************************************************************
  *
  *  MathJax/jax/output/SVG/autoload/annotation-xml.js
- *  
+ *
  *  Implements the SVG output for <annotation-xml> elements.
  *
  *  ---------------------------------------------------------------------
- *  
+ *
  *  Copyright (c) 2013-2015 The MathJax Consortium
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,12 +24,12 @@
  *  limitations under the License.
  */
 
-MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
+MathJax.Hub.Register.StartupHook("EditableSVG Jax Ready",function () {
   var VERSION = "2.5.0";
   var MML = MathJax.ElementJax.mml,
       SVG = MathJax.OutputJax.EditableSVG;
   var BBOX = SVG.BBOX;
-  
+
   BBOX.FOREIGN = BBOX.Subclass({type: "foreignObject", removeable: false});
 
   MML["annotation-xml"].Augment({
@@ -44,7 +44,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       return svg;
     }
   });
-  
+
   MML.xml.Augment({
     toSVG: function (encoding) {
       //
@@ -72,7 +72,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       //
       //  Add the children to the foreignObject
       //
-      for (var i = 0, m = this.data.length; i < m; i++) 
+      for (var i = 0, m = this.data.length; i < m; i++)
         {svg.element.appendChild(this.data[i].cloneNode(true))}
       //
       //  Set the scale and finish up
@@ -84,9 +84,8 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       return svg;
     }
   });
-  
-  MathJax.Hub.Startup.signal.Post("SVG annotation-xml Ready");
+
+  MathJax.Hub.Startup.signal.Post("EditableSVG annotation-xml Ready");
   MathJax.Ajax.loadComplete(SVG.autoloadDir+"/annotation-xml.js");
 
 });
-

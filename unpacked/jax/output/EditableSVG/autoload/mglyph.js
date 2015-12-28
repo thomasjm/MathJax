@@ -4,19 +4,19 @@
 /*************************************************************
  *
  *  MathJax/jax/output/SVG/autoload/mglyph.js
- *  
+ *
  *  Implements the SVG output for <mglyph> elements.
  *
  *  ---------------------------------------------------------------------
- *  
+ *
  *  Copyright (c) 2011-2015 The MathJax Consortium
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,13 +24,13 @@
  *  limitations under the License.
  */
 
-MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
+MathJax.Hub.Register.StartupHook("EditableSVG Jax Ready",function () {
   var VERSION = "2.5.0";
   var MML = MathJax.ElementJax.mml,
       SVG = MathJax.OutputJax.EditableSVG,
       BBOX = SVG.BBOX,
       LOCALE = MathJax.Localization;
-  
+
   var XLINKNS = "http://www.w3.org/1999/xlink";
 
   BBOX.MGLYPH = BBOX.Subclass({
@@ -51,7 +51,7 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
       this.d = this.D = -y; this.l = 0;
     }
   });
-  
+
   MML.mglyph.Augment({
     toSVG: function (variant,scale) {
       this.SVGgetStyles(); var svg = this.SVG(), img, err;
@@ -98,9 +98,8 @@ MathJax.Hub.Register.StartupHook("SVG Jax Ready",function () {
   },{
     GLYPH: {}    // global list of all loaded glyphs
   });
-  
-  MathJax.Hub.Startup.signal.Post("SVG mglyph Ready");
-  MathJax.Ajax.loadComplete(SVG.autoloadDir+"/mglyph.js");
-  
-});
 
+  MathJax.Hub.Startup.signal.Post("EditableSVG mglyph Ready");
+  MathJax.Ajax.loadComplete(SVG.autoloadDir+"/mglyph.js");
+
+});
