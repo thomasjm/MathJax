@@ -51,7 +51,7 @@ class Util {
         return target;
     }
 
-    Element(type, def) {
+    static Element(type, def) {
         var obj = (typeof(type) === "string" ? document.createElementNS(Util.SVGNS, type) : type);
         obj.isMathJax = true;
         if (def) {
