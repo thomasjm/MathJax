@@ -917,6 +917,8 @@ class EditableSVG implements OutputJax {
 
     constructor() {
 
+        console.log('this: ', this);
+
         MathJax.Hub.Register.StartupHook("mml Jax Ready", function() {
             console.log('STARTUP HOOK FOR TYPESCRIPT EDITABLESVG');
 
@@ -952,18 +954,18 @@ class EditableSVG implements OutputJax {
             MML["annotation-xml"].Augment({
                 toSVG: MML.mbase.SVGautoload
             });
+        });
 
-
-            //  Loading isn't complete until the element jax is modified,
-            //  but can't call loadComplete within the callback for "mml Jax Ready"
-            //  (it would call SVG's Require routine, asking for the mml jax again)
-            //  so wait until after the mml jax has finished processing.
-            //
-            //  We also need to wait for the onload handler to run, since the loadComplete
-            //  will call Config and Startup, which need to modify the body.
-            MathJax.Hub.Register.StartupHook("onLoad", function() {
-                setTimeout(MathJax.Callback(["loadComplete", EditableSVG, "jax.js"]), 0);
-            });
+        //  Loading isn't complete until the element jax is modified,
+        //  but can't call loadComplete within the callback for "mml Jax Ready"
+        //  (it would call SVG's Require routine, asking for the mml jax again)
+        //  so wait until after the mml jax has finished processing.
+        //
+        //  We also need to wait for the onload handler to run, since the loadComplete
+        //  will call Config and Startup, which need to modify the body.
+        MathJax.Hub.Register.StartupHook("onLoad", function() {
+            console.log('trying editablesvg: ', MathJax.OutputJax.EditableSVG);
+            setTimeout(MathJax.Callback(["loadComplete", MathJax.OutputJax.EditableSVG, "jax.js"]), 0);
         });
 
         MathJax.Hub.Browser.Select({
@@ -981,13 +983,17 @@ class EditableSVG implements OutputJax {
         });
 
         if (!document.createElementNS) {
-            //
             //  Try to handle SVG in IE8 and below, but fail
             //  (but don't crash on loading the file, so no delay for loadComplete)
-            //
             if (!document.namespaces.svg) {
                 document.namespaces.add("svg", Util.SVGNS)
             }
         }
     }
 }
+
+
+// TODO: this is not compatible with IE8, use something like $(document).ready
+document.addEventListener("DOMContentLoaded", function(event) {
+  var e = new EditableSVG();
+});
