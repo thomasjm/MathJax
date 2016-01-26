@@ -1,5 +1,4 @@
 /// <reference path="jax.ts" />
-/// <reference path="util.ts" />
 
 class Util {
     static MML: any;
@@ -64,6 +63,10 @@ class Util {
         return obj;
     }
 
+    static addElement(parent, type, def?) {
+        return parent.appendChild(Util.Element(type, def))
+    }
+
     static length2em(length, mu=null, size=null) {
         if (typeof(length) !== "string") {
             length = length.toString();
@@ -71,13 +74,13 @@ class Util {
         if (length === "") {
             return "";
         }
-        if (length === this.MML.SIZE.NORMAL) {
+        if (length === MathJax.ElementJax.mml.SIZE.NORMAL) {
             return 1000;
         }
-        if (length === this.MML.SIZE.BIG) {
+        if (length === MathJax.ElementJax.mml.SIZE.BIG) {
             return 2000;
         }
-        if (length === this.MML.SIZE.SMALL) {
+        if (length === MathJax.ElementJax.mml.SIZE.SMALL) {
             return 710;
         }
         if (length === "infinity") {
@@ -180,13 +183,13 @@ class Util {
 
     static thickness2em(length, mu) {
         var thick = this.TeX.rule_thickness;
-        if (length === this.MML.LINETHICKNESS.MEDIUM) {
+        if (length === MathJax.ElementJax.mml.LINETHICKNESS.MEDIUM) {
             return thick;
         }
-        if (length === this.MML.LINETHICKNESS.THIN) {
+        if (length === MathJax.ElementJax.mml.LINETHICKNESS.THIN) {
             return 0.67 * thick;
         }
-        if (length === this.MML.LINETHICKNESS.THICK) {
+        if (length === MathJax.ElementJax.mml.LINETHICKNESS.THICK) {
             return 1.67 * thick;
         }
         return this.length2em(length, mu, thick);

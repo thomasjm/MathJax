@@ -48,7 +48,7 @@ class MRowMixin extends MBaseMixin {
     }
 
     SVGmultiline(span) {
-        return this.MML.mbase.SVGautoloadFile("multiline")
+        return MathJax.ElementJax.mml.mbase.SVGautoloadFile("multiline")
     }
 
     SVGstretchH(w) {

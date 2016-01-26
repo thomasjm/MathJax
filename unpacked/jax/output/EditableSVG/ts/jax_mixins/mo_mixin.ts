@@ -31,9 +31,9 @@ class MoMixin extends MBaseMixin {
 
         //  Get character translation for superscript and accents
         var parent = this.CoreParent();
-        var isScript = (parent && parent.isa(this.MML.msubsup) && this !== parent.data[0]);
+        var isScript = (parent && parent.isa(MathJax.ElementJax.mml.msubsup) && this !== parent.data[0]);
         var mapchars = (isScript ? this.remapChars : null);
-        if (this.data.join("").length === 1 && parent && parent.isa(this.MML.munderover) &&
+        if (this.data.join("").length === 1 && parent && parent.isa(MathJax.ElementJax.mml.munderover) &&
             this.CoreText(parent.data[parent.base]).length === 1) {
             var over = parent.data[parent.over],
             under = parent.data[parent.under];
@@ -94,7 +94,7 @@ class MoMixin extends MBaseMixin {
             return false
         }
         var parent = this.CoreParent();
-        if (parent && parent.isa(this.MML.munderover) &&
+        if (parent && parent.isa(MathJax.ElementJax.mml.munderover) &&
             this.CoreText(parent.data[parent.base]).length === 1) {
             var over = parent.data[parent.over],
             under = parent.data[parent.under];
@@ -152,7 +152,7 @@ class MoMixin extends MBaseMixin {
         // FIXME:  should take style="font-weight:bold" into account as well
         if ((values.fontweight === "bold" || parseInt(values.fontweight) >= 600) &&
             !this.Get("mathvariant", true)) {
-            values.mathvariant = this.MML.VARIANT.BOLD
+            values.mathvariant = MathJax.ElementJax.mml.VARIANT.BOLD
         }
         values.maxsize = Util.length2em(values.maxsize, mu, svg.w);
         values.minsize = Util.length2em(values.minsize, mu, svg.w);
