@@ -1,5 +1,7 @@
 /// <reference path="mbase_mixin.ts" />
 
-class MMultiScriptsMixin {
-    toSVG = MBaseMixin.SVGautoload;
+class MMultiScriptsMixin extends MBaseMixin {
+    toSVG() {
+        return this.SVGautoload();
+    };
 }
