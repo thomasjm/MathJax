@@ -64,15 +64,27 @@ class MBaseMixin extends ElementJax {
         return elem.getBBox();
     }
 
-    static getMethods(AJAX, HUB, HTML, MML, editableSVG) {
+    static getMethods(AJAX, HUB, HTML, MML, self) {
         // TODO: put the args into the dict so they get stuck onto the objects
         var other = {
             AJAX: AJAX,
             HUB: HUB,
             HTML: HTML,
-            MML: MML,
-            editableSVG: editableSVG
+            MML: MML
+            // editableSVG: editableSVG
         }
+
+        var obj = {};
+        obj.prototype = {};
+        obj.constructor.prototype = {};
+        for (var id in this.prototype) {
+            console.log('Patching this: ', id);
+            obj[id] = this.prototype[id].bind(self);
+            obj.prototype[id] = this.prototype[id].bind(self);
+            // obj.constructor.prototype[id] = this.prototype[id].bind(self);
+        }
+
+        return obj;
     }
 
     toSVG(...args): any;
