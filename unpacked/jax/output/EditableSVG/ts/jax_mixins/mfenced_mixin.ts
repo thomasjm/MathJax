@@ -4,7 +4,7 @@ class MFencedMixin extends MBaseMixin {
 
     toSVG() {
         this.SVGgetStyles();
-        var svg  = new BBOX_ROW(this.SVG, this.HUB);
+        var svg  = new BBOX_ROW(this.SVG, MathJax.Hub);
         this.SVGhandleSpace(svg);
         if (this.data.open) {
             svg.Check(this.data.open)

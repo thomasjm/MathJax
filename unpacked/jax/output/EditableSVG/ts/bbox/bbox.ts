@@ -44,7 +44,7 @@ class BBOX {
         this.x = this.y = 0;
         this.scale = 1;
         if (this.type) {
-            this.element = EditableSVG.Element(this.type, def);
+            this.element = Util.Element(this.type, def);
         }
     }
 

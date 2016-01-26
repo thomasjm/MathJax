@@ -11,7 +11,7 @@ class TeXAtomMixin extends MBaseMixin {
         if (this.data[0] != null) {
             var box = this.EditableSVGdataStretched(0, HW, D),
             y = 0;
-            if (this.texClass === this.MML.TEXCLASS.VCENTER) {
+            if (this.texClass === MathJax.ElementJax.mml.TEXCLASS.VCENTER) {
                 y = Util.TeX.axis_height - (box.h + box.d) / 2 + box.d;
             }
             svg.Add(box, 0, y);

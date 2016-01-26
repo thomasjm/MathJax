@@ -9,10 +9,10 @@ class MathMixin extends MBaseMixin {
         //  All the data should be in an inferred row
         if (this.data[0]) {
             this.SVGgetStyles();
-            this.MML.mbase.prototype.displayAlign = this.HUB.config.displayAlign;
-            this.MML.mbase.prototype.displayIndent = this.HUB.config.displayIndent;
-            if (String(this.HUB.config.displayIndent).match(/^0($|[a-z%])/i))
-                this.MML.mbase.prototype.displayIndent = "0";
+            MathJax.ElementJax.mml.mbase.prototype.displayAlign = MathJax.Hub.config.displayAlign;
+            MathJax.ElementJax.mml.mbase.prototype.displayIndent = MathJax.Hub.config.displayIndent;
+            if (String(MathJax.Hub.config.displayIndent).match(/^0($|[a-z%])/i))
+                MathJax.ElementJax.mml.mbase.prototype.displayIndent = "0";
 
             //  Put content in a <g> with defaults and matrix that flips y axis.
             //  Put that in an <svg> with xlink defined.
@@ -80,13 +80,13 @@ class MathMixin extends MBaseMixin {
             //  Handle indentalign and indentshift for single-line displays
             if (!this.isMultiline && this.Get("display") === "block" && !svg.hasIndent) {
                 var values = this.getValues("indentalignfirst", "indentshiftfirst", "indentalign", "indentshift");
-                if (values.indentalignfirst !== this.MML.INDENTALIGN.INDENTALIGN) {
+                if (values.indentalignfirst !== MathJax.ElementJax.mml.INDENTALIGN.INDENTALIGN) {
                     values.indentalign = values.indentalignfirst;
                 }
-                if (values.indentalign === this.MML.INDENTALIGN.AUTO) {
+                if (values.indentalign === MathJax.ElementJax.mml.INDENTALIGN.AUTO) {
                     values.indentalign = this.displayAlign;
                 }
-                if (values.indentshiftfirst !== this.MML.INDENTSHIFT.INDENTSHIFT) {
+                if (values.indentshiftfirst !== MathJax.ElementJax.mml.INDENTSHIFT.INDENTSHIFT) {
                     values.indentshift = values.indentshiftfirst;
                 }
                 if (values.indentshift === "auto") {
@@ -95,11 +95,11 @@ class MathMixin extends MBaseMixin {
                 var shift = Util.length2em(values.indentshift, 1, this.editableSVG.cwidth);
                 if (this.displayIndent !== "0") {
                     var indent = Util.length2em(this.displayIndent, 1, this.editableSVG.cwidth);
-                    shift += (values.indentalign === this.MML.INDENTALIGN.RIGHT ? -indent : indent);
+                    shift += (values.indentalign === MathJax.ElementJax.mml.INDENTALIGN.RIGHT ? -indent : indent);
                 }
                 div.style.textAlign = values.indentalign;
                 if (shift) {
-                    this.HUB.Insert(style, ({
+                    MathJax.Hub.Insert(style, ({
                         left: {
                             marginLeft: this.editableSVG.Ex(shift)
                         },

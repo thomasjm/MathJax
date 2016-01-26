@@ -11,7 +11,7 @@ class MUnderOverMixin extends MBaseMixin {
         var values = this.getValues("displaystyle", "accent", "accentunder", "align");
         if (!values.displaystyle && this.data[this.base] != null &&
             this.data[this.base].CoreMO().Get("movablelimits")) {
-            return this.MML.msubsup.prototype.toSVG.call(this)
+            return MathJax.ElementJax.mml.msubsup.prototype.toSVG.call(this)
         }
         var svg  = new BBOX();
         var scale = this.SVGgetScale(svg);
@@ -83,7 +83,7 @@ class MUnderOverMixin extends MBaseMixin {
                     box.x = -box.l;
                     boxes[i] = (new BBOX_G()).With({
                         removeable: false
-                    }, this.HUB);
+                    }, MathJax.Hub);
                     boxes[i].Add(box);
                     boxes[i].Clean();
                     boxes[i].w = -box.l;

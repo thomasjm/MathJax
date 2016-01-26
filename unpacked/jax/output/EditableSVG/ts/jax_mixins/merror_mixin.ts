@@ -35,7 +35,7 @@ class MErrorMixin extends MBaseMixin {
         this.styles = this.SVGprocessStyles(span.style);
         if (this.style) {
             span.style.cssText = this.style;
-            this.HUB.Insert(this.styles, this.SVGprocessStyles(span.style));
+            MathJax.Hub.Insert(this.styles, this.SVGprocessStyles(span.style));
         }
     }
 }

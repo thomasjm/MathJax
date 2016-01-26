@@ -3,16 +3,21 @@
 class BBOX_GLYPH extends BBOX {
 
     static glyphs: any; // This serves as a cache
+    static defs: any;
 
     constructor(scale, id, h, d, w, l, r, p, SVG, HUB) {
         this.type = "path";
         this.removeable = false;
 
+        this.glyphs = {};
+        this.defs = null;
+        this.n = 0;
+
         var def;
-        var t = SVG.config.blacker;
-        var cache = SVG.config.useFontCache;
-        var transform = (scale === 1 ? null : "scale(" + SVG.Fixed(scale) + ")");
-        if (cache && !SVG.config.useGlobalCache) {
+        var t = MathJax.OutputJax.EditableSVG.config.blacker;
+        var cache = MathJax.OutputJax.EditableSVG.config.useFontCache;
+        var transform = (scale === 1 ? null : "scale(" + MathJax.OutputJax.EditableSVG.Fixed(scale) + ")");
+        if (cache && !MathJax.OutputJax.EditableSVG.config.useGlobalCache) {
             id = "E" + this.n + "-" + id
         }
 
@@ -37,7 +42,7 @@ class BBOX_GLYPH extends BBOX {
             if (transform) {
                 def.transform = transform
             }
-            this.element = SVG.Element("use", def);
+            this.element = MathJax.OutputJax.EditableSVG.Element("use", def);
             this.element.setAttributeNS(Util.XLINKNS, "href", "#" + id);
         }
         this.h = (h + t) * scale;
