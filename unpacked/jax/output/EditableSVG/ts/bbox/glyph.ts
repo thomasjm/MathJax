@@ -33,7 +33,7 @@ class BBOX_GLYPH extends BBOX {
             def.d = (p ? "M" + p + "Z" : "");
             super(def);
             if (cache) {
-                BBOX.defs.appendChild(this.element);
+                BBOX_GLYPH.defs.appendChild(this.element);
                 this.glyphs[id] = true;
             }
         }
