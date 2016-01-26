@@ -16,6 +16,8 @@ class EditableSVGConfig {
         font: null,
         EqnChunk: null,
         EqnChunkDelay: null,
+        EqnChunkFactor: null,
+        undefinedFamily: null,
 
         styles: {
             ".MathJax_SVG": {

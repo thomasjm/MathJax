@@ -2,6 +2,8 @@
 
 class BBOX_GLYPH extends BBOX {
 
+    static glyphs: any; // This serves as a cache
+
     constructor(scale, id, h, d, w, l, r, p, SVG, HUB) {
         this.type = "path";
         this.removeable = false;
