@@ -1,5 +1,4 @@
 /// <reference path="mbase_mixin.ts" />
-/// <reference path="../bbox/nonremoveable.ts" />
 /// <reference path="../bbox/g.ts" />
 
 class MathMixin extends MBaseMixin {

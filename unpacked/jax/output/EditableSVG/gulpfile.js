@@ -14,9 +14,9 @@ gulp.task('build', function() {
         tsResult.dts.pipe(gulp.dest('dist/definitions')),
         tsResult.js
             .pipe(sourcemaps.init())
-            .pipe(concat('all.js'))
+            .pipe(concat('jax.js'))
             .pipe(sourcemaps.write())
-            .pipe(gulp.dest('dist/'))
+            .pipe(gulp.dest('.'))
     ]);
 });
 

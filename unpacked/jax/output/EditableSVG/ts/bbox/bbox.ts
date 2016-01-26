@@ -16,6 +16,7 @@ class BBOX {
     w: number;
     d: number;
     l: number;
+    n: number;
     D: number;
     H: number;
     r: number;
@@ -42,7 +43,6 @@ class BBOX {
         this.l = Util.BIGDIMEN;
         this.x = this.y = 0;
         this.scale = 1;
-        this.EditableSVG = svg;
         if (this.type) {
             this.element = EditableSVG.Element(this.type, def);
         }
