@@ -32,8 +32,6 @@ interface OutputJax {
 declare var MathJax: any;
 
 class EditableSVG implements OutputJax {
-    SVG = MathJax.OutputJax.EditableSVG;
-
     TOUCH = undefined;
 
     // Bunch of properties being added to make the build happy
@@ -70,7 +68,7 @@ class EditableSVG implements OutputJax {
     textSVG: any;
     zoomScale: any;
 
-    config = EditableSVGConfig.config;
+    // config = EditableSVGConfig.config;
 
     hideProcessedMath = true; // use display:none until all math is processed
 
@@ -206,12 +204,25 @@ class EditableSVG implements OutputJax {
     }
 
     preTranslate(state) {
-        var scripts = state.jax[this.id],
-        i, m = scripts.length,
-        script, prev, span, div, test, jax, ex, em, maxwidth, relwidth = false,
-        cwidth,
-        linebreak = this.config.linebreaks.automatic,
-        width = this.config.linebreaks.width;
+        console.log('PRETRANSLATE CALLED');
+
+        var scripts = state.jax[this.id];
+        var i;
+        var m = scripts.length;
+        var script;
+        var prev;
+        var span;
+        var div;
+        var test;
+        var jax;
+        var ex;
+        var em;
+        var maxwidth;
+        var relwidth = false;
+        var cwidth;
+        var linebreak = this.config.linebreaks.automatic;
+        var width = this.config.linebreaks.width;
+
         if (linebreak) {
             relwidth = (width.match(/^\s*(\d+(\.\d*)?%\s*)?container\s*$/) != null);
             if (relwidth) {
@@ -253,13 +264,13 @@ class EditableSVG implements OutputJax {
                 id: jax.inputID + "-Frame",
                 isMathJax: true,
                 jaxID: this.id,
-                oncontextmenu: this.EVENT.Menu,
-                onmousedown: this.EVENT.Mousedown,
-                onmouseover: this.EVENT.Mouseover,
-                onmouseout: this.EVENT.Mouseout,
-                onmousemove: this.EVENT.Mousemove,
-                onclick: this.EVENT.Click,
-                ondblclick: this.EVENT.DblClick
+                oncontextmenu: MathJax.Extension.MathEvents.Event.Menu,
+                onmousedown: MathJax.Extension.MathEvents.Event.Mousedown,
+                onmouseover: MathJax.Extension.MathEvents.Event.Mouseover,
+                onmouseout: MathJax.Extension.MathEvents.Event.Mouseout,
+                onmousemove: MathJax.Extension.MathEvents.Event.Mousemove,
+                onclick: MathJax.Extension.MathEvents.Event.Click,
+                ondblclick: MathJax.Extension.MathEvents.Event.DblClick
             });
             if (MathJax.Hub.Browser.noContextMenu) {
                 span.ontouchstart = this.TOUCH.start;
@@ -342,11 +353,11 @@ class EditableSVG implements OutputJax {
         }
 
         //  Get the data about the math
-        var jax = script.MathJax.elementJax,
-        math = jax.root,
-        span = document.getElementById(jax.inputID + "-Frame"),
-        div = (jax.EditableSVG.display ? (span || {parentNode: undefined}).parentNode : span),
-        localCache = (this.config.useFontCache && !this.config.useGlobalCache);
+        var jax = script.MathJax.elementJax
+        var math = jax.root;
+        var span = document.getElementById(jax.inputID + "-Frame");
+        var div = (jax.EditableSVG.display ? (span || {parentNode: undefined}).parentNode : span);
+        var localCache = (this.config.useFontCache && !this.config.useGlobalCache);
         if (!div) return;
 
         //  Set the font metrics
@@ -464,7 +475,7 @@ class EditableSVG implements OutputJax {
     }
 
     getHoverBBox(jax, span, math) {
-        var bbox = this.EVENT.getBBox(span.parentNode);
+        var bbox = MathJax.Extension.MathEvents.Event.getBBox(span.parentNode);
         bbox.h += 2;
         bbox.d -= 2; // bbox seems to be a bit off, so compensate (FIXME)
         return bbox;
@@ -521,7 +532,7 @@ class EditableSVG implements OutputJax {
         span.style.position = math.style.position = "";
 
         return {
-            Y: -this.EVENT.getBBox(span).h,
+            Y: -MathJax.Extension.MathEvents.Event.getBBox(span).h,
             mW: mW,
             mH: mH,
             zW: zW,
@@ -923,32 +934,32 @@ class EditableSVG implements OutputJax {
 
             var MML = MathJax.ElementJax.mml;
 
-            MML.mbase.Augment(MBaseMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, this));
-            MML.chars.Augment(CharsMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, this));
-            MML.entity.Augment(EntityMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, this));
-            MML.mo.Augment(MoMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, this));
-            MML.mtext.Augment(MTextMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, this));
-            MML.merror.Augment(MErrorMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, this));
-            MML.ms.Augment(MsMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, this));
-            MML.mglyph.Augment(MGlyphMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, this));
-            MML.mspace.Augment(MSpaceMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, this));
-            MML.mphantom.Augment(MPhantomMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, this));
-            MML.mpadded.Augment(MPaddedMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, this));
-            MML.mrow.Augment(MRowMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, this));
-            MML.mstyle.Augment(MStyleMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, this));
-            MML.mfrac.Augment(MFracMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, this));
-            MML.msqrt.Augment(MSqrtMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, this));
-            MML.mroot.Augment(MRootMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, this));
-            MML.mfenced.Augment(MFencedMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, this));
-            MML.menclose.Augment(MEncloseMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, this));
-            MML.maction.Augment(MActionMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, this));
-            MML.semantics.Augment(SemanticsMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, this));
-            MML.munderover.Augment(MUnderOverMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, this));
-            MML.msubsup.Augment(MSubSupMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, this));
-            MML.mmultiscripts.Augment(MMultiScriptsMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, this));
-            MML.mtable.Augment(MTableMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, this));
-            MML.math.Augment(MathMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, this));
-            MML.TeXAtom.Augment(TeXAtomMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, this));
+            MML.mbase.Augment(MBaseMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, MML.mbase));
+            MML.chars.Augment(CharsMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, MML.chars));
+            MML.entity.Augment(EntityMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, MML.entity));
+            MML.mo.Augment(MoMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, MML.mo));
+            MML.mtext.Augment(MTextMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, MML.mtext));
+            MML.merror.Augment(MErrorMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, MML.merror));
+            MML.ms.Augment(MsMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, MML.ms));
+            MML.mglyph.Augment(MGlyphMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, MML.mglyph));
+            MML.mspace.Augment(MSpaceMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, MML.mspace));
+            MML.mphantom.Augment(MPhantomMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, MML.mphantom));
+            MML.mpadded.Augment(MPaddedMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, MML.mpadded));
+            MML.mrow.Augment(MRowMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, MML.mrow));
+            MML.mstyle.Augment(MStyleMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, MML.mstyle));
+            MML.mfrac.Augment(MFracMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, MML.mfrac));
+            MML.msqrt.Augment(MSqrtMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, MML.msqrt));
+            MML.mroot.Augment(MRootMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, MML.mroot));
+            MML.mfenced.Augment(MFencedMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, MML.mfenced));
+            MML.menclose.Augment(MEncloseMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, MML.menclose));
+            MML.maction.Augment(MActionMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, MML.maction));
+            MML.semantics.Augment(SemanticsMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, MML.semantics));
+            MML.munderover.Augment(MUnderOverMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, MML.munderover));
+            MML.msubsup.Augment(MSubSupMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, MML.msubsup));
+            MML.mmultiscripts.Augment(MMultiScriptsMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, MML.mmultiscripts));
+            MML.mtable.Augment(MTableMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, MML.mtable));
+            MML.math.Augment(MathMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, MML.math));
+            MML.TeXAtom.Augment(TeXAtomMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, MML, MML.TeXAtom));
 
             MML["annotation-xml"].Augment({
                 toSVG: MML.mbase.SVGautoload
@@ -999,12 +1010,13 @@ var load = function(event) {
 
     // TODO: we're blowing away config right now
 
-    for (id in EditableSVG.prototype) {
+    for (var id in EditableSVG.prototype) {
         MathJax.OutputJax.EditableSVG[id] = EditableSVG.prototype[id].bind(MathJax.OutputJax.EditableSVG);
+        MathJax.OutputJax.EditableSVG.constructor.prototype[id] = EditableSVG.prototype[id].bind(MathJax.OutputJax.EditableSVG);
     }
 
-    console.log("Here it is now: ", MathJax.OutputJax.EditableSVG);
-});
+    // console.log("Here it is now: ", MathJax.OutputJax.EditableSVG);
+};
 
 setTimeout(load, 1000);
 // console.log('GOING TO APPLY NOW');
