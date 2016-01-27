@@ -1,4 +1,6 @@
 /// <reference path="jax.ts" />
+/// <reference path="bbox/g.ts" />
+/// <reference path="bbox/text.ts" />
 
 class Util {
     static MML: any;
@@ -51,7 +53,13 @@ class Util {
     }
 
     static Element(type, def) {
-        var obj = (typeof(type) === "string" ? document.createElementNS(Util.SVGNS, type) : type);
+        var obj;
+        if (document.createElementNS) {
+            obj = (typeof(type) === "string" ? document.createElementNS("http://www.w3.org/2000/svg", type) : type);
+        } else {
+            obj = (typeof(type) === "string" ? document.createElement("svg:" + type) : type);
+        }
+
         obj.isMathJax = true;
         if (def) {
             for (var id in def) {

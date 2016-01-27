@@ -1,10 +1,10 @@
 /// <reference path="bbox.ts" />
 
 class BBOX_RECT extends BBOX {
-    constructor(h, d, w, def = null) {
-        this.type = "rect";
-        this.removeable = false;
+    static type = "rect";
+    static removeable = false;
 
+    constructor(h: number, d: number, w: number, def = null) {
         if (def == null) {
             def = {
                 stroke: "none"

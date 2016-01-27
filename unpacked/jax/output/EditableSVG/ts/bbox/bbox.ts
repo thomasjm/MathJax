@@ -2,8 +2,8 @@
 
 
 class BBOX {
-    type = "g";
-    removeable = true;
+    static type = "g";
+    static removeable = true;
 
     EditableSVG: any;
 
@@ -36,18 +36,14 @@ class BBOX {
 
     hasIndent: boolean;
 
-    constructor(def = null) {
-        console.log('UTIL.BIGDIMEN is', Util.BIGDIMEN);
+    constructor(def = null, type = "g") {
         this.h = this.d = -Util.BIGDIMEN;
         this.H = this.D = 0;
         this.w = this.r = 0;
         this.l = Util.BIGDIMEN;
         this.x = this.y = 0;
         this.scale = 1;
-        if (this.type) {
-            console.log('MAKING ELEMENT OF TYPE: ', this.type);
-            this.element = Util.Element(this.type, def);
-        }
+        this.element = Util.Element(type, def);
     }
 
     With(def, HUB) {

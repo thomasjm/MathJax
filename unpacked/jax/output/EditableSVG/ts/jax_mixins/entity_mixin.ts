@@ -1,4 +1,5 @@
 /// <reference path="mbase_mixin.ts" />
+/// <reference path="chars_mixin.ts" />
 
 class EntityMixin extends MBaseMixin {
     toSVG(variant, scale, remap, chars) {
@@ -7,6 +8,6 @@ class EntityMixin extends MBaseMixin {
             text = remap(text, chars)
         }
         console.log('handling entity: ', text);
-        return this.SVGhandleVariant(variant, scale, text);
+        return CharsMixin.HandleVariant(variant, scale, text);
     }
 }

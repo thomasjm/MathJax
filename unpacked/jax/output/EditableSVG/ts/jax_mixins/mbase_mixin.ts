@@ -97,7 +97,8 @@ class MBaseMixin extends ElementJax {
         this.SVGhandleSpace(svg);
         for (var i = 0, m = this.data.length; i < m; i++) {
             if (this.data[i]) {
-                var child = svg.Add(this.data[i].toSVG(variant, svg.scale), svg.w, 0, true);
+                var rendered = this.data[i].toSVG(variant, svg.scale);
+                var child = svg.Add(rendered, svg.w, 0, true);
                 if (child.skew) {
                     svg.skew = child.skew
                 }
@@ -149,24 +150,19 @@ class MBaseMixin extends ElementJax {
             this.EditableSVGdata.h += svg.y;
             this.EditableSVGdata.d -= svg.y
         }
-        if (svg.X != null) {
-            this.EditableSVGdata.X = svg.X
-        }
-        if (svg.tw != null) {
-            this.EditableSVGdata.tw = svg.tw
-        }
-        if (svg.skew) {
-            this.EditableSVGdata.skew = svg.skew
-        }
-        if (svg.ic) {
-            this.EditableSVGdata.ic = svg.ic
-        }
+
+        if (svg.X != null) this.EditableSVGdata.X = svg.X
+        if (svg.tw != null) this.EditableSVGdata.tw = svg.tw
+        if (svg.skew) this.EditableSVGdata.skew = svg.skew
+        if (svg.ic) this.EditableSVGdata.ic = svg.ic
+
         if (this["class"]) {
             svg.removeable = false;
             MathJax.OutputJax.EditableSVG.Element(svg.element, {
                 "class": this["class"]
             })
         }
+
         // FIXME:  if an element is split by linebreaking, the ID will be the same on both parts
         // FIXME:  if an element has an id, its zoomed copy will have the same ID
         if (this.id) {
@@ -175,6 +171,7 @@ class MBaseMixin extends ElementJax {
                 "id": this.id
             })
         }
+
         if (this.href) {
             var a = MathJax.OutputJax.EditableSVG.Element("a", {
                 "class": "mjx-svg-href"
@@ -270,7 +267,6 @@ class MBaseMixin extends ElementJax {
     SVGgetStyles() {
         if (this.style) {
             var span = this.HTML.Element("span");
-            console.log('SVGgetStyles:', this.style);
             span.style.cssText = this.style;
             this.styles = this.SVGprocessStyles(span.style);
         }
@@ -427,10 +423,6 @@ class MBaseMixin extends ElementJax {
                 }
             }
         }
-    }
-
-    SVGhandleVariant(variant, scale, text) {
-        return MathJax.OutputJax.EditableSVG.HandleVariant(variant, scale, text);
     }
 
     SVGgetVariant() {
