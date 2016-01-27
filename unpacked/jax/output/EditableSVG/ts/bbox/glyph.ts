@@ -2,7 +2,7 @@
 
 class BBOX_GLYPH extends BBOX {
 
-    static glyphs: any; // This serves as a cache
+    static glyphs: {}; // This serves as a cache
     static defs: any;
 
     constructor(scale, id, h, d, w, l, r, p, SVG, HUB) {
@@ -22,14 +22,11 @@ class BBOX_GLYPH extends BBOX {
         }
 
         if (!cache || !this.glyphs[id]) {
-            def = {
-                "stroke-width": t
-            };
-            if (cache) {
-                def.id = id
-            } else if (transform) {
-                def.transform = transform
-            }
+            def = { "stroke-width": t };
+
+            if (cache) def.id = id
+            else if (transform) def.transform = transform
+
             def.d = (p ? "M" + p + "Z" : "");
             super(def);
             if (cache) {
@@ -37,14 +34,14 @@ class BBOX_GLYPH extends BBOX {
                 this.glyphs[id] = true;
             }
         }
+
         if (cache) {
             def = {};
-            if (transform) {
-                def.transform = transform
-            }
+            if (transform) def.transform = transform
             this.element = MathJax.OutputJax.EditableSVG.Element("use", def);
             this.element.setAttributeNS(Util.XLINKNS, "href", "#" + id);
         }
+
         this.h = (h + t) * scale;
         this.d = (d + t) * scale;
         this.w = (w + t / 2) * scale;

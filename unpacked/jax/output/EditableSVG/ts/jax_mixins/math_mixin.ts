@@ -51,7 +51,6 @@ class MathMixin extends MBaseMixin {
             var l = Math.max(-svg.l, 0),
             r = Math.max(svg.r - svg.w, 0);
             var style = svg.element.style;
-            console.log('Got width! ', Util.Ex(l + svg.w + r));
             svg.element.setAttribute("width", Util.Ex(l + svg.w + r));
             svg.element.setAttribute("height", Util.Ex(svg.H + svg.D + 2 * Util.em));
             style.verticalAlign = Util.Ex(-svg.D - 2 * Util.em); // remove extra pixel added below plus padding from above

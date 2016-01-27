@@ -37,6 +37,7 @@ class BBOX {
     hasIndent: boolean;
 
     constructor(def = null) {
+        console.log('UTIL.BIGDIMEN is', Util.BIGDIMEN);
         this.h = this.d = -Util.BIGDIMEN;
         this.H = this.D = 0;
         this.w = this.r = 0;
@@ -44,6 +45,7 @@ class BBOX {
         this.x = this.y = 0;
         this.scale = 1;
         if (this.type) {
+            console.log('MAKING ELEMENT OF TYPE: ', this.type);
             this.element = Util.Element(this.type, def);
         }
     }

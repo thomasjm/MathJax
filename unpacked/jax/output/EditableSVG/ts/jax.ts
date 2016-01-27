@@ -187,8 +187,15 @@ class EditableSVG implements OutputJax {
             }]
         ]);
 
+
+        // Merge the styles provided by MathJax with the ones in EditableSVGConfig
+        var styles = this.config.styles;
+        for (var s in EditableSVGConfig.styles) {
+            styles[s] = EditableSVGConfig.styles[s];
+        }
+
         // Set up styles
-        return MathJax.Ajax.Styles(this.config.styles, ["InitializeSVG", this]);
+        return MathJax.Ajax.Styles(styles, ["InitializeSVG", this]);
     }
 
     //  Handle initialization that requires styles to be set up
@@ -313,7 +320,6 @@ class EditableSVG implements OutputJax {
                     maxwidth = cwidth
                 }
             }
-            console.log('SETTING UTIL EX TO ', ex);
             Util.ex = ex;
             Util.em = em = ex / Util.TeX.x_height * 1000; // scale ex to x_height
             Util.cwidth = cwidth / em * 1000;
@@ -443,6 +449,7 @@ class EditableSVG implements OutputJax {
     }
 
     resetGlyphs(reset?) {
+        console.log('RESETTING GLYPHS');
         if (this.config.useFontCache) {
             if (this.config.useGlobalCache) {
                 BBOX_GLYPH.defs = document.getElementById("MathJax_SVG_glyphs");
@@ -635,6 +642,7 @@ class EditableSVG implements OutputJax {
                     }
                     F.prototype = BBOX_GLYPH.prototype;
                     var glyph = new F(c);
+                    console.log('Made glyph: ', glyph);
 
                     svg.Add(glyph, svg.w, 0);
                 }
