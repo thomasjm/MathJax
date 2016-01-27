@@ -78,15 +78,12 @@ class MBaseMixin extends ElementJax {
         obj.prototype = {};
         obj.constructor.prototype = {};
         for (var id in this.prototype) {
-            console.log('Patching this: ', id);
             obj[id] = this.prototype[id];
             // obj.prototype[id] = this.prototype[id].bind(self);
             // obj.constructor.prototype[id] = this.prototype[id].bind(self);
         }
 
         obj.editableSVG = editableSVG;
-
-        console.log('Returning this: ', obj);
 
         return obj;
     }
@@ -206,7 +203,7 @@ class MBaseMixin extends ElementJax {
             svg.removeable = false;
         }
 
-        if (EditableSVGConfig.config.addMMLclasses) {
+        if (MathJax.OutputJax.EditableSVG.config.addMMLclasses) {
             this.SVGaddClass(svg.element, "mjx-svg-" + this.type);
             svg.removeable = false;
         }
@@ -273,6 +270,7 @@ class MBaseMixin extends ElementJax {
     SVGgetStyles() {
         if (this.style) {
             var span = this.HTML.Element("span");
+            console.log('SVGgetStyles:', this.style);
             span.style.cssText = this.style;
             this.styles = this.SVGprocessStyles(span.style);
         }

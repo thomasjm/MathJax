@@ -3,7 +3,7 @@
 
 class MTextMixin extends MBaseMixin {
     toSVG() {
-        if (EditableSVGConfig.config.mtextFontInherit || this.Parent().type === "merror") {
+        if (MathJax.OutputJax.EditableSVG.config.mtextFontInherit || this.Parent().type === "merror") {
             this.SVGgetStyles();
             var svg  = new BBOX();
             var scale = this.SVGgetScale(svg);
@@ -27,7 +27,7 @@ class MTextMixin extends MBaseMixin {
             }
 
             svg.Add(new BBOX_TEXT(this.HTML,
-                                  scale * 100 / EditableSVGConfig.config.scale,
+                                  scale * 100 / MathJax.OutputJax.EditableSVG.config.scale,
                                   this.data.join(""), def));
             svg.Clean();
             this.SVGhandleColor(svg);

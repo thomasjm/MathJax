@@ -6,19 +6,19 @@ class Util {
     static SVGNS = "http://www.w3.org/2000/svg";
     static XLINKNS = "http://www.w3.org/1999/xlink";
 
-    // TODO: this needs to be set by the code in Translate
+    // These are filled in in the Translate function in jax.ts
     static em: number;
     static ex: number;
     static pxPerInch: number;
 
-    Em(m) {
+    static Em(m) {
         if (Math.abs(m) < 0.0006) {
             return "0em";
         }
         return m.toFixed(3).replace(/\.?0+$/, "") + "em";
     }
 
-    Ex(m) {
+    static Ex(m) {
         m = Math.round(m / this.TeX.x_height * this.ex) / this.ex; // try to use closest pixel size
         if (Math.abs(m) < 0.0006) {
             return "0ex";
@@ -26,7 +26,7 @@ class Util {
         return m.toFixed(3).replace(/\.?0+$/, "") + "ex";
     }
 
-    Percent(m) {
+    static Percent(m) {
         return (100 * m).toFixed(1).replace(/\.?0+$/, "") + "%";
     }
 
@@ -68,67 +68,29 @@ class Util {
     }
 
     static length2em(length, mu=null, size=null) {
-        if (typeof(length) !== "string") {
-            length = length.toString();
-        }
-        if (length === "") {
-            return "";
-        }
-        if (length === MathJax.ElementJax.mml.SIZE.NORMAL) {
-            return 1000;
-        }
-        if (length === MathJax.ElementJax.mml.SIZE.BIG) {
-            return 2000;
-        }
-        if (length === MathJax.ElementJax.mml.SIZE.SMALL) {
-            return 710;
-        }
-        if (length === "infinity") {
-            return this.BIGDIMEN;
-        }
-        if (length.match(/mathspace$/)) {
-            return 1000 * this.MATHSPACE[length];
-        }
+        if (typeof(length) !== "string") length = length.toString();
+        if (length === "") return "";
+        if (length === MathJax.ElementJax.mml.SIZE.NORMAL) return 1000;
+        if (length === MathJax.ElementJax.mml.SIZE.BIG) return 2000;
+        if (length === MathJax.ElementJax.mml.SIZE.SMALL) return 710;
+        if (length === "infinity") return this.BIGDIMEN;
+        if (length.match(/mathspace$/)) return 1000 * this.MATHSPACE[length];
         var emFactor = (EditableSVG.zoomScale || 1) / Util.em;
         var match = length.match(/^\s*([-+]?(?:\.\d+|\d+(?:\.\d*)?))?(pt|em|ex|mu|px|pc|in|mm|cm|%)?/);
         var m = parseFloat(match[1] || "1") * 1000,
         unit = match[2];
-        if (size == null) {
-            size = 1000
-        };
-        if (mu == null) {
-            mu = 1;
-        }
-        if (unit === "em") {
-            return m;
-        }
-        if (unit === "ex") {
-            return m * this.TeX.x_height / 1000;
-        }
-        if (unit === "%") {
-            return m / 100 * size / 1000;
-        }
-        if (unit === "px") {
-            return m * emFactor;
-        }
-        if (unit === "pt") {
-            return m / 10;
-        } // 10 pt to an em
-        if (unit === "pc") {
-            return m * 1.2;
-        } // 12 pt to a pc
-        if (unit === "in") {
-            return m * this.pxPerInch * emFactor;
-        }
-        if (unit === "cm") {
-            return m * this.pxPerInch * emFactor / 2.54;
-        } // 2.54 cm to an inch
-        if (unit === "mm") {
-            return m * this.pxPerInch * emFactor / 25.4;
-        } // 10 mm to a cm
-        if (unit === "mu") {
-            return m / 18 * mu;
-        }
+        if (size == null) size = 1000
+        if (mu == null) mu = 1;
+        if (unit === "em") return m;
+        if (unit === "ex") return m * this.TeX.x_height / 1000;
+        if (unit === "%") return m / 100 * size / 1000;
+        if (unit === "px") return m * emFactor;
+        if (unit === "pt") return m / 10;
+        if (unit === "pc") return m * 1.2;
+        if (unit === "in") return m * this.pxPerInch * emFactor;
+        if (unit === "cm") return m * this.pxPerInch * emFactor / 2.54;
+        if (unit === "mm") return m * this.pxPerInch * emFactor / 25.4;
+        if (unit === "mu") return m / 18 * mu;
         return m * size / 1000; // relative to given size (or 1em as default)
     }
 

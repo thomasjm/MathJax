@@ -9,7 +9,7 @@ class MRowMixin extends MBaseMixin {
 
     toSVG(h, d) {
         this.SVGgetStyles();
-        var svg  = new BBOX_ROW(this.editableSVG);
+        var svg  = new BBOX_ROW();
         this.SVGhandleSpace(svg);
         if (d != null) {
             svg.sh = h;
@@ -43,7 +43,7 @@ class MRowMixin extends MBaseMixin {
         if (!this.parent.linebreakContainer) {
             return false
         }
-        return (EditableSVGConfig.config.linebreaks.automatic &&
+        return (MathJax.OutputJax.EditableSVG.config.linebreaks.automatic &&
                 svg.w > this.editableSVG.linebreakWidth) || this.hasNewline();
     }
 
@@ -52,7 +52,7 @@ class MRowMixin extends MBaseMixin {
     }
 
     SVGstretchH(w) {
-        var svg  = new BBOX_ROW(this.editableSVG);
+        var svg  = new BBOX_ROW();
         this.SVGhandleSpace(svg);
         for (var i = 0, m = this.data.length; i < m; i++) {
             svg.Add(this.EditableSVGdataStretched(i, w), svg.w, 0)

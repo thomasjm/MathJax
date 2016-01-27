@@ -16,7 +16,7 @@ class BBOX_GLYPH extends BBOX {
         var def;
         var t = MathJax.OutputJax.EditableSVG.config.blacker;
         var cache = MathJax.OutputJax.EditableSVG.config.useFontCache;
-        var transform = (scale === 1 ? null : "scale(" + MathJax.OutputJax.EditableSVG.Fixed(scale) + ")");
+        var transform = (scale === 1 ? null : "scale(" + Util.Fixed(scale) + ")");
         if (cache && !MathJax.OutputJax.EditableSVG.config.useGlobalCache) {
             id = "E" + this.n + "-" + id
         }
