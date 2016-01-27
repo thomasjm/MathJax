@@ -204,8 +204,6 @@ class EditableSVG implements OutputJax {
     }
 
     preTranslate(state) {
-        console.log('PRETRANSLATE CALLED');
-
         var scripts = state.jax[this.id];
         var i;
         var m = scripts.length;
@@ -315,10 +313,11 @@ class EditableSVG implements OutputJax {
                     maxwidth = cwidth
                 }
             }
-            jax.EditableSVG.ex = ex;
-            jax.EditableSVG.em = em = ex / Util.TeX.x_height * 1000; // scale ex to x_height
-            jax.EditableSVG.cwidth = cwidth / em * 1000;
-            jax.EditableSVG.lineWidth = (linebreak ? this.length2em(width, 1, maxwidth / em * 1000) : Util.BIGDIMEN);
+            console.log('SETTING UTIL EX TO ', ex);
+            Util.ex = ex;
+            Util.em = em = ex / Util.TeX.x_height * 1000; // scale ex to x_height
+            Util.cwidth = cwidth / em * 1000;
+            Util.lineWidth = (linebreak ? Util.length2em(width, 1, maxwidth / em * 1000) : Util.BIGDIMEN);
         }
 
         //  Remove the test spans used for determining scales and linebreak widths
@@ -428,7 +427,7 @@ class EditableSVG implements OutputJax {
 
                 //  Remove the processed marker
                 script.previousSibling.className = script.previousSibling.className.split(/ /)[0];
-                var data = script.MathJax.elementJax.SVG;
+                var data = script.MathJax.elementJax.EditableSVG;
 
                 //  Remove the preview, if any
                 if (data.preview) {
@@ -629,7 +628,15 @@ class EditableSVG implements OutputJax {
                     svg.w += c[2];
                 } else {
                     c = [scale, font.id + "-" + n.toString(16).toUpperCase()].concat(c);
-                    svg.Add(BBOX_GLYPH.apply(BBOX, c), svg.w, 0);
+
+                    // Trick to use "new" with an arguments array
+                    function F(args) {
+                        return BBOX_GLYPH.apply(this, args);
+                    }
+                    F.prototype = BBOX_GLYPH.prototype;
+                    var glyph = new F(c);
+
+                    svg.Add(glyph, svg.w, 0);
                 }
             } else if (this.FONTDATA.DELIMITERS[n]) {
                 c = this.createDelimiter(n, 0, 1, font);

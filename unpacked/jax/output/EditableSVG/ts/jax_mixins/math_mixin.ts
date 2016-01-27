@@ -4,7 +4,7 @@
 class MathMixin extends MBaseMixin {
 
     toSVG(span, div) {
-        var CONFIG = EditableSVGConfig.config;
+        var CONFIG = MathJax.OutputJax.EditableSVG.config;
 
         //  All the data should be in an inferred row
         if (this.data[0]) {
@@ -21,7 +21,7 @@ class MathMixin extends MBaseMixin {
             box.Add(this.data[0].toSVG(), 0, 0, true);
             box.Clean();
             this.SVGhandleColor(box);
-            this.editableSVG.Element(box.element, {
+            Util.Element(box.element, {
                 stroke: "currentColor",
                 fill: "currentColor",
                 "stroke-width": 0,
@@ -51,22 +51,23 @@ class MathMixin extends MBaseMixin {
             var l = Math.max(-svg.l, 0),
             r = Math.max(svg.r - svg.w, 0);
             var style = svg.element.style;
-            svg.element.setAttribute("width", this.editableSVG.Ex(l + svg.w + r));
-            svg.element.setAttribute("height", this.editableSVG.Ex(svg.H + svg.D + 2 * Util.em));
-            style.verticalAlign = this.editableSVG.Ex(-svg.D - 2 * this.editableSVG.em); // remove extra pixel added below plus padding from above
-            style.marginLeft = this.editableSVG.Ex(-l);
-            style.marginRight = this.editableSVG.Ex(-r);
-            svg.element.setAttribute("viewBox", this.editableSVG.Fixed(-l, 1) + " " + this.editableSVG.Fixed(-svg.H - Util.em, 1) + " " +
-                                     this.editableSVG.Fixed(l + svg.w + r, 1) + " " + this.editableSVG.Fixed(svg.H + svg.D + 2 * Util.em, 1));
+            console.log('Got width! ', Util.Ex(l + svg.w + r));
+            svg.element.setAttribute("width", Util.Ex(l + svg.w + r));
+            svg.element.setAttribute("height", Util.Ex(svg.H + svg.D + 2 * Util.em));
+            style.verticalAlign = Util.Ex(-svg.D - 2 * Util.em); // remove extra pixel added below plus padding from above
+            style.marginLeft = Util.Ex(-l);
+            style.marginRight = Util.Ex(-r);
+            svg.element.setAttribute("viewBox", Util.Fixed(-l, 1) + " " + Util.Fixed(-svg.H - Util.em, 1) + " " +
+                                     Util.Fixed(l + svg.w + r, 1) + " " + Util.Fixed(svg.H + svg.D + 2 * Util.em, 1));
             style.marginTop = style.marginBottom = "1px"; // 1px above and below to prevent lines from touching
 
             //  If there is extra height or depth, hide that
             if (svg.H > svg.h) {
-                style.marginTop = this.editableSVG.Ex(svg.h - svg.H)
+                style.marginTop = Util.Ex(svg.h - svg.H)
             }
             if (svg.D > svg.d) {
-                style.marginBottom = this.editableSVG.Ex(svg.d - svg.D);
-                style.verticalAlign = this.editableSVG.Ex(-svg.d);
+                style.marginBottom = Util.Ex(svg.d - svg.D);
+                style.verticalAlign = Util.Ex(-svg.d);
             }
 
             //  Add it to the MathJax span
@@ -101,14 +102,14 @@ class MathMixin extends MBaseMixin {
                 if (shift) {
                     MathJax.Hub.Insert(style, ({
                         left: {
-                            marginLeft: this.editableSVG.Ex(shift)
+                            marginLeft: Util.Ex(shift)
                         },
                         right: {
-                            marginRight: this.editableSVG.Ex(-shift)
+                            marginRight: Util.Ex(-shift)
                         },
                         center: {
-                            marginLeft: this.editableSVG.Ex(shift),
-                            marginRight: this.editableSVG.Ex(-shift)
+                            marginLeft: Util.Ex(shift),
+                            marginRight: Util.Ex(-shift)
                         }
                     })[values.indentalign]);
                 }

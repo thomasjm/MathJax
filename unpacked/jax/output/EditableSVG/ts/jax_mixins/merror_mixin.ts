@@ -9,7 +9,7 @@ class MErrorMixin extends MBaseMixin {
         scale = Util.length2em(this.styles.fontSize || 1) / 1000;
         this.SVGhandleSpace(svg);
         var def = (scale !== 1 ? {
-            transform: "scale(" + this.editableSVG.Fixed(scale) + ")"
+            transform: "scale(" + Util.Fixed(scale) + ")"
         } : {});
         var bbox = new BBOX(def);
         bbox.Add(this.SVGchildSVG(0));
@@ -30,7 +30,7 @@ class MErrorMixin extends MBaseMixin {
 
     SVGgetStyles() {
         var span = this.HTML.Element("span", {
-            style: EditableSVGConfig.config.merrorStyle
+            style: MathJax.OutputJax.EditableSVG.config.merrorStyle
         });
         this.styles = this.SVGprocessStyles(span.style);
         if (this.style) {

@@ -55,10 +55,10 @@ class BBOX {
     Add(svg, dx?, dy?, forcew?, infront?) {
         if (dx) {
             svg.x += dx
-        };
+        }
         if (dy) {
             svg.y += dy
-        };
+        }
         if (svg.element) {
             if (svg.removeable && svg.element.childNodes.length === 1 && svg.n === 1) {
                 var child = svg.element.firstChild,
@@ -136,21 +136,12 @@ class BBOX {
                 this.H = this.h
             }
         }
-        if (svg.D - svg.y > this.D) {
-            this.D = svg.D - svg.y
-        }
-        if (svg.y + svg.H > this.H) {
-            this.H = svg.y + svg.H
-        }
-        if (svg.x + svg.l < this.l) {
-            this.l = svg.x + svg.l
-        }
-        if (svg.x + svg.r > this.r) {
-            this.r = svg.x + svg.r
-        }
-        if (forcew || svg.x + svg.w + (svg.X || 0) > this.w) {
-            this.w = svg.x + svg.w + (svg.X || 0)
-        }
+        if (svg.D - svg.y > this.D) this.D = svg.D - svg.y;
+        if (svg.y + svg.H > this.H) this.H = svg.y + svg.H;
+        if (svg.x + svg.l < this.l) this.l = svg.x + svg.l;
+        if (svg.x + svg.r > this.r) this.r = svg.x + svg.r;
+        if (forcew || svg.x + svg.w + (svg.X || 0) > this.w) this.w = svg.x + svg.w + (svg.X || 0);
+
         this.childScale = svg.scale;
         this.childX = svg.x;
         this.childY = svg.y;

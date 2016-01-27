@@ -15,10 +15,10 @@ class MPaddedMixin extends MBaseMixin {
             X = 0,
             Y = 0;
             if (values.lspace) {
-                X = this.editableSVG.SVGlength2em(pad, values.lspace, mu)
+                X = Util.SVGlength2em(pad, values.lspace, mu)
             }
             if (values.voffset) {
-                Y = this.editableSVG.SVGlength2em(pad, values.voffset, mu)
+                Y = Util.SVGlength2em(pad, values.voffset, mu)
             }
             var h = pad.h,
             d = pad.d,
