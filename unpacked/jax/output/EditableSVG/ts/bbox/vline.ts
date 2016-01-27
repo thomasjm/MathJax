@@ -3,7 +3,6 @@
 class BBOX_VLINE extends BBOX {
 
     constructor(h, t, dash, color, def) {
-        this.type = "line";
         this.removeable = false;
 
         if (def == null) {
@@ -27,7 +26,7 @@ class BBOX_VLINE extends BBOX {
             def["stroke-linecap"] = "round";
         }
 
-        super(def);
+        super(def, "line");
 
         this.w = this.r = t;
         this.l = 0;

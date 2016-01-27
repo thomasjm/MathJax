@@ -73,7 +73,7 @@ class MUnderOverMixin extends MBaseMixin {
         var x, y, z1, z2, z3, dw, k, delta = 0;
         if (base.ic) {
             delta = 1.3 * base.ic + .05
-        } // adjust faked IC to be more in line with expeted results
+        } // adjust faked IC to be more in line with expected results
         for (i = 0, m = this.data.length; i < m; i++) {
             if (this.data[i] != null) {
                 box = boxes[i];

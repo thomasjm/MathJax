@@ -34,7 +34,7 @@ class MSubSupMixin extends MBaseMixin implements ElementJax {
         p;
         if (base.ic) {
             base.w -= base.ic; // remove IC (added by mo and mi)
-            delta = 1.3 * base.ic + .05; // adjust faked IC to be more in line with expeted results
+            delta = 1.3 * base.ic + .05; // adjust faked IC to be more in line with expected results
         }
         if (this.data[this.base] &&
             (this.data[this.base].type === "mi" || this.data[this.base].type === "mo")) {

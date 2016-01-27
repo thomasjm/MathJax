@@ -1,16 +1,13 @@
 /// <reference path="bbox.ts" />
 
 class BBOX_GLYPH extends BBOX {
+    static removeable = false;
 
     static glyphs: {}; // This serves as a cache
     static defs: any;
 
-    constructor(scale, id, h, d, w, l, r, p, SVG, HUB) {
-        this.type = "path";
-        this.removeable = false;
-
+    constructor(scale, id, h, d, w, l, r, p) {
         this.glyphs = {};
-        this.defs = null;
         this.n = 0;
 
         var def;
@@ -28,7 +25,7 @@ class BBOX_GLYPH extends BBOX {
             else if (transform) def.transform = transform
 
             def.d = (p ? "M" + p + "Z" : "");
-            super(def);
+            super(def, "path");
             if (cache) {
                 BBOX_GLYPH.defs.appendChild(this.element);
                 this.glyphs[id] = true;
@@ -38,7 +35,7 @@ class BBOX_GLYPH extends BBOX {
         if (cache) {
             def = {};
             if (transform) def.transform = transform
-            this.element = MathJax.OutputJax.EditableSVG.Element("use", def);
+            this.element = Util.Element("use", def);
             this.element.setAttributeNS(Util.XLINKNS, "href", "#" + id);
         }
 

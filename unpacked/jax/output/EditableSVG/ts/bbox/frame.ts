@@ -1,13 +1,13 @@
 /// <reference path="bbox.ts" />
 
 class BBOX_FRAME extends BBOX {
-    constructor(h, d, w, t, dash, color, svg, hub, def) {
-        this.type = "rect";
-        this.removeable = false;
+    static removeable = false;
 
+    constructor(h, d, w, t, dash, color, svg, hub, def) {
         if (def == null) {
             def = {}
         };
+
         def.fill = "none";
         def["stroke-width"] = Util.Fixed(t, 2);
         def.width = Math.floor(w - t);
@@ -16,7 +16,9 @@ class BBOX_FRAME extends BBOX {
         if (dash === "dashed") {
             def["stroke-dasharray"] = [Math.floor(6 * Util.em), Math.floor(6 * Util.em)].join(" ")
         }
-        super(def);
+
+        super(def, "rect");
+
         this.w = this.r = w;
         this.h = this.H = h;
         this.d = this.D = d;
