@@ -8,10 +8,14 @@ class SubSupCursor {
     sup: any;
     base: any;
     parent: any;
+    endingPos: any;
+
+    // TODO: this one is on munderover
+    rightMoveStay: any;
 
     moveCursorFromParent(cursor, direction) {
-        direction = getCursorValue(direction)
-        var dest
+        var direction = Util.getCursorValue(direction);
+        var dest;
         if (direction === Direction.RIGHT || direction === Direction.LEFT) {
             dest = this.data[this.base]
             if (dest.cursorable) {
@@ -53,7 +57,7 @@ class SubSupCursor {
     }
 
     moveCursorFromChild(cursor, direction, child) {
-        direction = getCursorValue(direction)
+        direction = Util.getCursorValue(direction)
         var section, pos;
 
         var childIdx
@@ -87,14 +91,14 @@ class SubSupCursor {
         var pos;
 
         // If the click is somewhere within the sup or sup, go there
-        if (subBB && SVG.boxContains(subBB, x, y)) {
+        if (subBB && Util.boxContains(subBB, x, y)) {
             if (sub.cursorable) {
                 return sub.moveCursorFromClick(cursor, x, y)
             }
             section = this.sub;
             var midpoint = subBB.x + (subBB.width / 2.0);
             pos = (x < midpoint) ? 0 : 1;
-        } else if (supBB && SVG.boxContains(supBB, x, y)) {
+        } else if (supBB && Util.boxContains(supBB, x, y)) {
             if (sup.cursorable) {
                 return sup.moveCursorFromClick(cursor, x, y)
             }
@@ -118,7 +122,7 @@ class SubSupCursor {
     }
 
     moveCursor(cursor, direction) {
-        direction = getCursorValue(direction);
+        direction = Util.getCursorValue(direction);
 
         var sup = this.data[this.sup]
         var sub = this.data[this.sub]

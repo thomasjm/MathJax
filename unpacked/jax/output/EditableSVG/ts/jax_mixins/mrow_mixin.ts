@@ -76,7 +76,7 @@ class MRowMixin extends MBaseMixin {
     }
 
     moveCursorFromParent(cursor, direction) {
-        direction = getCursorValue(direction)
+        direction = Util.getCursorValue(direction)
         if (this.isCursorPassthrough()) {
             return this.data[0].moveCursorFromParent(cursor, direction)
         }
@@ -97,7 +97,7 @@ class MRowMixin extends MBaseMixin {
         if (this.isCursorPassthrough() || direction === Direction.UP || direction === Direction.DOWN) {
             return this.parent.moveCursorFromChild(cursor, direction, this)
         }
-        direction = getCursorValue(direction)
+        direction = Util.getCursorValue(direction)
         var childIdx
         for (childIdx = 0; childIdx < this.data.length; ++childIdx) {
             if (child === this.data[childIdx]) break
@@ -130,7 +130,7 @@ class MRowMixin extends MBaseMixin {
     }
 
     moveCursor(cursor, direction) {
-        direction = getCursorValue(direction)
+        direction = Util.getCursorValue(direction)
 
         var vertical = direction === Direction.UP || direction === Direction.DOWN
         if (vertical) return this.parent.moveCursorFromChild(cursor, direction, this)

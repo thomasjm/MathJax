@@ -19,7 +19,8 @@ class Cursor {
     boxes: any;
     startBlink: any; // setTimeout task
     renderedPosition: any;
-
+    id: any;
+    width: number;
 
     constructor() {
         this.selectionStart = null;
@@ -520,7 +521,7 @@ class Cursor {
             }
         }
 
-        jax = MathJax.Hub.getAllJax('#' + svgelem.parentNode.id)[0];
+        var jax = MathJax.Hub.getAllJax('#' + svgelem.parentNode.id)[0];
         Util.visualizeJax(jax, $('#mmlviz'), this);
 
         if (!skipScroll) this.scrollIntoView(svgelem)

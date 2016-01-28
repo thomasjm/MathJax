@@ -9,7 +9,7 @@ class MnMixin extends MBaseMixin {
     }
 
     moveCursor(cursor, direction) {
-        direction = getCursorValue(direction)
+        direction = Util.getCursorValue(direction)
 
         var vertical = direction === Direction.UP || direction === Direction.DOWN
         if (vertical) return this.parent.moveCursorFromChild(cursor, direction, this)
@@ -27,7 +27,7 @@ class MnMixin extends MBaseMixin {
     }
 
     moveCursorFromParent(cursor, direction) {
-        direction = getCursorValue(direction)
+        direction = Util.getCursorValue(direction)
         if (direction === Direction.LEFT) {
             cursor.moveTo(this, this.getCursorLength())
         } else if (direction === Direction.RIGHT) {
