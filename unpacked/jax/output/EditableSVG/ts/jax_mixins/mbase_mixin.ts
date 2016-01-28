@@ -277,33 +277,16 @@ class MBaseMixin extends ElementJax {
             border: Util.getBorders(style),
             padding: Util.getPadding(style)
         };
-        if (!styles.border) {
-            delete styles.border
-        }
-        if (!styles.padding) {
-            delete styles.padding
-        }
-        if (style.fontSize) {
-            styles['fontSize'] = style.fontSize
-        }
-        if (style.color) {
-            styles['color'] = style.color
-        }
-        if (style.backgroundColor) {
-            styles['background'] = style.backgroundColor
-        }
-        if (style.fontStyle) {
-            styles['fontStyle'] = style.fontStyle
-        }
-        if (style.fontWeight) {
-            styles['fontWeight'] = style.fontWeight
-        }
-        if (style.fontFamily) {
-            styles['fontFamily'] = style.fontFamily
-        }
-        if (styles['fontWeight'] && styles['fontWeight'].match(/^\d+$/)) {
+        if (!styles.border) delete styles.border
+        if (!styles.padding) delete styles.padding
+        if (style.fontSize) styles['fontSize'] = style.fontSize
+        if (style.color) styles['color'] = style.color
+        if (style.backgroundColor) styles['background'] = style.backgroundColor
+        if (style.fontStyle) styles['fontStyle'] = style.fontStyle
+        if (style.fontWeight) styles['fontWeight'] = style.fontWeight
+        if (style.fontFamily) styles['fontFamily'] = style.fontFamily
+        if (styles['fontWeight'] && styles['fontWeight'].match(/^\d+$/))
             styles['fontWeight'] = (parseInt(styles['fontWeight']) > 600 ? "bold" : "normal")
-        }
         return styles;
     }
 
@@ -321,19 +304,13 @@ class MBaseMixin extends ElementJax {
                     core = parent;
                     parent = parent.Parent()
                 }
-                if (values.lspace) {
-                    svg.x += values.lspace
-                }
-                if (values.rspace) {
-                    svg.X = values.rspace
-                }
+                if (values.lspace) svg.x += values.lspace
+                if (values.rspace) svg.X = values.rspace
             }
         } else {
             var space = this.texSpacing();
             this.SVGgetScale();
-            if (space !== "") {
-                svg.x += Util.length2em(space, this.scale) * this.mscale
-            }
+            if (space !== "") svg.x += Util.length2em(space, this.scale) * this.mscale
         }
     }
 
@@ -402,9 +379,8 @@ class MBaseMixin extends ElementJax {
                 stroke: "none"
             }), 0, 0, false, true)
         }
-        //
+
         //  Add borders
-        //
         if (borders) {
             var dd = 5; // fuzz factor to avoid anti-alias problems at edges
             var sides = {
@@ -438,15 +414,9 @@ class MBaseMixin extends ElementJax {
             values.style = values.fontstyle;
         }
         if (this.styles) {
-            if (!values.style && this.styles.fontStyle) {
-                values.style = this.styles.fontStyle;
-            }
-            if (!values.weight && this.styles.fontWeight) {
-                values.weight = this.styles.fontWeight;
-            }
-            if (!values.family && this.styles.fontFamily) {
-                values.family = this.styles.fontFamily;
-            }
+            if (!values.style && this.styles.fontStyle) values.style = this.styles.fontStyle;
+            if (!values.weight && this.styles.fontWeight) values.weight = this.styles.fontWeight;
+            if (!values.family && this.styles.fontFamily) values.family = this.styles.fontFamily;
         }
         if (values.family && !values.hasVariant) {
             if (!values.weight && values.mathvariant.match(/bold/)) {
@@ -545,6 +515,7 @@ class MBaseMixin extends ElementJax {
         }
         return scale * this.mscale;
     }
+
     SVGgetMu(svg) {
         var mu = 1,
         values = this.getValues("scriptlevel", "scriptsizemultiplier");

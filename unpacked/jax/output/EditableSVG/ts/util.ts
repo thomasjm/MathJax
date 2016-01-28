@@ -321,7 +321,7 @@ class Util {
         var f = function(j, spacer) {
             var s;
             var end;
-            if (_.isString(j)) {
+            if (typeof(j) === "string") {
                 s = spacer + j + "\n";
                 end = true;
             } else {
