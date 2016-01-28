@@ -169,22 +169,22 @@ class MFracMixin extends MBaseMixin {
     }
 
     moveCursorFromParent(cursor, direction) {
-        direction = getCursorValue(direction)
+        var direction = getCursorValue(direction);
         switch (direction) {
         case Direction.LEFT:
         case Direction.RIGHT:
             if (this.data[0].cursorable) {
-                return this.data[0].moveCursorFromParent(cursor, direction)
+                return this.data[0].moveCursorFromParent(cursor, direction);
             }
             cursor.moveTo(this, {
                 half: 0,
-                position: direction === RIGHT ? 0 : 1,
-            })
+                position: direction === Direction.RIGHT ? 0 : 1,
+            });
             return true
         case Direction.UP:
-            return this.moveCursorIntoDenominator(cursor, direction)
+            return this.moveCursorIntoDenominator(cursor, direction);
         case Direction.DOWN:
-            return this.moveCursorIntoNumerator(cursor, direction)
+            return this.moveCursorIntoNumerator(cursor, direction);
         }
         return false
     }

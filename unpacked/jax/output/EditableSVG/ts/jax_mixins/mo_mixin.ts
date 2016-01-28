@@ -130,7 +130,7 @@ class MoMixin extends MBaseMixin {
         if (H != values.minsize) {
             H = [Math.max(H * Util.TeX.delimiterfactor / 1000, H - Util.TeX.delimitershortfall), H]
         }
-        svg = EditableSVG.createDelimiter(this.data.join("").charCodeAt(0), H, svg.scale);
+        svg = CharsMixin.createDelimiter(this.data.join("").charCodeAt(0), H, svg.scale);
         if (values.symmetric) {
             H = (svg.h + svg.d) / 2 + axis
         } else {

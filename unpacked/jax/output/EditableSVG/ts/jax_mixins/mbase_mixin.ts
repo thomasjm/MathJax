@@ -613,6 +613,19 @@ class MBaseMixin extends ElementJax {
         MathJax.Hub.RestartAfter(this.AJAX.Require(file));
     }
 
+    SVGlength2em(svg, length, mu, d, m) {
+        if (m == null) {
+            m = -Util.BIGDIMEN
+        }
+        var match = String(length).match(/width|height|depth/);
+        var size = (match ? svg[match[0].charAt(0)] : (d ? svg[d] : 0));
+        var v = Util.length2em(length, mu, size / this.mscale) * this.mscale;
+        if (d && String(length).match(/^\s*[-+]/)) {
+            return Math.max(m, svg[d] + v)
+        } else {
+            return v
+        }
+    }
 
     //////////////////
     // Cursor stuff //
@@ -644,5 +657,41 @@ class MBaseMixin extends ElementJax {
         var bb = this.getSVGBBox();
         var svgelem = this.EditableSVGelem.ownerSVGElement;
         cursor.drawHighlightAt(svgelem, bb.x, bb.y, bb.width, bb.height);
+    }
+
+    getSVGBBox(elem?) {
+        var elem = elem || this.EditableSVGelem;
+        if (!elem || !elem.ownerSVGElement) return;
+
+        var bb = elem.getBBox()
+        if (elem.nodeName === 'use') {
+            bb.x += Number(elem.getAttribute('x'))
+            bb.y += Number(elem.getAttribute('y'))
+        }
+        var transform = elem.getTransformToElement(elem.ownerSVGElement)
+        var ptmp = elem.ownerSVGElement.createSVGPoint()
+        var lx = 1/0, ly = 1/0, hx = -1/0, hy = -1/0
+
+        check(bb.x, bb.y)
+        check(bb.x+bb.width, bb.y)
+        check(bb.x, bb.y+bb.height)
+        check(bb.x+bb.width, bb.y+bb.height)
+
+        return {
+            x: lx,
+            y: ly,
+            width: hx-lx,
+            height: hy-ly,
+        }
+
+        function check(x, y) {
+            ptmp.x = x
+            ptmp.y = y
+            var p = ptmp.matrixTransform(transform)
+            lx = Math.min(lx, p.x)
+            ly = Math.min(ly, p.y)
+            hx = Math.max(hx, p.x)
+            hy = Math.max(hy, p.y)
+        }
     }
 }

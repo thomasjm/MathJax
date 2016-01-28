@@ -9,8 +9,11 @@ class Util {
     static XLINKNS = "http://www.w3.org/1999/xlink";
 
     // These are filled in in the Translate function in jax.ts
+    // TODO: let's not do this
     static em: number;
     static ex: number;
+    static cwidth: number;
+    static lineWidth: number;
     static pxPerInch: number;
 
     static Em(m) {
@@ -219,7 +222,7 @@ class Util {
         negativeveryverythickmathspace: -7 / 18
     }
 
-    elemCoordsToScreenCoords(elem, x, y) {
+    static elemCoordsToScreenCoords(elem, x, y) {
         var svg = this.getSVGElem(elem);
         if (!svg) return;
 
@@ -231,7 +234,7 @@ class Util {
     }
 
     // Convert coordinates in some arbitrary element's coordinate system to the viewport coordinate system
-    elemCoordsToViewportCoords(elem, x, y) {
+    static elemCoordsToViewportCoords(elem, x, y) {
         var svg = this.getSVGElem(elem)
         if (!svg) return
 
@@ -242,7 +245,17 @@ class Util {
         return pt.matrixTransform(elem.getTransformToElement(svg));
     }
 
-    screenCoordsToElemCoords(elem, x, y) {
+    static getSVGElem(elem) {
+        if (!elem) return;
+        var svg = elem.nodeName === 'svg' ? elem : elem.ownerSVGElement;
+        if (!svg) {
+            console.error('No owner SVG element');
+            return;
+        }
+        return svg;
+    }
+
+    static screenCoordsToElemCoords(elem, x, y) {
         var svg = this.getSVGElem(elem)
         if (!svg) return
 
@@ -253,11 +266,11 @@ class Util {
         return pt.matrixTransform(elem.getScreenCTM().inverse());
     }
 
-    boxContains(bb, x, y) {
+    static boxContains(bb, x, y) {
         return bb && bb.x <= x && x <= bb.x+bb.width && bb.y <= y && y <= bb.y+bb.height;
     }
 
-    nodeContainsScreenPoint(node, x, y) {
+    static nodeContainsScreenPoint(node, x, y) {
         var bb = node.getBB && node.getBB()
         var p = this.screenCoordsToElemCoords(node.EditableSVGelem, x, y);
         if (!bb || !p) return false
@@ -269,7 +282,7 @@ class Util {
         var d = 100; // TODO: use proper units
 
         var drawLine = function(x1, y1, x2, y2) {
-            var line = document.createElementNS(SVGNS, 'line')
+            var line = document.createElementNS(this.SVGNS, 'line')
             svg.appendChild(line)
             line.setAttribute('style', 'stroke:rgb(0,0,255);stroke-width:20')
             line.setAttribute('x1', x1)
@@ -302,54 +315,68 @@ class Util {
      * Pass in the jax and a jQuery selector div
      */
     visualizeJax(jax, selector, cursor) {
-      selector.empty();
-      var hb = this.highlightBox;
+        selector.empty();
+        var hb = this.highlightBox;
 
-      var f = function(j, spacer) {
-        var s;
-        var end;
-        if (_.isString(j)) {
-          s = spacer + j + "\n";
-          end = true;
-        } else {
-          s = spacer + (j ? j.type : "null") + "\n";
-        }
-        var item = $('<li><pre style="margin: 0;">' + s + '</pre></li>');
-        item.appendTo(selector);
-        if (end) return;
-        item.on('click', function() {
-          var bb = j.getSVGBBox();
-          var svg = j.EditableSVGelem.ownerSVGElement;
+        var f = function(j, spacer) {
+            var s;
+            var end;
+            if (_.isString(j)) {
+                s = spacer + j + "\n";
+                end = true;
+            } else {
+                s = spacer + (j ? j.type : "null") + "\n";
+            }
+            var item = $('<li><pre style="margin: 0;">' + s + '</pre></li>');
+            item.appendTo(selector);
+            if (end) return;
+            item.on('click', function() {
+                var bb = j.getSVGBBox();
+                var svg = j.EditableSVGelem.ownerSVGElement;
 
-          hb(svg, bb);
-        });
+                hb(svg, bb);
+            });
 
-        if (!j) return;
+            if (!j) return;
 
-        for (var i = 0; i < j.data.length; i++) {
-          f(j.data[i], spacer + " ");
-        }
-      };
-      f(jax.root || jax, "");
+            for (var i = 0; i < j.data.length; i++) {
+                f(j.data[i], spacer + " ");
+            }
+        };
+        f(jax.root || jax, "");
 
-      cursorInfo = cursor ? JSON.stringify({
-        type: cursor.node.type,
-        position: cursor.position,
-        mode: cursor.mode,
-        selectionStart: cursor.selectionStart ? cursor.selectionStart.node.type : "null",
-        selectionEnd: cursor.selectionEnd ? cursor.selectionEnd.node.type : "null"
-      }) : "(no cursor)";
-      selector.prepend('<pre>' + cursorInfo + '</pre>');
+        cursorInfo = cursor ? JSON.stringify({
+            type: cursor.node.type,
+            position: cursor.position,
+            mode: cursor.mode,
+            selectionStart: cursor.selectionStart ? cursor.selectionStart.node.type : "null",
+            selectionEnd: cursor.selectionEnd ? cursor.selectionEnd.node.type : "null"
+        }) : "(no cursor)";
+        selector.prepend('<pre>' + cursorInfo + '</pre>');
 
     }
 
-    getJaxFromMath(math) {
-      if (math.parentNode.className === "MathJax_SVG_Display") {
-        math = math.parentNode;
-      }
-      do {
-        math = math.nextSibling;
-      } while (math && math.nodeName.toLowerCase() !== "script");
-      return MathJax.Hub.getJaxFor(math);
+    static getJaxFromMath(math) {
+        if (math.parentNode.className === "MathJax_SVG_Display") {
+            math = math.parentNode;
+        }
+        do {
+            math = math.nextSibling;
+        } while (math && math.nodeName.toLowerCase() !== "script");
+        return MathJax.Hub.getJaxFor(math);
+    }
+
+    static getCursorValue(direction) {
+        if (isNaN(direction)) {
+            switch(direction[0].toLowerCase()) {
+            case 'u': return Direction.UP
+            case 'd': return Direction.DOWN
+            case 'l': return Direction.LEFT
+            case 'r': return Direction.RIGHT
+            }
+            throw new Error('Invalid cursor value')
+        } else {
+            return direction
+        }
     }
 }
