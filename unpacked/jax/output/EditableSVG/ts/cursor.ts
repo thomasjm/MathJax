@@ -236,6 +236,7 @@ class Cursor {
         return mi;
     }
 
+    // TODO: move parser into its own class
     makeParser() {
         var obj = {
             mmlToken(x) {

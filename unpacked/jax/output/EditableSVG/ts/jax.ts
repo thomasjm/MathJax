@@ -395,6 +395,7 @@ class EditableSVG implements OutputJax {
             throw err;
         }
         span.removeChild(this.textSVG);
+        this.AddInputHandlers(math, span, div)
 
         //  Put it in place, and remove the processing marker
         if (jax.EditableSVG.isHidden) {
@@ -466,14 +467,34 @@ class EditableSVG implements OutputJax {
         }
     }
 
-    getJaxFromMath(math) {
-        if (math.parentNode.className === "MathJax_SVG_Display") {
-            math = math.parentNode;
+    AddInputHandlers(math, span, div) {
+      math.cursor = new MathJax.Object.Cursor()
+      math.rerender = rerender
+      span.setAttribute('tabindex', '0')
+      function rerender(callback) {
+        try {
+          SVG.preprocessElementJax(math).toSVG(span, div, true)
+
+          math.cursor.refocus()
+        } catch (err) {
+          if (err.restart) {
+            MathJax.Callback.After([rerender, callback], err.restart)
+            return
+          }
+          throw err;
         }
-        do {
-            math = math.nextSibling;
-        } while (math && math.nodeName.toLowerCase() !== "script");
-        return MathJax.Hub.getJaxFor(math);
+        MathJax.Callback(callback)()
+      }
+      function handler(e) {
+        if (math.cursor[e.type]) {
+          math.cursor[e.type](e, rerender);
+        }
+      }
+      span.addEventListener('keydown', handler)
+      span.addEventListener('keypress', handler)
+      span.addEventListener('mousedown', handler)
+      span.addEventListener('blur', handler)
+      span.addEventListener('focus', handler)
     }
 
     getHoverSpan(jax, math) {
