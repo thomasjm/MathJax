@@ -2,6 +2,7 @@
 /// <reference path="msqrt_mixin.ts" />
 
 class MRootMixin extends MBaseMixin {
+    static cursorable = true;
 
     toSVG = MSqrtMixin.toSVG;
 
@@ -22,5 +23,17 @@ class MRootMixin extends MBaseMixin {
 
     SVGrootHeight(d, scale, root) {
         return .45 * (d - 900 * scale) + 600 * scale + Math.max(0, root.d - 75);
+    }
+
+    //////////////////
+    // Cursor stuff //
+    //////////////////
+
+    moveCursorFromChild(c, d) {
+        this.parent.moveCursorFromChild(c, d, this)
+    }
+
+    moveCursorFromParent(c, d) {
+        return this.data[0].moveCursorFromParent(c, d)
     }
 }

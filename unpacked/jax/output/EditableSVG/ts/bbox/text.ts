@@ -1,18 +1,16 @@
 /// <reference path="bbox.ts" />
 
 class BBOX_TEXT extends BBOX {
+    static removeable = false;
 
     constructor(HTML, scale, text, def) {
-        this.type = "text";
-        this.removeable = false;
-
         if (!def) def = {};
-        def.stroke = "none";
 
+        def.stroke = "none";
         if (def["font-style"] === "") delete def["font-style"];
         if (def["font-weight"] === "") delete def["font-weight"];
 
-        super(def);
+        super(def, "text");
 
         HTML.addText(this.element, text);
         this.EditableSVG.textSVG.appendChild(this.element);

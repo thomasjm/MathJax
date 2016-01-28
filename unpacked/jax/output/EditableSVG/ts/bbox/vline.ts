@@ -1,10 +1,9 @@
 /// <reference path="bbox.ts" />
 
 class BBOX_VLINE extends BBOX {
+    static removeable = false;
 
     constructor(h, t, dash, color, def) {
-        this.removeable = false;
-
         if (def == null) {
             def = {
                 "stroke-linecap": "square"

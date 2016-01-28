@@ -6,6 +6,9 @@ class MUnderOverMixin extends MBaseMixin {
     under: any;
     ACCENTS: any;
 
+    endingPos = 0;
+    rightMoveStay = true;
+
     toSVG(HW, D) {
         this.SVGgetStyles();
         var values = this.getValues("displaystyle", "accent", "accentunder", "align");

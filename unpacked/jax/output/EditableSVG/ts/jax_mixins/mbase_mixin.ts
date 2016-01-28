@@ -612,4 +612,37 @@ class MBaseMixin extends ElementJax {
         var file = MathJax.OutputJax.EditableSVG.autoloadDir + "/" + name + ".js";
         MathJax.Hub.RestartAfter(this.AJAX.Require(file));
     }
+
+
+    //////////////////
+    // Cursor stuff //
+    //////////////////
+
+
+    moveCursor(cursor, direction) {
+        this.parent.moveCursorFromChild(cursor, direction, this)
+    }
+
+    moveCursorFromChild(cursor, direction, child) {
+        throw new Error('Unimplemented as cursor container')
+    }
+
+    moveCursorFromParent(cursor, direction) {
+        return false
+    }
+
+    moveCursorFromClick(cursor, x, y) {
+        return false
+    }
+
+    drawCursor(cursor) {
+        throw new Error('Unable to draw cursor')
+    }
+
+    // If this function is called on a node, it means the selectionEnd is inside that node
+    drawCursorHighlight(cursor) {
+        var bb = this.getSVGBBox();
+        var svgelem = this.EditableSVGelem.ownerSVGElement;
+        cursor.drawHighlightAt(svgelem, bb.x, bb.y, bb.width, bb.height);
+    }
 }

@@ -68,6 +68,8 @@ class EditableSVG implements OutputJax {
     textSVG: any;
     zoomScale: any;
 
+    config: any;
+
     // config = EditableSVGConfig.config;
 
     hideProcessedMath = true; // use display:none until all math is processed
@@ -200,7 +202,6 @@ class EditableSVG implements OutputJax {
 
     //  Handle initialization that requires styles to be set up
     InitializeSVG() {
-
         //  Get the default sizes (need styles in place to do this)
         document.body.appendChild(this.ExSpan);
         document.body.appendChild(this.linebreakSpan);
@@ -560,21 +561,21 @@ class EditableSVG implements OutputJax {
     }
 
     static extendDelimiterV(svg, H, delim, scale, font) {
-        var top = this.createChar(scale, (delim.top || delim.ext), font);
-        var bot = this.createChar(scale, (delim.bot || delim.ext), font);
+        var top = CharsMixin.createChar(scale, (delim.top || delim.ext), font);
+        var bot = CharsMixin.createChar(scale, (delim.bot || delim.ext), font);
         var h = top.h + top.d + bot.h + bot.d;
         var y = -top.h;
         svg.Add(top, 0, y);
         y -= top.d;
         if (delim.mid) {
-            var mid = this.createChar(scale, delim.mid, font);
+            var mid = CharsMixin.createChar(scale, delim.mid, font);
             h += mid.h + mid.d
         }
         if (delim.min && H < h * delim.min) {
             H = h * delim.min
         }
         if (H > h) {
-            var ext = this.createChar(scale, delim.ext, font);
+            var ext = CharsMixin.createChar(scale, delim.ext, font);
             var k = (delim.mid ? 2 : 1),
             eH = (H - h) / k,
             s = (eH + 100) / (ext.h + ext.d);
@@ -604,20 +605,20 @@ class EditableSVG implements OutputJax {
     }
 
     static extendDelimiterH(svg, W, delim, scale, font) {
-        var left = this.createChar(scale, (delim.left || delim.rep), font);
-        var right = this.createChar(scale, (delim.right || delim.rep), font);
+        var left = CharsMixin.createChar(scale, (delim.left || delim.rep), font);
+        var right = CharsMixin.createChar(scale, (delim.right || delim.rep), font);
         svg.Add(left, -left.l, 0);
         var w = (left.r - left.l) + (right.r - right.l),
         x = left.r - left.l;
         if (delim.mid) {
-            var mid = this.createChar(scale, delim.mid, font);
+            var mid = CharsMixin.createChar(scale, delim.mid, font);
             w += mid.w
         }
         if (delim.min && W < w * delim.min) {
             W = w * delim.min
         }
         if (W > w) {
-            var rep = this.createChar(scale, delim.rep, font),
+            var rep = CharsMixin.createChar(scale, delim.rep, font),
             fuzz = delim.fuzz || 0;
             var k = (delim.mid ? 2 : 1),
             rW = (W - w) / k,
@@ -647,18 +648,16 @@ class EditableSVG implements OutputJax {
         svg.isMultiChar = true;
     }
 
-    static Element(type, def) {
-        console.error("USE ELEMENT IN UTIL.TS INSTEAD");
-    }
-
     constructor() {
-
-        console.log('this: ', this);
-
         MathJax.Hub.Register.StartupHook("mml Jax Ready", function() {
-            console.log('STARTUP HOOK FOR TYPESCRIPT EDITABLESVG');
-
             var MML = MathJax.ElementJax.mml;
+
+            // TODO: add properties to some of these classes
+            // MML.munderover.Augment(subsupcursor)
+            // MML.msubsup.Augment(subsupcursor)
+
+            MML.hole = MML.hole = MML.mbase.Subclass({})
+            MML.hole.Augment(HoleMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
 
             MML.mbase.Augment(MBaseMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
             MML.chars.Augment(CharsMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
