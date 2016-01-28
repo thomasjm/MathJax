@@ -1,18 +1,15 @@
 /// <reference path="bbox.ts" />
 
 class BBOX_HLINE extends BBOX {
-    constructor(w, t, dash, color, def) {
-        this.type = "line";
-        this.removeable = false;
+    static removeable = false;
 
+    constructor(w, t, dash, color, def) {
         if (def == null) {
             def = {
                 "stroke-linecap": "square"
             }
         }
-        if (color && color !== "") {
-            def.stroke = color
-        }
+        if (color && color !== "") def.stroke = color
 
         def["stroke-width"] = Util.Fixed(t, 2);
         def.x1 = def.y1 = def.y2 = Math.floor(t / 2);
@@ -27,7 +24,7 @@ class BBOX_HLINE extends BBOX {
             def["stroke-linecap"] = "round";
         }
 
-        super(def);
+        super(def, "line");
 
         this.w = this.r = w;
         this.l = 0;

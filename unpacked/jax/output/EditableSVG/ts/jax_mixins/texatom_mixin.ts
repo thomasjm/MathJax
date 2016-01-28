@@ -1,6 +1,8 @@
 /// <reference path="mbase_mixin.ts" />
 
 class TeXAtomMixin extends MBaseMixin {
+    static cursorable = true;
+
     texClass: any;
 
     toSVG(HW, D) {
@@ -21,5 +23,29 @@ class TeXAtomMixin extends MBaseMixin {
         this.SVGhandleColor(svg);
         this.SVGsaveData(svg);
         return svg;
+    }
+
+    //////////////////
+    // Cursor stuff //
+    //////////////////
+
+    moveCursorFromParent(cursor, direction) {
+        return this.data[0].moveCursorFromParent(cursor, direction);
+    }
+
+    moveCursorFromChild(cursor, direction, child) {
+        return this.parent.moveCursorFromChild(cursor, direction, this);
+    }
+
+    moveCursorFromClick(cursor, x, y) {
+        return this.data[0].moveCursorFromClick(cursor, x, y)
+    }
+
+    moveCursor(cursor, direction) {
+        return this.parent.moveCursorFromChild(cursor, direction, this)
+    }
+
+    drawCursor(cursor) {
+        console.error('TeXAtom drawCursor NOT IMPLEMENTED');
     }
 }

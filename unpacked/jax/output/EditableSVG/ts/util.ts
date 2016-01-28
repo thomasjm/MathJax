@@ -218,4 +218,138 @@ class Util {
         negativeverythickmathspace: -6 / 18,
         negativeveryverythickmathspace: -7 / 18
     }
+
+    elemCoordsToScreenCoords(elem, x, y) {
+        var svg = this.getSVGElem(elem);
+        if (!svg) return;
+
+        var pt = svg.createSVGPoint();
+        pt.x = x;
+        pt.y = y;
+
+        return pt.matrixTransform(elem.getScreenCTM());
+    }
+
+    // Convert coordinates in some arbitrary element's coordinate system to the viewport coordinate system
+    elemCoordsToViewportCoords(elem, x, y) {
+        var svg = this.getSVGElem(elem)
+        if (!svg) return
+
+        var pt = svg.createSVGPoint();
+        pt.x = x;
+        pt.y = y;
+
+        return pt.matrixTransform(elem.getTransformToElement(svg));
+    }
+
+    screenCoordsToElemCoords(elem, x, y) {
+        var svg = this.getSVGElem(elem)
+        if (!svg) return
+
+        var pt = svg.createSVGPoint();
+        pt.x = x
+        pt.y = y
+
+        return pt.matrixTransform(elem.getScreenCTM().inverse());
+    }
+
+    boxContains(bb, x, y) {
+        return bb && bb.x <= x && x <= bb.x+bb.width && bb.y <= y && y <= bb.y+bb.height;
+    }
+
+    nodeContainsScreenPoint(node, x, y) {
+        var bb = node.getBB && node.getBB()
+        var p = this.screenCoordsToElemCoords(node.EditableSVGelem, x, y);
+        if (!bb || !p) return false
+
+        return bb.x <= p.x && p.x <= bb.x+bb.width && bb.y <= p.y && p.y <= bb.y+bb.height;
+    }
+
+    highlightBox(svg, bb) {
+        var d = 100; // TODO: use proper units
+
+        var drawLine = function(x1, y1, x2, y2) {
+            var line = document.createElementNS(SVGNS, 'line')
+            svg.appendChild(line)
+            line.setAttribute('style', 'stroke:rgb(0,0,255);stroke-width:20')
+            line.setAttribute('x1', x1)
+            line.setAttribute('y1', y1)
+            line.setAttribute('x2', x2)
+            line.setAttribute('y2', y2)
+            return line
+        };
+
+        return [
+            // Top left
+            drawLine(bb.x, bb.y, bb.x + d, bb.y),
+            drawLine(bb.x, bb.y, bb.x, bb.y + d),
+            // Top right
+            drawLine(bb.x + bb.width, bb.y, bb.x + bb.width - d, bb.y),
+            drawLine(bb.x + bb.width, bb.y, bb.x + bb.width, bb.y + d),
+            // Bottom right
+            drawLine(bb.x, bb.y + bb.height, bb.x, bb.y + bb.height - d),
+            drawLine(bb.x, bb.y + bb.height, bb.x + d, bb.y + bb.height),
+
+            // Bottom right
+            drawLine(bb.x + bb.width, bb.y + bb.height, bb.x + bb.width - d, bb.y + bb.height),
+            drawLine(bb.x + bb.width, bb.y + bb.height, bb.x + bb.width, bb.y + bb.height - d)
+        ];
+    }
+
+
+    /*
+     * Append a visualization of the jax to a given div
+     * Pass in the jax and a jQuery selector div
+     */
+    visualizeJax(jax, selector, cursor) {
+      selector.empty();
+      var hb = this.highlightBox;
+
+      var f = function(j, spacer) {
+        var s;
+        var end;
+        if (_.isString(j)) {
+          s = spacer + j + "\n";
+          end = true;
+        } else {
+          s = spacer + (j ? j.type : "null") + "\n";
+        }
+        var item = $('<li><pre style="margin: 0;">' + s + '</pre></li>');
+        item.appendTo(selector);
+        if (end) return;
+        item.on('click', function() {
+          var bb = j.getSVGBBox();
+          var svg = j.EditableSVGelem.ownerSVGElement;
+
+          hb(svg, bb);
+        });
+
+        if (!j) return;
+
+        for (var i = 0; i < j.data.length; i++) {
+          f(j.data[i], spacer + " ");
+        }
+      };
+      f(jax.root || jax, "");
+
+      cursorInfo = cursor ? JSON.stringify({
+        type: cursor.node.type,
+        position: cursor.position,
+        mode: cursor.mode,
+        selectionStart: cursor.selectionStart ? cursor.selectionStart.node.type : "null",
+        selectionEnd: cursor.selectionEnd ? cursor.selectionEnd.node.type : "null"
+      }) : "(no cursor)";
+      selector.prepend('<pre>' + cursorInfo + '</pre>');
+
+    }
+
+    getJaxFromMath(math) {
+      if (math.parentNode.className === "MathJax_SVG_Display") {
+        math = math.parentNode;
+      }
+      do {
+        math = math.nextSibling;
+      } while (math && math.nodeName.toLowerCase() !== "script");
+      return MathJax.Hub.getJaxFor(math);
+    }
 }

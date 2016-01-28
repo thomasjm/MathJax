@@ -5,6 +5,8 @@ class MSubSupMixin extends MBaseMixin implements ElementJax {
     sup: any;
     sub: any;
 
+    endingPos = 1;
+
     toSVG(HW, D) {
         this.SVGgetStyles();
         var svg = new BBOX(),
