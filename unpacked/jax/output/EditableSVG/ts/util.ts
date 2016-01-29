@@ -278,7 +278,7 @@ class Util {
         var p = this.screenCoordsToElemCoords(node.EditableSVGelem, x, y);
         if (!bb || !p) return false
 
-        return bb.x <= p.x && p.x <= bb.x+bb.width && bb.y <= p.y && p.y <= bb.y+bb.height;
+        return Util.boxContains(bb, p.x, p.y);
     }
 
     static highlightBox(svg, bb) {
