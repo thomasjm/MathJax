@@ -3,9 +3,9 @@
 
 class Hole extends MBaseMixin {
 
-    constructor() {
-        super();
+    Init() {
         this.type = "hole";
+        this.data = [];
     }
 
     isCursorable() { return true; }

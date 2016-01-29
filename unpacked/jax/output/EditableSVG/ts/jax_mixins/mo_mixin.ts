@@ -5,6 +5,8 @@ class MoMixin extends MBaseMixin {
     svg: any;
 
     toSVG(HW = null, D = null) {
+        var FONTDATA = MathJax.OutputJax.EditableSVG.FONTDATA;
+
         this.SVGgetStyles();
         var svg = this.svg  = new BBOX();
         var scale = this.SVGgetScale(svg);
@@ -26,7 +28,7 @@ class MoMixin extends MBaseMixin {
         var variant = this.SVGgetVariant();
         var values = this.getValues("largeop", "displaystyle");
         if (values.largeop) {
-            variant = EditableSVG.FONTDATA.VARIANT[values.displaystyle ? "-largeOp" : "-smallOp"]
+            variant = FONTDATA.VARIANT[values.displaystyle ? "-largeOp" : "-smallOp"]
         }
 
         //  Get character translation for superscript and accents
@@ -38,15 +40,15 @@ class MoMixin extends MBaseMixin {
             var over = parent.data[parent.over],
             under = parent.data[parent.under];
             if (over && this === over.CoreMO() && parent.Get("accent")) {
-                mapchars = EditableSVG.FONTDATA.REMAPACCENT
+                mapchars = FONTDATA.REMAPACCENT
             } else if (under && this === under.CoreMO() && parent.Get("accentunder")) {
-                mapchars = EditableSVG.FONTDATA.REMAPACCENTUNDER
+                mapchars = FONTDATA.REMAPACCENTUNDER
             }
         }
 
         //  Primes must come from another font
         if (isScript && this.data.join("").match(/['`"\u00B4\u2032-\u2037\u2057]/)) {
-            variant = EditableSVG.FONTDATA.VARIANT["-TeX-variant"]
+            variant = FONTDATA.VARIANT["-TeX-variant"]
         }
 
         //  Typeset contents
@@ -86,6 +88,8 @@ class MoMixin extends MBaseMixin {
     }
 
     SVGcanStretch(direction) {
+        var FONTDATA = MathJax.OutputJax.EditableSVG.FONTDATA;
+
         if (!this.Get("stretchy")) {
             return false
         }
@@ -99,12 +103,12 @@ class MoMixin extends MBaseMixin {
             var over = parent.data[parent.over],
             under = parent.data[parent.under];
             if (over && this === over.CoreMO() && parent.Get("accent")) {
-                c = EditableSVG.FONTDATA.REMAPACCENT[c] || c
+                c = FONTDATA.REMAPACCENT[c] || c
             } else if (under && this === under.CoreMO() && parent.Get("accentunder")) {
-                c = EditableSVG.FONTDATA.REMAPACCENTUNDER[c] || c
+                c = FONTDATA.REMAPACCENTUNDER[c] || c
             }
         }
-        c = EditableSVG.FONTDATA.DELIMITERS[c.charCodeAt(0)];
+        c = FONTDATA.DELIMITERS[c.charCodeAt(0)];
         var can = (c && c.dir == direction.substr(0, 1));
         if (!can) {
             delete this.svg;

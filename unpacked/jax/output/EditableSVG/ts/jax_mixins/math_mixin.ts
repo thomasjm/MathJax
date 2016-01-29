@@ -8,9 +8,11 @@ class MathMixin extends MBaseMixin {
     toSVG(span, div, replace?: boolean) {
         var CONFIG = MathJax.OutputJax.EditableSVG.config;
 
+        // TODO: find a better place for this
+        this.loadTexify();
+
         //  All the data should be in an inferred row
         if (!this.data[0]) return span;
-
 
         this.SVGgetStyles();
         MathJax.ElementJax.mml.mbase.prototype.displayAlign = MathJax.Hub.config.displayAlign;
@@ -128,6 +130,14 @@ class MathMixin extends MBaseMixin {
         }
         return span;
     }
+
+    loadTexify() {
+        return MBaseMixin.SVGautoloadFile('texify')
+    }
+
+    //////////////////
+    // Cursor stuff //
+    //////////////////
 
     moveCursorFromChild(cursor, direction, child) {
         return false

@@ -577,9 +577,9 @@ class MBaseMixin extends ElementJax {
         MathJax.Hub.RestartAfter(MathJax.Ajax.Require(file));
     }
 
-    SVGautoloadFile(name) {
+    static SVGautoloadFile(name) {
         var file = MathJax.OutputJax.EditableSVG.autoloadDir + "/" + name + ".js";
-        MathJax.Hub.RestartAfter(MathJax.Ajax.Require(file));
+        return MathJax.Hub.RestartAfter(MathJax.Ajax.Require(file));
     }
 
     SVGlength2em(svg, length, mu, d, m) {

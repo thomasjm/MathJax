@@ -37,7 +37,7 @@ class MRowMixin extends MBaseMixin {
             }
         }
 
-        if (this.SVGlineBreaks(svg)) svg = this.SVGmultiline(svg)
+        if (this.SVGlineBreaks(svg)) svg = this.SVGmultiline(svg);
 
         this.SVGhandleColor(svg);
         this.SVGsaveData(svg);
@@ -55,7 +55,7 @@ class MRowMixin extends MBaseMixin {
     }
 
     SVGmultiline(span) {
-        return MathJax.ElementJax.mml.mbase.SVGautoloadFile("multiline")
+        return MBaseMixin.SVGautoloadFile("multiline");
     }
 
     SVGstretchH(w) {
