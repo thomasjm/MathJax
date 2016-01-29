@@ -66,7 +66,6 @@ class EditableSVG implements OutputJax {
     pxPerInch: any;
     require: any;
     textSVG: any;
-    zoomScale: any;
 
     config: any;
 
@@ -156,7 +155,7 @@ class EditableSVG implements OutputJax {
         this.hiddenDiv.removeChild(div);
 
         // Used for measuring text sizes
-        this.textSVG = Util.Element("svg");
+        this.textSVG = Util.Element("svg", null);
 
         // Global defs for font glyphs
         BBOX_GLYPH.defs = Util.addElement(Util.addElement(this.hiddenDiv.parentNode, "svg"),
@@ -457,7 +456,7 @@ class EditableSVG implements OutputJax {
                 BBOX_GLYPH.defs = document.getElementById("MathJax_SVG_glyphs");
                 BBOX_GLYPH.defs.innerHTML = "";
             } else {
-                BBOX_GLYPH.defs = Util.Element("defs");
+                BBOX_GLYPH.defs = Util.Element("defs", null);
                 BBOX_GLYPH.n++;
             }
             BBOX_GLYPH.glyphs = {};
@@ -486,7 +485,7 @@ class EditableSVG implements OutputJax {
                 if (type[0] !== 'm' || type === 'mrow') {
                     EditableSVG.preprocessElementJax(cur)
                 } else {
-                    var row = new MML.mrow()
+                    var row = new MathJax.ElementJax.mml.mrow()
                     row.Append(EditableSVG.preprocessElementJax(cur))
                     root.SetData(i, row)
                 }
@@ -553,13 +552,11 @@ class EditableSVG implements OutputJax {
 
         span.appendChild(this.textSVG);
         this.mathDIV = span;
-        this.zoomScale = parseInt(MathJax.Hub.config.menuSettings.zscale) / 100;
         var tw = jax.root.data[0].EditableSVGdata.tw;
         if (tw && tw < this.cwidth) this.cwidth = tw;
         this.idPostfix = "-zoom";
         jax.root.toSVG(span, span);
         this.idPostfix = "";
-        this.zoomScale = 1;
         span.removeChild(this.textSVG);
 
         //  Don't allow overlaps on any edge
@@ -603,7 +600,7 @@ class EditableSVG implements OutputJax {
         var span = document.getElementById(jax.inputID + "-Frame");
         if (span) {
             if (jax.EditableSVG.display) {
-                span = span.parentNode;
+                span = <HTMLElement>span.parentNode;
             }
             span.parentNode.removeChild(span);
         }
@@ -630,7 +627,7 @@ class EditableSVG implements OutputJax {
             eH = (H - h) / k,
             s = (eH + 100) / (ext.h + ext.d);
             while (k-- > 0) {
-                var g = EditableSVG.Element("g", {
+                var g = Util.Element("g", {
                     transform: "translate(" + ext.y + "," + (y - s * ext.h + 50 + ext.y) + ") scale(1," + s + ")"
                 });
                 g.appendChild(ext.element.cloneNode(false));
@@ -674,7 +671,7 @@ class EditableSVG implements OutputJax {
             rW = (W - w) / k,
             s = (rW + fuzz) / (rep.r - rep.l);
             while (k-- > 0) {
-                var g = SVG.Element("g", {
+                var g = Util.Element("g", {
                     transform: "translate(" + (x - fuzz / 2 - s * rep.l + rep.x) + "," + rep.y + ") scale(" + s + ",1)"
                 });
                 g.appendChild(rep.element.cloneNode(false));
@@ -707,34 +704,34 @@ class EditableSVG implements OutputJax {
             // MML.msubsup.Augment(subsupcursor)
 
             MML.hole = MML.hole = MML.mbase.Subclass({})
-            MML.hole.Augment(HoleMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
+            MML.hole.Augment(HoleMixin.getMethods(this));
 
-            MML.mbase.Augment(MBaseMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
-            MML.chars.Augment(CharsMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
-            MML.entity.Augment(EntityMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
-            MML.mo.Augment(MoMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
-            MML.mtext.Augment(MTextMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
-            MML.merror.Augment(MErrorMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
-            MML.ms.Augment(MsMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
-            MML.mglyph.Augment(MGlyphMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
-            MML.mspace.Augment(MSpaceMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
-            MML.mphantom.Augment(MPhantomMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
-            MML.mpadded.Augment(MPaddedMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
-            MML.mrow.Augment(MRowMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
-            MML.mstyle.Augment(MStyleMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
-            MML.mfrac.Augment(MFracMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
-            MML.msqrt.Augment(MSqrtMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
-            MML.mroot.Augment(MRootMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
-            MML.mfenced.Augment(MFencedMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
-            MML.menclose.Augment(MEncloseMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
-            MML.maction.Augment(MActionMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
-            MML.semantics.Augment(SemanticsMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
-            MML.munderover.Augment(MUnderOverMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
-            MML.msubsup.Augment(MSubSupMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
-            MML.mmultiscripts.Augment(MMultiScriptsMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
-            MML.mtable.Augment(MTableMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
-            MML.math.Augment(MathMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
-            MML.TeXAtom.Augment(TeXAtomMixin.getMethods(MathJax.Ajax, MathJax.Hub, MathJax.HTML, this));
+            MML.mbase.Augment(MBaseMixin.getMethods(this));
+            MML.chars.Augment(CharsMixin.getMethods(this));
+            MML.entity.Augment(EntityMixin.getMethods(this));
+            MML.mo.Augment(MoMixin.getMethods(this));
+            MML.mtext.Augment(MTextMixin.getMethods(this));
+            MML.merror.Augment(MErrorMixin.getMethods(this));
+            MML.ms.Augment(MsMixin.getMethods(this));
+            MML.mglyph.Augment(MGlyphMixin.getMethods(this));
+            MML.mspace.Augment(MSpaceMixin.getMethods(this));
+            MML.mphantom.Augment(MPhantomMixin.getMethods(this));
+            MML.mpadded.Augment(MPaddedMixin.getMethods(this));
+            MML.mrow.Augment(MRowMixin.getMethods(this));
+            MML.mstyle.Augment(MStyleMixin.getMethods(this));
+            MML.mfrac.Augment(MFracMixin.getMethods(this));
+            MML.msqrt.Augment(MSqrtMixin.getMethods(this));
+            MML.mroot.Augment(MRootMixin.getMethods(this));
+            MML.mfenced.Augment(MFencedMixin.getMethods(this));
+            MML.menclose.Augment(MEncloseMixin.getMethods(this));
+            MML.maction.Augment(MActionMixin.getMethods(this));
+            MML.semantics.Augment(SemanticsMixin.getMethods(this));
+            MML.munderover.Augment(MUnderOverMixin.getMethods(this));
+            MML.msubsup.Augment(MSubSupMixin.getMethods(this));
+            MML.mmultiscripts.Augment(MMultiScriptsMixin.getMethods(this));
+            MML.mtable.Augment(MTableMixin.getMethods(this));
+            MML.math.Augment(MathMixin.getMethods(this));
+            MML.TeXAtom.Augment(TeXAtomMixin.getMethods(this));
 
             MML["annotation-xml"].Augment({
                 toSVG: MML.mbase.SVGautoload
@@ -768,10 +765,12 @@ class EditableSVG implements OutputJax {
         });
 
         if (!document.createElementNS) {
-            //  Try to handle SVG in IE8 and below, but fail
-            //  (but don't crash on loading the file, so no delay for loadComplete)
-            if (!document.namespaces.svg) {
-                document.namespaces.add("svg", Util.SVGNS)
+            // Try to handle SVG in IE8 and below, but fail
+            // (but don't crash on loading the file, so no delay for loadComplete)
+            // Use a cast to make Typescript happy
+            var doc = <any>document;
+            if (!doc.namespaces.svg) {
+                doc.namespaces.add("svg", Util.SVGNS)
             }
         }
     }

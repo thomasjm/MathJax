@@ -1,9 +1,7 @@
-/// <reference path="../util.ts" />
-
 
 class BBOX {
-    static type = "g";
-    static removeable = true;
+    // TODO: what is this for?
+    removeable: boolean;
 
     EditableSVG: any;
 
@@ -47,6 +45,7 @@ class BBOX {
         this.l = Util.BIGDIMEN;
         this.x = this.y = 0;
         this.scale = 1;
+        this.removeable = true;
         this.element = Util.Element(type, def);
     }
 

@@ -112,6 +112,52 @@
                  }
              }
          }
+
+         /*
+          * Append a visualization of the jax to a given div
+          * Pass in the jax and a jQuery selector div
+          */
+         function visualizeJax(jax, selector, cursor) {
+             selector = $(selector)
+             selector.empty();
+             var hb = this.highlightBox;
+
+             var f = function(j, spacer) {
+                 var s;
+                 var end;
+                 if (typeof(j) === "string") {
+                     s = spacer + j + "\n";
+                     end = true;
+                 } else {
+                     s = spacer + (j ? j.type : "null") + "\n";
+                 }
+                 var item = $('<li><pre style="margin: 0;">' + s + '</pre></li>');
+                 item.appendTo(selector);
+                 if (end) return;
+                 item.on('click', function() {
+                     var bb = j.getSVGBBox();
+                     var svg = j.EditableSVGelem.ownerSVGElement;
+
+                     hb(svg, bb);
+                 });
+
+                 if (!j) return;
+
+                 for (var i = 0; i < j.data.length; i++) {
+                     f(j.data[i], spacer + " ");
+                 }
+             };
+             f(jax.root || jax, "");
+
+             cursorInfo = cursor ? JSON.stringify({
+                 type: cursor.node.type,
+                 position: cursor.position,
+                 mode: cursor.mode,
+                 selectionStart: cursor.selectionStart ? cursor.selectionStart.node.type : "null",
+                 selectionEnd: cursor.selectionEnd ? cursor.selectionEnd.node.type : "null"
+             }) : "(no cursor)";
+             selector.prepend('<pre>' + cursorInfo + '</pre>');
+         }
         </script>
 
         <style>

@@ -157,7 +157,7 @@ class MoMixin extends MBaseMixin {
         values.maxsize = Util.length2em(values.maxsize, mu, svg.w);
         values.minsize = Util.length2em(values.minsize, mu, svg.w);
         w = Math.max(values.minsize, Math.min(values.maxsize, w));
-        svg = EditableSVG.createDelimiter(this.data.join("").charCodeAt(0), w, svg.scale, values.mathvariant);
+        svg = CharsMixin.createDelimiter(this.data.join("").charCodeAt(0), w, svg.scale, values.mathvariant);
         this.SVGhandleSpace(svg);
         this.SVGhandleColor(svg);
         delete this.svg.element;

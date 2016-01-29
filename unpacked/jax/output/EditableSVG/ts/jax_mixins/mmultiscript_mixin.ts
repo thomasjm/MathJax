@@ -3,5 +3,5 @@
 class MMultiScriptsMixin extends MBaseMixin {
     toSVG() {
         return this.SVGautoload();
-    };
+    }
 }

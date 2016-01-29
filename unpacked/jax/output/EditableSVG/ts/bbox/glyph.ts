@@ -1,8 +1,6 @@
 /// <reference path="bbox.ts" />
 
 class BBOX_GLYPH extends BBOX {
-    static removeable = false;
-
     static glyphs: {}; // This serves as a cache
     static defs: any;
 
@@ -38,6 +36,8 @@ class BBOX_GLYPH extends BBOX {
             this.element = Util.Element("use", def);
             this.element.setAttributeNS(Util.XLINKNS, "href", "#" + id);
         }
+
+        this.removeable = false;
 
         this.h = (h + t) * scale;
         this.d = (d + t) * scale;

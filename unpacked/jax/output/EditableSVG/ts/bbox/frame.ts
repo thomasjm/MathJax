@@ -1,8 +1,6 @@
 /// <reference path="bbox.ts" />
 
 class BBOX_FRAME extends BBOX {
-    static removeable = false;
-
     constructor(h, d, w, t, dash, color, svg, hub, def) {
         if (def == null) {
             def = {}
@@ -19,6 +17,7 @@ class BBOX_FRAME extends BBOX {
 
         super(def, "rect");
 
+        this.removeable = false;
         this.w = this.r = w;
         this.h = this.H = h;
         this.d = this.D = d;

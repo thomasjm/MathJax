@@ -1,4 +1,7 @@
 
+// TODO: remove
+declare function visualizeJax(jax: any, selector: string, ptr: any);
+
 class Cursor {
     selectionStart: any;
     selectionEnd: any;
@@ -9,13 +12,13 @@ class Cursor {
         SELECTION: "selection"
     }
 
-    node: any;
-    mode: any;
+    node: MBaseMixin;
+    mode: string;
     position: any;
     boxes: any;
     startBlink: any; // setTimeout task
     renderedPosition: any;
-    id: any;
+    id: string;
     width: number;
 
     constructor() {
@@ -28,10 +31,15 @@ class Cursor {
     }
 
     refocus() {
-        if (!this.node || !this.node.EditableSVGelem || !this.node.EditableSVGelem.ownerSVGElement
-            || !this.node.EditableSVGelem.ownerSVGElement.parentNode) return false
-        this.node.EditableSVGelem.ownerSVGElement.parentNode.focus()
-        this.draw()
+        if (!this.node ||
+            !this.node.EditableSVGelem ||
+            !this.node.EditableSVGelem.ownerSVGElement ||
+            !this.node.EditableSVGelem.ownerSVGElement.parentNode)
+            return false
+
+        var parent = <HTMLElement>this.node.EditableSVGelem.ownerSVGElement.parentNode;
+        parent.focus();
+        this.draw();
     }
 
     moveToClick(event) {
@@ -114,7 +122,7 @@ class Cursor {
         var direction
         switch (event.which) {
         case 8: this.backspace(event, recall); break;
-        case 27: this.exitBackslashMode(); recall(['refocus', this]); break
+        case 27: this.exitBackslashMode(false); recall(['refocus', this]); break
         case 38: direction = Direction.UP; break
         case 40: direction = Direction.DOWN; break
         case 37: direction = Direction.LEFT; break
@@ -144,7 +152,8 @@ class Cursor {
         }
     }
 
-    exitBackslashMode(replace) {
+    // TODO: give replace a type here...
+    exitBackslashMode(replace: any) {
         this.mode = Cursor.CursorMode.NORMAL
         var ppos = this.node.parent.data.indexOf(this.node)
         if (!replace) {
@@ -189,7 +198,7 @@ class Cursor {
             if (!prev.isCursorable()) {
                 // If it's not cursorable, just delete it
                 if (this.mode === Cursor.CursorMode.BACKSLASH && this.node.data.length === 1) {
-                    this.exitBackslashMode()
+                    this.exitBackslashMode(false);
                 } else {
                     this.node.data.splice(this.position-1, 1);
                     this.position = this.position - 1;
@@ -288,7 +297,8 @@ class Cursor {
 
             stack: {env: {}},
         }
-        obj.__proto__ = MathJax.InputJax.TeX.Parse.prototype
+
+        obj.__proto__ = MathJax.InputJax.TeX.Parse.prototype;
         return obj
     }
 
@@ -401,8 +411,7 @@ class Cursor {
                             throw new Error('Found non-identifier in backslash expression');
                         }
                         var chars = mi.data[0];
-                        var c = chars.data[0];
-                        latex += c;
+                        latex += chars.data[0];
                     }
 
                     var parser = this.makeParser()
@@ -481,35 +490,35 @@ class Cursor {
         }
     }
 
-    findElement() {
-        return document.getElementById('cursor-' + this.id)
+    findElement(): Element {
+        return document.getElementById('cursor-' + this.id);
     }
 
-    findHighlight() {
-        return document.getElementById('cursor-highlight-' + this.id)
+    findHighlight(): Element {
+        return document.getElementById('cursor-highlight-' + this.id);
     }
 
     drawAt(svgelem, x, y, height, skipScroll) {
         this.renderedPosition = {x: x, y: y, height: height}
-        var celem = this.findElement()
+        var celem = this.findElement();
         if (!celem) {
-            celem = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-            celem.setAttribute('fill', '#777777')
-            celem.setAttribute('class', 'math-cursor')
-            celem.id = 'cursor-'+this.id
-            svgelem.appendChild(celem)
+            celem = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            celem.setAttribute('fill', '#777777');
+            celem.setAttribute('class', 'math-cursor');
+            celem.id = 'cursor-' + this.id;
+            svgelem.appendChild(celem);
         } else {
-            var oldclass = celem.getAttribute('class')
-            celem.setAttribute('class', oldclass.split('blink').join(''))
+            var oldclass = celem.getAttribute('class');
+            celem.setAttribute('class', oldclass.split('blink').join(''));
         }
-        celem.setAttribute('x', x)
-        celem.setAttribute('y', y)
-        celem.setAttribute('width', this.width)
-        celem.setAttribute('height', height)
-        clearTimeout(this.startBlink)
+        celem.setAttribute('x', x);
+        celem.setAttribute('y', y);
+        celem.setAttribute('width', this.width.toString());
+        celem.setAttribute('height', height);
+        clearTimeout(this.startBlink);
         this.startBlink = setTimeout(function() {
-            celem.setAttribute('class', celem.getAttribute('class') + ' blink')
-        }.bind(this), 500)
+            celem.setAttribute('class', celem.getAttribute('class') + ' blink');
+        }.bind(this), 500);
 
         this.highlightBoxes(svgelem);
 
@@ -521,8 +530,9 @@ class Cursor {
 
         var jax = MathJax.Hub.getAllJax('#' + svgelem.parentNode.id)[0];
 
+        // TODO: remove this, it's just for debugging
         try {
-            Util.visualizeJax(jax, $('#mmlviz'), this);
+            visualizeJax(jax, '#mmlviz', this);
         } catch (err) {
             // Ignore
             console.error('Failed to visualize jax');

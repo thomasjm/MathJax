@@ -102,18 +102,23 @@ class MRowMixin extends MBaseMixin {
         if (this.isCursorPassthrough() || direction === Direction.UP || direction === Direction.DOWN) {
             return this.parent.moveCursorFromChild(cursor, direction, this)
         }
-        direction = Util.getCursorValue(direction)
-        var childIdx
-        for (childIdx = 0; childIdx < this.data.length; ++childIdx) {
-            if (child === this.data[childIdx]) break
+
+        direction = Util.getCursorValue(direction);
+
+        for (var childIdx = 0; childIdx < this.data.length; ++childIdx) {
+            if (child === this.data[childIdx]) break;
         }
-        if (childIdx === this.data.length) throw new Error('Unable to find specified child in children')
+
+        if (childIdx === this.data.length)
+            throw new Error('Unable to find specified child in children')
+
         if (direction === Direction.LEFT) {
-            cursor.moveTo(this, childIdx)
+            cursor.moveTo(this, childIdx);
         } else if (direction === Direction.RIGHT) {
-            cursor.moveTo(this, childIdx + 1)
+            cursor.moveTo(this, childIdx + 1);
         }
-        return true
+
+        return true;
     }
 
     moveCursorFromClick(cursor, x, y) {
@@ -161,25 +166,29 @@ class MRowMixin extends MBaseMixin {
     }
 
     drawCursor(cursor) {
-        var bbox = this.getSVGBBox()
-        var height = bbox.height
-        var y = bbox.y
-        var preedge, postedge
+        var bbox = this.getSVGBBox();
+        var height = bbox.height;
+        var y = bbox.y;
+        var preedge;
+        var postedge;
+
         if (cursor.position === 0) {
             preedge = bbox.x
         } else {
-            var prebox = this.data[cursor.position-1].getSVGBBox()
+            var prebox = this.data[cursor.position-1].getSVGBBox();
             preedge = prebox.x+prebox.width
         }
+
         if (cursor.position === this.data.length) {
             postedge = bbox.x+bbox.width
         } else {
-            var postbox = this.data[cursor.position].getSVGBBox()
+            var postbox = this.data[cursor.position].getSVGBBox();
             postedge = postbox.x
         }
-        var x = (postedge + preedge) / 2
-        var svgelem = this.EditableSVGelem.ownerSVGElement
-        cursor.drawAt(svgelem, x, y, height)
+
+        var x = (postedge + preedge) / 2;
+        var svgelem = this.EditableSVGelem.ownerSVGElement;
+        cursor.drawAt(svgelem, x, y, height);
     }
 
     drawCursorHighlight(cursor) {

@@ -43,9 +43,11 @@ class MnMixin extends MBaseMixin {
         return true
     }
 
+    // TODO: unify this with MRowMixin
     moveCursorFromClick(cursor, x, y) {
         for (var childIdx = 0; childIdx < this.getCursorLength(); ++childIdx) {
-            var bb = this.getSVGBBox(this.EditableSVGelem.children[childIdx]);
+            var child = this.data[childIdx];
+            var bb = child.getSVGBBox();
             var midpoint = bb.x + (bb.width / 2);
 
             if (x < midpoint) {
@@ -58,25 +60,30 @@ class MnMixin extends MBaseMixin {
         return true;
     }
 
+    // TODO: unify this with MRowMixin
     drawCursor(cursor) {
-        var bbox = this.getSVGBBox()
-        var height = bbox.height
-        var y = bbox.y
-        var preedge, postedge
+        var bbox = this.getSVGBBox();
+        var height = bbox.height;
+        var y = bbox.y;
+        var preedge;
+        var postedge;
+
         if (cursor.position === 0) {
             preedge = bbox.x
         } else {
-            var prebox = this.getSVGBBox(this.EditableSVGelem.children[cursor.position-1])
-            preedge = prebox.x+prebox.width
+            var prebox = this.data[cursor.position-1].getSVGBBox();
+            preedge = prebox.x+prebox.width;
         }
+
         if (cursor.position === this.getCursorLength()) {
-            postedge = bbox.x+bbox.width
+            postedge = bbox.x+bbox.width;
         } else {
-            var postbox = this.getSVGBBox(this.EditableSVGelem.children[cursor.position])
+            var postbox = this.data[cursor.position].getSVGBBox();
             postedge = postbox.x
         }
-        var x = (postedge + preedge) / 2
-        var svgelem = this.EditableSVGelem.ownerSVGElement
-        cursor.drawAt(svgelem, x, y, height)
+
+        var x = (postedge + preedge) / 2;
+        var svgelem = this.EditableSVGelem.ownerSVGElement;
+        cursor.drawAt(svgelem, x, y, height);
     }
 }

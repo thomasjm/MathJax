@@ -78,15 +78,18 @@ class Util {
         return parent.appendChild(Util.Element(type, def))
     }
 
-    static length2em(length, mu=null, size=null) {
-        if (typeof(length) !== "string") length = length.toString();
-        if (length === "") return "";
+    static length2em(length, mu=null, size=null): number {
+        if (typeof(length) !== "string")
+            length = length.toString();
+
+        if (length === "") return 0;
         if (length === MathJax.ElementJax.mml.SIZE.NORMAL) return 1000;
         if (length === MathJax.ElementJax.mml.SIZE.BIG) return 2000;
         if (length === MathJax.ElementJax.mml.SIZE.SMALL) return 710;
         if (length === "infinity") return this.BIGDIMEN;
         if (length.match(/mathspace$/)) return 1000 * this.MATHSPACE[length];
-        var emFactor = (EditableSVG.zoomScale || 1) / Util.em;
+        var zoomScale = parseInt(MathJax.Hub.config.menuSettings.zscale) / 100;
+        var emFactor = (zoomScale || 1) / Util.em;
         var match = length.match(/^\s*([-+]?(?:\.\d+|\d+(?:\.\d*)?))?(pt|em|ex|mu|px|pc|in|mm|cm|%)?/);
         var m = parseFloat(match[1] || "1") * 1000,
         unit = match[2];
@@ -307,53 +310,6 @@ class Util {
             drawLine(bb.x + bb.width, bb.y + bb.height, bb.x + bb.width - d, bb.y + bb.height),
             drawLine(bb.x + bb.width, bb.y + bb.height, bb.x + bb.width, bb.y + bb.height - d)
         ];
-    }
-
-
-    /*
-     * Append a visualization of the jax to a given div
-     * Pass in the jax and a jQuery selector div
-     */
-    static visualizeJax(jax, selector, cursor) {
-        selector.empty();
-        var hb = this.highlightBox;
-
-        var f = function(j, spacer) {
-            var s;
-            var end;
-            if (typeof(j) === "string") {
-                s = spacer + j + "\n";
-                end = true;
-            } else {
-                s = spacer + (j ? j.type : "null") + "\n";
-            }
-            var item = $('<li><pre style="margin: 0;">' + s + '</pre></li>');
-            item.appendTo(selector);
-            if (end) return;
-            item.on('click', function() {
-                var bb = j.getSVGBBox();
-                var svg = j.EditableSVGelem.ownerSVGElement;
-
-                hb(svg, bb);
-            });
-
-            if (!j) return;
-
-            for (var i = 0; i < j.data.length; i++) {
-                f(j.data[i], spacer + " ");
-            }
-        };
-        f(jax.root || jax, "");
-
-        cursorInfo = cursor ? JSON.stringify({
-            type: cursor.node.type,
-            position: cursor.position,
-            mode: cursor.mode,
-            selectionStart: cursor.selectionStart ? cursor.selectionStart.node.type : "null",
-            selectionEnd: cursor.selectionEnd ? cursor.selectionEnd.node.type : "null"
-        }) : "(no cursor)";
-        selector.prepend('<pre>' + cursorInfo + '</pre>');
-
     }
 
     static getJaxFromMath(math) {

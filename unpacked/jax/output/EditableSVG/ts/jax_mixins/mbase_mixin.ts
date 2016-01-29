@@ -3,8 +3,8 @@
 /// <reference path="../editable_svg_config.ts" />
 
 class ElementJax {
-    Get(...values): any;
-    getValues(...values): any;
+    Get: any;
+    getValues: any;
 
     Core: any;
     CoreParent: any;
@@ -28,6 +28,7 @@ class ElementJax {
     mathsize: any;
     remap: any;
     remapChars: any;
+    SetData: any;
     scale: any;
     style: any;
     styles: any;
@@ -65,14 +66,16 @@ class MBaseMixin extends ElementJax {
         return elem.getBBox();
     }
 
-    static getMethods(AJAX, HUB, HTML, editableSVG) {
-        var obj = {};
+    /*
+     * Dark magic: take the methods/properties of an object and return them in a format
+     * compatible with MathJax's Augment method
+     */
+    static getMethods(editableSVG) {
+        var obj = <any>{};
         obj.prototype = {};
         obj.constructor.prototype = {};
         for (var id in this.prototype) {
             obj[id] = this.prototype[id];
-            // obj.prototype[id] = this.prototype[id].bind(self);
-            // obj.constructor.prototype[id] = this.prototype[id].bind(self);
         }
 
         obj.editableSVG = editableSVG;
@@ -564,7 +567,7 @@ class MBaseMixin extends ElementJax {
         return this.toSVG(w)
     }
 
-    SVGlineBreaks() {
+    SVGlineBreaks(svg) {
         return false
     }
 
@@ -604,7 +607,8 @@ class MBaseMixin extends ElementJax {
         this.parent.moveCursorFromChild(cursor, direction, this)
     }
 
-    moveCursorFromChild(cursor, direction, child) {
+    // TODO: what is this "keep" and why do we need it?
+    moveCursorFromChild(cursor, direction, child, keep?) {
         throw new Error('Unimplemented as cursor container')
     }
 
