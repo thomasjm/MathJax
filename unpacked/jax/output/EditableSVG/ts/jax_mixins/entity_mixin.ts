@@ -7,7 +7,6 @@ class EntityMixin extends MBaseMixin {
         if (remap) {
             text = remap(text, chars)
         }
-        console.log('handling entity: ', text);
         return CharsMixin.HandleVariant(variant, scale, text);
     }
 }

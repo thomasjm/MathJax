@@ -1,8 +1,10 @@
 /// <reference path="mbase_mixin.ts" />
+/// <reference path="../bbox/bbox.ts" />
 
 class HoleMixin extends MBaseMixin {
 
     constructor() {
+        super();
         this.type = "hole";
     }
 
@@ -10,13 +12,20 @@ class HoleMixin extends MBaseMixin {
 
     toSVG(h, d) {
         this.SVGgetStyles();
-        var svg = this.SVG();
+        var svg = new BBOX_ROW();
         this.SVGhandleSpace(svg);
 
         if (d != null) {
             svg.sh = h;
             svg.sd = d
         }
+
+        // TODO: do we actually need the check calls?
+        // Let's see if we ever see this console.log
+        if (this.data.length > 0) {
+            console.log('NONTRIVIAL HOLE!!!');
+        }
+
         for (var i = 0, m = this.data.length; i < m; i++) {
             if (this.data[i]) {
                 svg.Check(this.data[i]);
@@ -25,7 +34,12 @@ class HoleMixin extends MBaseMixin {
 
         svg.Clean();
 
-        var hole = SVG.createHole(300, 400);
+        var hole = new BBOX_RECT(400, 0, 300, {
+            fill: 'white',
+            stroke: 'blue',
+            "stroke-width": '20'
+        });
+
         svg.Add(hole, 0, 0);
 
         svg.Clean();

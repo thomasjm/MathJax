@@ -41,7 +41,6 @@ class MRowMixin extends MBaseMixin {
 
         this.SVGhandleColor(svg);
         this.SVGsaveData(svg);
-        console.log('MROW SETTING EDITABLESVGELEM: ', svg.element);
         this.EditableSVGelem = svg.element;
 
         return svg;

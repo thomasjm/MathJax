@@ -51,8 +51,7 @@ class MBaseMixin extends ElementJax {
     data: any;
     base: any;
     EditableSVGdata: any;
-
-    EditableSVGelem: BBOX;
+    EditableSVGelem: SVGSVGElement;
 
     mscale: any;
 

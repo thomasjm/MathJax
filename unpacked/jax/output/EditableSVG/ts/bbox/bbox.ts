@@ -26,6 +26,10 @@ class BBOX {
     scale: number;
     element: any;
 
+    // TODO: what are these? *stretched* height..and stretched d?
+    sh: number;
+    sd: number;
+
     tw: number;
 
     ic: number; // set by MStyleMixin
