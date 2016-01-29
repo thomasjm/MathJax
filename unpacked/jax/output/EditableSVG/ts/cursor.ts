@@ -1,21 +1,20 @@
+
 class Cursor {
-
-    static BACKSLASH = 'backslash';
-    static NORMAL = 'normal';
-    static SELECTION = 'selection';
-    static mode = 'normal';
-
     static MML = MathJax.ElementJax.mml;
     static DEFS = MathJax.InputJax.TeX.Definitions;
 
     selectionStart: any;
     selectionEnd: any;
 
+    static CursorMode = {
+        BACKSLASH: "backslash",
+        NORMAL: "normal",
+        SELECTION: "selection"
+    }
+
     node: any;
     mode: any;
     position: any;
-    SELECTION: any;
-    NORMAL: any;
     boxes: any;
     startBlink: any; // setTimeout task
     renderedPosition: any;
@@ -25,6 +24,7 @@ class Cursor {
     constructor() {
         this.selectionStart = null;
         this.selectionEnd = null;
+        this.mode = Cursor.CursorMode.NORMAL;
 
         this.id = Math.random().toString(36).substring(2)
         this.width = 50
@@ -60,7 +60,7 @@ class Cursor {
             }
 
             var matched = matchedItems[0];
-            if (matched.cursorable) {
+            if (matched.isCursorable()) {
                 current = matched
             } else {
                 break;
@@ -71,10 +71,10 @@ class Cursor {
 
     moveTo(node, position) {
         // Does NOT redraw
-        if (this.mode === Cursor.BACKSLASH && !node.backslashRow) return false
+        if (this.mode === Cursor.CursorMode.BACKSLASH && !node.backslashRow) return false
         this.node = node;
         this.position = position;
-        if (this.mode === this.SELECTION) {
+        if (this.mode === Cursor.CursorMode.SELECTION) {
             this.selectionEnd = {
                 node: this.node,
                 position: this.position
@@ -83,27 +83,27 @@ class Cursor {
     }
 
     updateSelection(shiftKey) {
-        if (shiftKey && this.mode === this.NORMAL) {
-            this.mode = this.SELECTION;
+        if (shiftKey && this.mode === Cursor.CursorMode.NORMAL) {
+            this.mode = Cursor.CursorMode.SELECTION;
             this.selectionStart = {
                 node: this.node,
                 position: this.position
             };
-        } else if (this.mode === this.SELECTION) {
+        } else if (this.mode === Cursor.CursorMode.SELECTION) {
             if (shiftKey) {
                 this.selectionEnd = {
                     node: this.node,
                     position: this.position
                 };
             } else {
-                this.mode = this.NORMAL;
+                this.mode = Cursor.CursorMode.NORMAL;
                 this.selectionStart = this.selectionEnd = null;
                 this.clearHighlight();
             }
         }
     }
 
-    move(direction, shiftKey) {
+    move(direction: Direction, shiftKey) {
         this.updateSelection(shiftKey);
 
         this.node.moveCursor(this, direction)
@@ -148,7 +148,7 @@ class Cursor {
     }
 
     exitBackslashMode(replace) {
-        this.mode = this.NORMAL
+        this.mode = Cursor.CursorMode.NORMAL
         var ppos = this.node.parent.data.indexOf(this.node)
         if (!replace) {
             this.node.parent.data.splice(ppos, 1)
@@ -167,7 +167,7 @@ class Cursor {
         event.preventDefault();
         if (!this.node) return;
 
-        if (this.mode === this.SELECTION) {
+        if (this.mode === Cursor.CursorMode.SELECTION) {
             if (this.selectionStart.node.type === 'mrow' &&
                 this.selectionStart.node === this.selectionEnd.node) {
 
@@ -189,9 +189,9 @@ class Cursor {
 
         if (this.node.type === 'mrow') {
             var prev = this.node.data[this.position - 1];
-            if (!prev.cursorable) {
+            if (!prev.isCursorable()) {
                 // If it's not cursorable, just delete it
-                if (this.mode === Cursor.BACKSLASH && this.node.data.length === 1) {
+                if (this.mode === Cursor.CursorMode.BACKSLASH && this.node.data.length === 1) {
                     this.exitBackslashMode()
                 } else {
                     this.node.data.splice(this.position-1, 1);
@@ -203,7 +203,7 @@ class Cursor {
                 recall(['refocus', this])
             } else {
                 // Otherwise, highlight it
-                this.mode = this.SELECTION;
+                this.mode = Cursor.CursorMode.SELECTION;
                 this.selectionStart = {
                     node: this.node,
                     position: this.position
@@ -316,7 +316,7 @@ class Cursor {
             row.moveCursorFromParent(this, Direction.RIGHT)
         }
 
-        if (this.mode === Cursor.BACKSLASH) {
+        if (this.mode === Cursor.CursorMode.BACKSLASH) {
             this.node.EditableSVGelem.classList.remove('invalid')
         }
 
@@ -324,9 +324,9 @@ class Cursor {
 
             if (c === "\\") {
                 // Backslash mode
-                if (this.mode !== Cursor.BACKSLASH) {
+                if (this.mode !== Cursor.CursorMode.BACKSLASH) {
                     // Enter backslash mode
-                    this.mode = Cursor.BACKSLASH;
+                    this.mode = Cursor.CursorMode.BACKSLASH;
 
                     // Insert mrow
                     var grayRow = Cursor.MML.mrow(Cursor.MML.mo(Cursor.MML.entity('#x005C')));
@@ -370,7 +370,7 @@ class Cursor {
                         // Move into thing
                         var thing = prev.data[index];
 
-                        if (thing.cursorable) {
+                        if (thing.isCursorable()) {
                             thing.moveCursorFromParent(this, Direction.LEFT)
                         } else {
                             this.moveTo(prev, {
@@ -395,7 +395,7 @@ class Cursor {
                 return;
 
             } else if (c === " ") {
-                if (this.mode === Cursor.BACKSLASH) {
+                if (this.mode === Cursor.CursorMode.BACKSLASH) {
                     // Exit backslash mode and enter the thing we had
                     var latex = "";
                     for (var i = 1; i < this.node.data.length; i++) {
@@ -432,7 +432,7 @@ class Cursor {
 
                     recall([this, function() {
                         this.refocus()
-                        this.mode = this.NORMAL
+                        this.mode = Cursor.CursorMode.NORMAL
                     }]);
 
                     return;
@@ -475,7 +475,7 @@ class Cursor {
         this.clearBoxes()
 
         while (cur) {
-            if (cur.cursorable) {
+            if (cur.isCursorable()) {
                 var bb = cur.getSVGBBox();
                 if (!bb) return;
                 this.boxes = this.boxes.concat(Util.highlightBox(svg, bb));
@@ -516,7 +516,7 @@ class Cursor {
 
         this.highlightBoxes(svgelem);
 
-        if (this.mode === this.SELECTION) {
+        if (this.mode === Cursor.CursorMode.SELECTION) {
             if (this.selectionEnd.node.type === 'mrow') {
                 this.selectionEnd.node.drawCursorHighlight(this);
             }
@@ -529,7 +529,7 @@ class Cursor {
     }
 
     clearHighlight() {
-        this.mode = this.NORMAL;
+        this.mode = Cursor.CursorMode.NORMAL;
         this.selectionStart = null;
         this.selectionEnd = null;
         this.hideHighlight();

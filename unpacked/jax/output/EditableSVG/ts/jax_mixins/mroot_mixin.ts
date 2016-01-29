@@ -2,7 +2,7 @@
 /// <reference path="msqrt_mixin.ts" />
 
 class MRootMixin extends MBaseMixin {
-    static cursorable = true;
+    isCursorable() { return true; }
 
     toSVG = MSqrtMixin.toSVG;
 

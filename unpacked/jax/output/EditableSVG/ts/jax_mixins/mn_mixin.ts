@@ -1,8 +1,10 @@
 /// <reference path="mbase_mixin.ts" />
 
 class MnMixin extends MBaseMixin {
-    static cursorable = true;
     svg: any;
+
+    isCursorable() { return true; }
+
 
     getCursorLength() {
         return this.data[0].data[0].length

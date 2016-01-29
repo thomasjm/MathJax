@@ -3,7 +3,8 @@
 /// <reference path="../bbox/row.ts" />
 
 class MRowMixin extends MBaseMixin {
-    static cursorable = true;
+
+    isCursorable() { return true; }
 
     focus() {
         console.log('focus!')
@@ -11,12 +12,16 @@ class MRowMixin extends MBaseMixin {
 
     toSVG(h, d) {
         this.SVGgetStyles();
+
         var svg  = new BBOX_ROW();
+
         this.SVGhandleSpace(svg);
+
         if (d != null) {
             svg.sh = h;
             svg.sd = d
         }
+
         for (var i = 0, m = this.data.length; i < m; i++) {
             if (this.data[i]) {
                 svg.Check(this.data[i]);
@@ -24,18 +29,19 @@ class MRowMixin extends MBaseMixin {
         }
         svg.Stretch();
         svg.Clean();
+
         if (this.data.length === 1 && this.data[0]) {
             var data = this.data[0].EditableSVGdata;
             if (data.skew) {
                 svg.skew = data.skew
             }
         }
-        if (this.SVGlineBreaks(svg)) {
-            svg = this.SVGmultiline(svg)
-        }
+
+        if (this.SVGlineBreaks(svg)) svg = this.SVGmultiline(svg)
+
         this.SVGhandleColor(svg);
         this.SVGsaveData(svg);
-
+        console.log('MROW SETTING EDITABLESVGELEM: ', svg.element);
         this.EditableSVGelem = svg.element;
 
         return svg;
@@ -71,7 +77,7 @@ class MRowMixin extends MBaseMixin {
 
     isCursorPassthrough() {
         // TODO: implement cursor navigation better
-        // return this.data.length === 1 && this.data[0].cursorable
+        // return this.data.length === 1 && this.data[0].isCursorable()
         return false
     }
 

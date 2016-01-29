@@ -18,7 +18,7 @@ class SubSupCursor {
         var dest;
         if (direction === Direction.RIGHT || direction === Direction.LEFT) {
             dest = this.data[this.base]
-            if (dest.cursorable) {
+            if (dest.isCursorable()) {
                 return dest.moveCursorFromParent(cursor, direction)
             }
             cursor.position = {
@@ -34,7 +34,7 @@ class SubSupCursor {
                     pos: 0,
                 }
             } else if (cursor.renderedPosition.x > baseBB.x+baseBB.width && this.data[small]) {
-                if (this.data[small].cursorable) {
+                if (this.data[small].isCursorable()) {
                     return this.data[small].moveCursorFromParent(cursor, direction)
                 }
                 var bb = this.data[small].getSVGBBox()
@@ -43,7 +43,7 @@ class SubSupCursor {
                     pos: cursor.renderedPosition.x > bb.x + bb.width/2 ? 1 : 0,
                 }
             } else {
-                if (this.data[this.base].cursorable) {
+                if (this.data[this.base].isCursorable()) {
                     return this.data[this.base].moveCursorFromParent(cursor, direction)
                 }
                 cursor.position = {
@@ -92,14 +92,14 @@ class SubSupCursor {
 
         // If the click is somewhere within the sup or sup, go there
         if (subBB && Util.boxContains(subBB, x, y)) {
-            if (sub.cursorable) {
+            if (sub.isCursorable()) {
                 return sub.moveCursorFromClick(cursor, x, y)
             }
             section = this.sub;
             var midpoint = subBB.x + (subBB.width / 2.0);
             pos = (x < midpoint) ? 0 : 1;
         } else if (supBB && Util.boxContains(supBB, x, y)) {
-            if (sup.cursorable) {
+            if (sup.isCursorable()) {
                 return sup.moveCursorFromClick(cursor, x, y)
             }
             section = this.sup;
@@ -107,7 +107,7 @@ class SubSupCursor {
             pos = (x < midpoint) ? 0 : 1;
         } else {
             // Click somewhere else, go by the midpoint
-            if (base.cursorable) {
+            if (base.isCursorable()) {
                 return base.moveCursorFromClick(cursor, x, y)
             }
             section = this.base;
@@ -130,7 +130,7 @@ class SubSupCursor {
         if (cursor.position.section === this.base) {
             if (direction === Direction.UP) {
                 if (sup) {
-                    if (sup.cursorable) {
+                    if (sup.isCursorable()) {
                         return sup.moveCursorFromParent(cursor, direction)
                     }
                     cursor.position = {
@@ -142,7 +142,7 @@ class SubSupCursor {
                 }
             } else if (direction === Direction.DOWN) {
                 if (sub) {
-                    if (sub.cursorable) {
+                    if (sub.isCursorable()) {
                         return sub.moveCursorFromParent(cursor, direction)
                     }
                     cursor.position = {
@@ -168,7 +168,7 @@ class SubSupCursor {
             if (movingAway) {
                 return this.parent.moveCursorFromChild(cursor, direction, this)
             } else if (movingIn) {
-                if (this.data[this.base].cursorable) {
+                if (this.data[this.base].isCursorable()) {
                     return this.data[this.base].moveCursorFromParent(cursor, cursor.position.section === this.sub ? Direction.UP : Direction.DOWN)
                 }
                 cursor.position = {
