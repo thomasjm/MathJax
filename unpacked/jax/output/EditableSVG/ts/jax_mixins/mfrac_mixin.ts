@@ -3,7 +3,8 @@
 
 class MFracMixin extends MBaseMixin {
     static name = "mfrac";
-    static cursorable = true;
+
+    isCursorable() { return true; }
 
     texWithDelims: any;
 
@@ -104,7 +105,7 @@ class MFracMixin extends MBaseMixin {
             half: (y < midlineY) ? 0 : 1,
         }
 
-        if (this.data[cursor.position.half].cursorable) {
+        if (this.data[cursor.position.half].isCursorable()) {
             this.data[cursor.position.half].moveCursorFromClick(cursor, x, y)
             return
         }
@@ -144,7 +145,7 @@ class MFracMixin extends MBaseMixin {
         }
     }
     moveCursorIntoHalf(half, cursor, direction) {
-        if (this.data[half].cursorable) {
+        if (this.data[half].isCursorable()) {
             // If the data is cursorable, it must take the cursor
             return this.data[half].moveCursorFromParent(cursor, direction)
         }
@@ -168,12 +169,11 @@ class MFracMixin extends MBaseMixin {
         return this.moveCursorIntoHalf(1, c, d)
     }
 
-    moveCursorFromParent(cursor, direction) {
-        var direction = getCursorValue(direction);
+    moveCursorFromParent(cursor: Cursor, direction: Direction) {
         switch (direction) {
         case Direction.LEFT:
         case Direction.RIGHT:
-            if (this.data[0].cursorable) {
+            if (this.data[0].isCursorable()) {
                 return this.data[0].moveCursorFromParent(cursor, direction);
             }
             cursor.moveTo(this, {

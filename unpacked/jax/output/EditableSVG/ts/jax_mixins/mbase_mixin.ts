@@ -5,21 +5,6 @@
 class ElementJax {
     Get(...values): any;
     getValues(...values): any;
-}
-
-class MBaseMixin extends ElementJax {
-    HUB: any;
-    MML: any;
-    AJAX: any;
-    HTML: any;
-
-    editableSVG: any;
-
-    data: any;
-    base: any;
-    EditableSVGdata: any;
-    EditableSVGelem: any;
-    mscale: any;
 
     Core: any;
     CoreParent: any;
@@ -47,13 +32,29 @@ class MBaseMixin extends ElementJax {
     style: any;
     styles: any;
     texSpacing: any;
-    type: any;
-    useMMLspacing: any;
+    type: string;
+    useMMLspacing: boolean;
     variantForm: any;
 
     displayIndent: any;
-    isMultiline: any;
+    isMultiline: boolean;
     displayAlign: any;
+}
+
+class MBaseMixin extends ElementJax {
+    HUB: any;
+    MML: any;
+    HTML: any;
+
+    editableSVG: any;
+
+    data: any;
+    base: any;
+    EditableSVGdata: any;
+
+    EditableSVGelem: BBOX;
+
+    mscale: any;
 
     getBB(relativeTo) {
         var elem = this.EditableSVGelem;
@@ -66,14 +67,6 @@ class MBaseMixin extends ElementJax {
     }
 
     static getMethods(AJAX, HUB, HTML, editableSVG) {
-        // TODO: put the args into the dict so they get stuck onto the objects
-        var other = {
-            AJAX: AJAX,
-            HUB: HUB,
-            HTML: HTML,
-            // editableSVG: editableSVG
-        }
-
         var obj = {};
         obj.prototype = {};
         obj.constructor.prototype = {};
@@ -141,6 +134,14 @@ class MBaseMixin extends ElementJax {
     }
 
     SVGsaveData(svg) {
+        /*
+          SVGsaveData is called every time a new svg element wants to be rendered
+          SVGsaveData pushes CSS attributes etc. onto the actual svg elements
+          setting this.EditableSVGelem to this svg.element will keep the copy fresh even when the parent
+          re-renders the child's svg elements (e.g. with a stretch)
+         */
+        this.EditableSVGelem = svg.element;
+
         if (!this.EditableSVGdata) {
             this.EditableSVGdata = {}
         }
@@ -568,20 +569,15 @@ class MBaseMixin extends ElementJax {
         return false
     }
 
-    constructor(AJAX) {
-        super()
-        this.AJAX = AJAX;
-    }
-
     // TODO: these two go in the second argument to Augment
     SVGautoload() {
         var file = MathJax.OutputJax.EditableSVG.autoloadDir + "/" + this.type + ".js";
-        MathJax.Hub.RestartAfter(this.AJAX.Require(file));
+        MathJax.Hub.RestartAfter(MathJax.Ajax.Require(file));
     }
 
     SVGautoloadFile(name) {
         var file = MathJax.OutputJax.EditableSVG.autoloadDir + "/" + name + ".js";
-        MathJax.Hub.RestartAfter(this.AJAX.Require(file));
+        MathJax.Hub.RestartAfter(MathJax.Ajax.Require(file));
     }
 
     SVGlength2em(svg, length, mu, d, m) {
@@ -602,6 +598,8 @@ class MBaseMixin extends ElementJax {
     // Cursor stuff //
     //////////////////
 
+
+    isCursorable(): boolean { return false; }
 
     moveCursor(cursor, direction) {
         this.parent.moveCursorFromChild(cursor, direction, this)

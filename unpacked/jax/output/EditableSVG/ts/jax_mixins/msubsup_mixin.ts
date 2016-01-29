@@ -81,9 +81,11 @@ class MSubSupMixin extends MBaseMixin implements ElementJax {
                 this.data[this.sub].EditableSVGdata.dy = -Math.max(v, min.subscriptshift);
             }
         }
+
         svg.Clean();
         this.SVGhandleColor(svg);
         this.SVGsaveData(svg);
+
         return svg;
     }
 }

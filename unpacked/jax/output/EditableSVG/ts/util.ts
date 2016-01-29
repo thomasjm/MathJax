@@ -278,7 +278,7 @@ class Util {
         return bb.x <= p.x && p.x <= bb.x+bb.width && bb.y <= p.y && p.y <= bb.y+bb.height;
     }
 
-    highlightBox(svg, bb) {
+    static highlightBox(svg, bb) {
         var d = 100; // TODO: use proper units
 
         var drawLine = function(x1, y1, x2, y2) {
@@ -314,7 +314,7 @@ class Util {
      * Append a visualization of the jax to a given div
      * Pass in the jax and a jQuery selector div
      */
-    visualizeJax(jax, selector, cursor) {
+    static visualizeJax(jax, selector, cursor) {
         selector.empty();
         var hb = this.highlightBox;
 

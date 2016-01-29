@@ -468,33 +468,33 @@ class EditableSVG implements OutputJax {
     }
 
     AddInputHandlers(math, span, div) {
-      math.cursor = new MathJax.Object.Cursor()
-      math.rerender = rerender
-      span.setAttribute('tabindex', '0')
-      function rerender(callback) {
-        try {
-          SVG.preprocessElementJax(math).toSVG(span, div, true)
+        math.cursor = new Cursor()
+        math.rerender = rerender
+        span.setAttribute('tabindex', '0')
+        function rerender(callback) {
+            try {
+                SVG.preprocessElementJax(math).toSVG(span, div, true)
 
-          math.cursor.refocus()
-        } catch (err) {
-          if (err.restart) {
-            MathJax.Callback.After([rerender, callback], err.restart)
-            return
-          }
-          throw err;
+                math.cursor.refocus()
+            } catch (err) {
+                if (err.restart) {
+                    MathJax.Callback.After([rerender, callback], err.restart)
+                    return
+                }
+                throw err;
+            }
+            MathJax.Callback(callback)()
         }
-        MathJax.Callback(callback)()
-      }
-      function handler(e) {
-        if (math.cursor[e.type]) {
-          math.cursor[e.type](e, rerender);
+        function handler(e) {
+            if (math.cursor[e.type]) {
+                math.cursor[e.type](e, rerender);
+            }
         }
-      }
-      span.addEventListener('keydown', handler)
-      span.addEventListener('keypress', handler)
-      span.addEventListener('mousedown', handler)
-      span.addEventListener('blur', handler)
-      span.addEventListener('focus', handler)
+        span.addEventListener('keydown', handler)
+        span.addEventListener('keypress', handler)
+        span.addEventListener('mousedown', math.cursor.mousedown.bind(math.cursor))
+        span.addEventListener('blur', math.cursor.blur.bind(math.cursor))
+        span.addEventListener('focus', math.cursor.focus.bind(math.cursor))
     }
 
     getHoverSpan(jax, math) {
@@ -766,6 +766,11 @@ var load = function(event) {
         MathJax.OutputJax.EditableSVG[id] = EditableSVG[id].bind(MathJax.OutputJax.EditableSVG);
         MathJax.OutputJax.EditableSVG.constructor.prototype[id] = EditableSVG[id].bind(MathJax.OutputJax.EditableSVG);
     }
+};
+
+// Monkeypatch getTransformToElement since Chrome 48 removes it
+SVGElement.prototype.getTransformToElement = SVGElement.prototype.getTransformToElement || function(elem) {
+    return elem.getScreenCTM().inverse().multiply(this.getScreenCTM());
 };
 
 setTimeout(load, 1000);

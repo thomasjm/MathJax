@@ -1,8 +1,12 @@
 /// <reference path="mbase_mixin.ts" />
 
 class HoleMixin extends MBaseMixin {
-    static type = "hole";
-    static cursorable = true;
+
+    constructor() {
+        this.type = "hole";
+    }
+
+    isCursorable() { return true; }
 
     toSVG(h, d) {
         this.SVGgetStyles();

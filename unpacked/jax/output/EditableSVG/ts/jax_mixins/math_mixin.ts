@@ -3,7 +3,7 @@
 /// <reference path="../bbox/svg.ts" />
 
 class MathMixin extends MBaseMixin {
-    static cursorable = false; // TODO actually implement cursor
+    isCursorable() { return false; } // TODO actually implement cursor
 
     toSVG(span, div) {
         var CONFIG = MathJax.OutputJax.EditableSVG.config;
