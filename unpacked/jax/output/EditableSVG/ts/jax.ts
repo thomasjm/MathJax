@@ -467,14 +467,42 @@ class EditableSVG implements OutputJax {
         }
     }
 
+    /*
+     * Traverse the jax and ensure everything lives inside an mrow
+     */
+    static preprocessElementJax(root) {
+        if (root.type === 'texatom') {
+            if (root.data.length !== 1) throw Error('Unexpected length in texatom')
+            EditableSVG.preprocessElementJax(root.data[0])
+        } else if (root.type === 'mrow') {
+            for (var i = 0; i < root.data.length; i++) {
+                EditableSVG.preprocessElementJax(root.data[i]);
+            }
+        } else if (root.isCursorable() || root.type === 'math') {
+            for (var i = 0; i < root.data.length; i++) {
+                var cur = root.data[i];
+                if (!cur) continue;
+                var type = cur.type;
+                if (type[0] !== 'm' || type === 'mrow') {
+                    EditableSVG.preprocessElementJax(cur)
+                } else {
+                    var row = new MML.mrow()
+                    row.Append(EditableSVG.preprocessElementJax(cur))
+                    root.SetData(i, row)
+                }
+            }
+        }
+        return root;
+    }
+
     AddInputHandlers(math, span, div) {
         math.cursor = new Cursor()
         math.rerender = rerender
         span.setAttribute('tabindex', '0')
+
         function rerender(callback) {
             try {
-                SVG.preprocessElementJax(math).toSVG(span, div, true)
-
+                EditableSVG.preprocessElementJax(math).toSVG(span, div, true)
                 math.cursor.refocus()
             } catch (err) {
                 if (err.restart) {
@@ -485,16 +513,17 @@ class EditableSVG implements OutputJax {
             }
             MathJax.Callback(callback)()
         }
+
         function handler(e) {
-            if (math.cursor[e.type]) {
-                math.cursor[e.type](e, rerender);
-            }
+            if (math.cursor.constructor.prototype[e.type])
+                math.cursor.constructor.prototype[e.type].call(math.cursor, e, rerender);
         }
-        span.addEventListener('keydown', handler)
-        span.addEventListener('keypress', handler)
-        span.addEventListener('mousedown', math.cursor.mousedown.bind(math.cursor))
-        span.addEventListener('blur', math.cursor.blur.bind(math.cursor))
-        span.addEventListener('focus', math.cursor.focus.bind(math.cursor))
+
+        span.addEventListener('mousedown', handler);
+        span.addEventListener('blur', handler);
+        span.addEventListener('keydown', handler);
+        span.addEventListener('keypress', handler);
+        span.addEventListener('focus', handler);
     }
 
     getHoverSpan(jax, math) {
