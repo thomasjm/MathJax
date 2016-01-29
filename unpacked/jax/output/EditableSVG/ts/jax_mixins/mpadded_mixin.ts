@@ -51,7 +51,7 @@ class MPaddedMixin extends MBaseMixin {
         return svg;
     }
 
-    SVGlength2em(svg, length, mu, d, m) {
+    SVGlength2em(svg, length, mu, d?, m?) {
         if (m == null) {
             m = -Util.BIGDIMEN
         }

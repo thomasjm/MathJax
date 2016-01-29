@@ -99,7 +99,7 @@ class CharsMixin extends MBaseMixin {
                     c = [scale, font.id + "-" + n.toString(16).toUpperCase()].concat(c);
 
                     // Trick to use "new" with an arguments array
-                    function F(args) {
+                    function F(args): any {
                         return BBOX_GLYPH.apply(this, args);
                     }
                     F.prototype = BBOX_GLYPH.prototype;
@@ -122,12 +122,9 @@ class CharsMixin extends MBaseMixin {
                     "font-style": (variant.italic ? "italic" : ""),
                     "font-weight": (variant.bold ? "bold" : "")
                 });
-                if (variant.h !== null) {
-                    box.h = variant.h;
-                }
-                if (variant.d !== null) {
-                    box.d = variant.d;
-                }
+                if (variant.h !== null) box.h = variant.h;
+                if (variant.d !== null) box.d = variant.d;
+
                 c = new BBOX_G();
                 c.Add(box);
                 svg.Add(c, svg.w, 0);
@@ -208,14 +205,19 @@ class CharsMixin extends MBaseMixin {
             alias: code,
             HW: undefined,
             load: undefined,
-            stretch: undefined
+            stretch: undefined,
+            dir: undefined
         };
         while (delim.alias) {
             code = delim.alias;
             delim = FONTDATA.DELIMITERS[code];
             if (!delim) {
                 delim = {
-                    HW: [0, FONTDATA.VARIANT[MathJax.ElementJax.mml.VARIANT.NORMAL]]
+                    HW: [0, FONTDATA.VARIANT[MathJax.ElementJax.mml.VARIANT.NORMAL]],
+                    alias: undefined,
+                    load: undefined,
+                    stretch: undefined,
+                    dir: undefined
                 }
             }
         }
@@ -223,7 +225,7 @@ class CharsMixin extends MBaseMixin {
             MathJax.Hub.RestartAfter(MathJax.Ajax.Require(EDITABLESVG.fontDir + "/fontdata-" + delim.load + ".js"))
         }
         for (var i = 0, m = delim.HW.length; i < m; i++) {
-            if (delim.HW[i][0] * scale >= HW - 10 - EditableSVG.config.blacker || (i == m - 1 && !delim.stretch)) {
+            if (delim.HW[i][0] * scale >= HW - 10 - MathJax.OutputJax.EditableSVG.blacker || (i == m - 1 && !delim.stretch)) {
                 if (delim.HW[i][2]) {
                     scale *= delim.HW[i][2]
                 }

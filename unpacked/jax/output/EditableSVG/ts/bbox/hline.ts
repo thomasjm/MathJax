@@ -1,8 +1,6 @@
 /// <reference path="bbox.ts" />
 
 class BBOX_HLINE extends BBOX {
-    static removeable = false;
-
     constructor(w, t, dash, color, def) {
         if (def == null) {
             def = {
@@ -26,6 +24,7 @@ class BBOX_HLINE extends BBOX {
 
         super(def, "line");
 
+        this.removeable = false;
         this.w = this.r = w;
         this.l = 0;
         this.h = this.H = t;

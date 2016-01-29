@@ -6,7 +6,7 @@ var insert = require('gulp-insert');
 var sourcemaps = require('gulp-sourcemaps');
 var ts = require('gulp-typescript');
 
-var tsProject = ts.createProject('tsconfig.json');
+var tsProject = ts.createProject('tsconfig.json', { sortOutput: true });
 
 gulp.task('build', function() {
     var tsResult = gulp.src('ts/**/*.ts')

@@ -1,4 +1,5 @@
 /// <reference path="mbase_mixin.ts" />
+/// <reference path="chars_mixin.ts" />
 
 
 class MFracMixin extends MBaseMixin {
@@ -23,7 +24,7 @@ class MFracMixin extends MBaseMixin {
         if (values.bevelled) {
             var delta = (isDisplay ? 400 : 150);
             var H = Math.max(num.h + num.d, den.h + den.d) + 2 * delta;
-            var bevel = EditableSVG.createDelimiter(0x2F, H);
+            var bevel = CharsMixin.createDelimiter(0x2F, H);
             frac.Add(num, 0, (num.d - num.h) / 2 + a + delta);
             frac.Add(bevel, num.w - delta / 2, (bevel.d - bevel.h) / 2 + a);
             frac.Add(den, num.w + bevel.w - delta, (den.d - den.h) / 2 + a - delta);
@@ -110,7 +111,7 @@ class MFracMixin extends MBaseMixin {
             return
         }
 
-        cursor.moveTo(this, cursor.position)
+        return cursor.moveTo(this, cursor.position)
     }
 
     moveCursor(cursor, direction) {
@@ -144,6 +145,7 @@ class MFracMixin extends MBaseMixin {
             return this.parent.moveCursorFromChild(cursor, direction, this)
         }
     }
+
     moveCursorIntoHalf(half, cursor, direction) {
         if (this.data[half].isCursorable()) {
             // If the data is cursorable, it must take the cursor

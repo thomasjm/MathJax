@@ -1,4 +1,6 @@
-class SubSupCursor {
+/// <reference path="jax_mixins/mbase_mixin.ts" />
+
+class SubSupCursor extends MBaseMixin {
     static cursorable = true;
     // TODO: make cursoring less messy
 
