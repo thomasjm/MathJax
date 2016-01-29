@@ -5,7 +5,7 @@
 class MathMixin extends MBaseMixin {
     isCursorable() { return false; } // TODO actually implement cursor
 
-    toSVG(span, div) {
+    toSVG(span, div, replace?: boolean) {
         var CONFIG = MathJax.OutputJax.EditableSVG.config;
 
         //  All the data should be in an inferred row
@@ -79,7 +79,15 @@ class MathMixin extends MBaseMixin {
         if (alttext && !svg.element.getAttribute("aria-label")) span.setAttribute("aria-label", alttext);
         if (!svg.element.getAttribute("role")) span.setAttribute("role", "math");
         //        span.setAttribute("tabindex",0);  // causes focus outline, so disable for now
-        span.appendChild(svg.element);
+
+        svg.element.classList.add('rendered-svg-output')
+        var previous = span.querySelector('.rendered-svg-output')
+        if (replace && previous) {
+            span.replaceChild(svg.element, previous)
+        } else {
+            span.appendChild(svg.element)
+        }
+
         svg.element = null;
 
         //  Handle indentalign and indentshift for single-line displays
