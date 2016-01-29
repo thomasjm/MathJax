@@ -1,8 +1,5 @@
 
 class Cursor {
-    static MML = MathJax.ElementJax.mml;
-    static DEFS = MathJax.InputJax.TeX.Definitions;
-
     selectionStart: any;
     selectionEnd: any;
 
@@ -140,7 +137,7 @@ class Cursor {
     makeHoleIfNeeded(node) {
         if (node.data.length === 0) {
             // The mrow has become empty; make a hole
-            var hole = Cursor.MML.hole();
+            var hole = MathJax.ElementJax.mml.hole();
             var rowindex = node.parent.data.indexOf(node)
             node.parent.SetData(rowindex, hole)
             hole.moveCursorFromParent(this)
@@ -221,16 +218,16 @@ class Cursor {
     }
 
     makeEntityMo(unicode) {
-        var mo = new Cursor.MML.mo();
-        var entity = new Cursor.MML.entity();
+        var mo = new MathJax.ElementJax.mml.mo();
+        var entity = new MathJax.ElementJax.mml.entity();
         entity.Append(unicode);
         mo.Append(entity);
         return mo;
     }
 
     makeEntityMi(unicode) {
-        var mi = new Cursor.MML.mi();
-        var entity = new Cursor.MML.entity();
+        var mi = new MathJax.ElementJax.mml.mi();
+        var entity = new MathJax.ElementJax.mml.entity();
         entity.Append(unicode);
         mi.Append(entity);
         return mi;
@@ -261,30 +258,30 @@ class Cursor {
 
             checkSpecialCS(cs) {
                 if (cs === 'frac') {
-                    var hole = new Cursor.MML.hole()
-                    var result = new Cursor.MML.mfrac(hole, new Cursor.MML.hole())
+                    var hole = new MathJax.ElementJax.mml.hole()
+                    var result = new MathJax.ElementJax.mml.mfrac(hole, new MathJax.ElementJax.mml.hole())
                     result.moveCursorAfter = [hole, 0]
                     return this.result = result
                 }
                 if (cs === 'sqrt') {
-                    var result = new Cursor.MML.msqrt()
-                    var hole = new Cursor.MML.hole()
+                    var result = new MathJax.ElementJax.mml.msqrt()
+                    var hole = new MathJax.ElementJax.mml.hole()
                     result.SetData(0, hole)
                     result.moveCursorAfter = [hole, 0]
                     return this.result = result
                 }
-                if (Cursor.DEFS.macros[cs]) {
-                    console.log(Cursor.DEFS.macros[cs])
-                    var namedDirectly = Cursor.DEFS.macros[cs] === 'NamedOp' || Cursor.DEFS.macros[cs] === 'NamedFn'
-                    var namedArray = Cursor.DEFS.macros[cs][0] && (Cursor.DEFS.macros[cs][0] === 'NamedFn' || Cursor.DEFS.macros[cs][0] === 'NamedOp')
+                if (MathJax.InputJax.TeX.Definitions.macros[cs]) {
+                    console.log(MathJax.InputJax.TeX.Definitions.macros[cs])
+                    var namedDirectly = MathJax.InputJax.TeX.Definitions.macros[cs] === 'NamedOp' || MathJax.InputJax.TeX.Definitions.macros[cs] === 'NamedFn'
+                    var namedArray = MathJax.InputJax.TeX.Definitions.macros[cs][0] && (MathJax.InputJax.TeX.Definitions.macros[cs][0] === 'NamedFn' || MathJax.InputJax.TeX.Definitions.macros[cs][0] === 'NamedOp')
                     if (namedDirectly || namedArray) {
                         var value
-                        if (namedArray && Cursor.DEFS.macros[cs][1]) {
-                            value = Cursor.DEFS.macros[cs][1].replace(/&thinsp;/,"\u2006")
+                        if (namedArray && MathJax.InputJax.TeX.Definitions.macros[cs][1]) {
+                            value = MathJax.InputJax.TeX.Definitions.macros[cs][1].replace(/&thinsp;/,"\u2006")
                         } else {
                             value = cs
                         }
-                        return this.result = new Cursor.MML.mo(new Cursor.MML.chars(value))
+                        return this.result = new MathJax.ElementJax.mml.mo(new MathJax.ElementJax.mml.chars(value))
                     }
                 }
             },
@@ -311,7 +308,7 @@ class Cursor {
             // function inserts something into the mrow
             var parent = this.node.parent;
             var holeIndex = parent.data.indexOf(this.node);
-            var row = Cursor.MML.mrow()
+            var row = MathJax.ElementJax.mml.mrow()
             parent.SetData(holeIndex, row)
             row.moveCursorFromParent(this, Direction.RIGHT)
         }
@@ -329,7 +326,7 @@ class Cursor {
                     this.mode = Cursor.CursorMode.BACKSLASH;
 
                     // Insert mrow
-                    var grayRow = Cursor.MML.mrow(Cursor.MML.mo(Cursor.MML.entity('#x005C')));
+                    var grayRow = MathJax.ElementJax.mml.mrow(MathJax.ElementJax.mml.mo(MathJax.ElementJax.mml.entity('#x005C')));
                     grayRow.backslashRow = true
                     this.node.data.splice(this.position, 0, null)
                     this.node.SetData(this.position, grayRow)
@@ -357,13 +354,13 @@ class Cursor {
 
                 var createAndMoveIntoHole = function(msubsup, index) {
                     // Create the thing
-                    var hole = Cursor.MML.hole();
+                    var hole = MathJax.ElementJax.mml.hole();
                     msubsup.SetData(index, hole);
                     // Move into it
                     this.moveTo(hole, 0)
                 }.bind(this);
 
-                var index = (c === "_") ? Cursor.MML.msubsup().sub : Cursor.MML.msubsup().sup;
+                var index = (c === "_") ? MathJax.ElementJax.mml.msubsup().sub : MathJax.ElementJax.mml.msubsup().sup;
 
                 if (prev.type === "msubsup" || prev.type === "munderover") {
                     if (prev.data[index]) {
@@ -384,7 +381,7 @@ class Cursor {
                     }
                 } else {
                     // Convert the predecessor to an msubsup
-                    var msubsup = Cursor.MML.msubsup();
+                    var msubsup = MathJax.ElementJax.mml.msubsup();
                     msubsup.SetData(msubsup.base, prev);
                     this.node.SetData(this.position - 1, msubsup);
                     createAndMoveIntoHole(msubsup, index);
@@ -441,13 +438,13 @@ class Cursor {
 
             // Insertion
             // TODO: actually insert numbers
-            if (Cursor.DEFS.letter.test(c) || Cursor.DEFS.number.test(c)) {
+            if (MathJax.InputJax.TeX.Definitions.letter.test(c) || MathJax.InputJax.TeX.Definitions.number.test(c)) {
                 // Alpha, insert an mi
-                toInsert = new Cursor.MML.mi(new Cursor.MML.chars(c))
-            } else if (Cursor.DEFS.remap[c]) {
-                toInsert = new Cursor.MML.mo(new Cursor.MML.entity('#x' + Cursor.DEFS.remap[c]));
+                toInsert = new MathJax.ElementJax.mml.mi(new MathJax.ElementJax.mml.chars(c))
+            } else if (MathJax.InputJax.TeX.Definitions.remap[c]) {
+                toInsert = new MathJax.ElementJax.mml.mo(new MathJax.ElementJax.mml.entity('#x' + MathJax.InputJax.TeX.Definitions.remap[c]));
             } else if (c === '+' || c === '/' || c === '=' || c === '.' || c === '(' || c === ')') {
-                toInsert = new Cursor.MML.mo(new Cursor.MML.chars(c))
+                toInsert = new MathJax.ElementJax.mml.mo(new MathJax.ElementJax.mml.chars(c))
             }
         }
 
@@ -523,7 +520,13 @@ class Cursor {
         }
 
         var jax = MathJax.Hub.getAllJax('#' + svgelem.parentNode.id)[0];
-        Util.visualizeJax(jax, $('#mmlviz'), this);
+
+        try {
+            Util.visualizeJax(jax, $('#mmlviz'), this);
+        } catch (err) {
+            // Ignore
+            console.error('Failed to visualize jax');
+        }
 
         if (!skipScroll) this.scrollIntoView(svgelem)
     }
