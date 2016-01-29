@@ -15,9 +15,9 @@ MathJax.Hub.Register.StartupHook("EditableSVG Jax Ready", function() {
 
     MML.hole.Augment({
         toTex: function() {
-            return '{ }'
-        },
-    })
+            return '{ }';
+        }
+    });
 
     MML.math.Augment({
         loadTexify: function() {
@@ -26,9 +26,9 @@ MathJax.Hub.Register.StartupHook("EditableSVG Jax Ready", function() {
 
     MML.chars.Augment({
         toTex: function() {
-            var alphad = this.data[0].replace(/[^a-z]/i, '')
+            var alphad = this.data[0].replace(/[^a-z]/i, '');
             if (DEFS.macros[alphad]) {
-                return '\\'+alphad+' '
+                return '\\'+alphad+' ';
             }
             return this.data[0];
         }
@@ -48,8 +48,8 @@ MathJax.Hub.Register.StartupHook("EditableSVG Jax Ready", function() {
 
     MML.entity.Augment({
         toTex: function() {
-            var value = this.data[0].substring(2)
-            if (!entities) makeEntities()
+            var value = this.data[0].substring(2);
+            if (!entities) makeEntities();
             return entities[value] || this.toString();
         }
     });
@@ -109,25 +109,25 @@ MathJax.Hub.Register.StartupHook("EditableSVG Jax Ready", function() {
 
     function forEachInObj(obj, fn) {
         Object.keys(obj).forEach(function(key) {
-            fn(obj[key], key)
-        })
+            fn(obj[key], key);
+        });
     }
 
     function makeEntities() {
-        entities = {}
-        forEachInObj(DEFS.mathchar0mi, addEscapeEntity)
-        forEachInObj(DEFS.mathchar0mo, addEscapeEntity)
-        forEachInObj(DEFS.mathchar7, addEscapeEntity)
+        entities = {};
+        forEachInObj(DEFS.mathchar0mi, addEscapeEntity);
+        forEachInObj(DEFS.mathchar0mo, addEscapeEntity);
+        forEachInObj(DEFS.mathchar7, addEscapeEntity);
         forEachInObj(DEFS.remap, function(value, key) {
-            entities[value] = key
-        })
+            entities[value] = key;
+        });
 
         function addEscapeEntity(value, key) {
-            var lookup = (typeof value === 'string') ? value : value[0]
-            entities[lookup] = '\\' + key
+            var lookup = (typeof value === 'string') ? value : value[0];
+            entities[lookup] = '\\' + key;
         }
     }
 
     MathJax.Hub.Startup.signal.Post('texify Ready');
-    MathJax.Ajax.loadComplete(SVG.autoloadDir+"/texify.js");
+    MathJax.Ajax.loadComplete(SVG.autoloadDir + "/texify.js");
 });

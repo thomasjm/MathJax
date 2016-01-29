@@ -535,7 +535,7 @@ class Cursor {
             visualizeJax(jax, '#mmlviz', this);
         } catch (err) {
             // Ignore
-            console.error('Failed to visualize jax');
+            console.error('Failed to visualize jax', err);
         }
 
         if (!skipScroll) this.scrollIntoView(svgelem)
