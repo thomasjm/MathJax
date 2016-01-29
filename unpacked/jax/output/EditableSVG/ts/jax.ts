@@ -703,8 +703,7 @@ class EditableSVG implements OutputJax {
             // MML.munderover.Augment(subsupcursor)
             // MML.msubsup.Augment(subsupcursor)
 
-            MML.hole = MML.hole = MML.mbase.Subclass({})
-            MML.hole.Augment(HoleMixin.getMethods(this));
+            MML.hole = Hole;
 
             MML.mbase.Augment(MBaseMixin.getMethods(this));
             MML.chars.Augment(CharsMixin.getMethods(this));

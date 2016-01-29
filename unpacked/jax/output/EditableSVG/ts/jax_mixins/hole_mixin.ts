@@ -1,7 +1,7 @@
 /// <reference path="mbase_mixin.ts" />
 /// <reference path="../bbox/bbox.ts" />
 
-class HoleMixin extends MBaseMixin {
+class Hole extends MBaseMixin {
 
     constructor() {
         super();

@@ -302,6 +302,14 @@ class Cursor {
         return obj
     }
 
+    createAndMoveIntoHole(msubsup, index) {
+        console.log('CREATING HOLE');
+        var hole = new MathJax.ElementJax.mml.hole();
+        msubsup.SetData(index, hole);
+        // Move into it
+        this.moveTo(hole, 0)
+    }
+
     keypress(event, recall) {
         event.preventDefault();
 
@@ -362,14 +370,6 @@ class Cursor {
 
                 var prev = this.node.data[this.position - 1];
 
-                var createAndMoveIntoHole = function(msubsup, index) {
-                    // Create the thing
-                    var hole = MathJax.ElementJax.mml.hole();
-                    msubsup.SetData(index, hole);
-                    // Move into it
-                    this.moveTo(hole, 0)
-                }.bind(this);
-
                 var index = (c === "_") ? MathJax.ElementJax.mml.msubsup().sub : MathJax.ElementJax.mml.msubsup().sup;
 
                 if (prev.type === "msubsup" || prev.type === "munderover") {
@@ -387,14 +387,14 @@ class Cursor {
                         }
                     } else {
                         // Create a new thing and move into it
-                        createAndMoveIntoHole(prev, index);
+                        this.createAndMoveIntoHole(prev, index);
                     }
                 } else {
                     // Convert the predecessor to an msubsup
                     var msubsup = MathJax.ElementJax.mml.msubsup();
                     msubsup.SetData(msubsup.base, prev);
                     this.node.SetData(this.position - 1, msubsup);
-                    createAndMoveIntoHole(msubsup, index);
+                    this.createAndMoveIntoHole(msubsup, index);
                 }
 
                 recall(['refocus', this])
