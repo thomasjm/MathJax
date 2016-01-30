@@ -242,66 +242,6 @@ class Cursor {
         return mi;
     }
 
-    // TODO: move parser into its own class
-    makeParser() {
-        var obj = {
-            mmlToken(x) {
-                return x
-            },
-            Push(x) {
-                this.result = x
-            },
-            noop() {},
-            parseControlSequence(cs) {
-                if (this.checkSpecialCS(cs)) return this.result
-                this.cs = cs
-                this.csUndefined = this.csFindMacro = this.noop
-                this.ControlSequence()
-                delete this.csFindMacro
-                delete this.csUndefined
-                return this.result
-            },
-            GetCS() {
-                return this.cs
-            },
-
-            checkSpecialCS(cs) {
-                if (cs === 'frac') {
-                    var hole = new MathJax.ElementJax.mml.hole()
-                    var result = new MathJax.ElementJax.mml.mfrac(hole, new MathJax.ElementJax.mml.hole())
-                    result.moveCursorAfter = [hole, 0]
-                    return this.result = result
-                }
-                if (cs === 'sqrt') {
-                    var result = new MathJax.ElementJax.mml.msqrt()
-                    var hole = new MathJax.ElementJax.mml.hole()
-                    result.SetData(0, hole)
-                    result.moveCursorAfter = [hole, 0]
-                    return this.result = result
-                }
-                if (MathJax.InputJax.TeX.Definitions.macros[cs]) {
-                    console.log(MathJax.InputJax.TeX.Definitions.macros[cs])
-                    var namedDirectly = MathJax.InputJax.TeX.Definitions.macros[cs] === 'NamedOp' || MathJax.InputJax.TeX.Definitions.macros[cs] === 'NamedFn'
-                    var namedArray = MathJax.InputJax.TeX.Definitions.macros[cs][0] && (MathJax.InputJax.TeX.Definitions.macros[cs][0] === 'NamedFn' || MathJax.InputJax.TeX.Definitions.macros[cs][0] === 'NamedOp')
-                    if (namedDirectly || namedArray) {
-                        var value
-                        if (namedArray && MathJax.InputJax.TeX.Definitions.macros[cs][1]) {
-                            value = MathJax.InputJax.TeX.Definitions.macros[cs][1].replace(/&thinsp;/,"\u2006")
-                        } else {
-                            value = cs
-                        }
-                        return this.result = new MathJax.ElementJax.mml.mo(new MathJax.ElementJax.mml.chars(value))
-                    }
-                }
-            },
-
-            stack: {env: {}},
-        }
-
-        obj.__proto__ = MathJax.InputJax.TeX.Parse.prototype;
-        return obj
-    }
-
     createAndMoveIntoHole(msubsup, index) {
         console.log('CREATING HOLE');
         var hole = new MathJax.ElementJax.mml.hole();
@@ -360,8 +300,7 @@ class Cursor {
                 latex += chars.data[0];
             }
 
-            var parser = this.makeParser()
-            var result = parser.parseControlSequence(latex)
+            var result = Parser.parseControlSequence(latex)
 
             if (!result) {
                 this.node.EditableSVGelem.classList.add('invalid')
