@@ -43,10 +43,6 @@ class ElementJax {
 }
 
 class MBaseMixin extends ElementJax {
-    HUB: any;
-    MML: any;
-    HTML: any;
-
     editableSVG: any;
 
     data: any;

@@ -1,5 +1,6 @@
 /// <reference path="mbase_mixin.ts" />
 /// <reference path="../bbox/glyph.ts" />
+/// <reference path="../bbox/text.ts" />
 
 class CharsMixin extends MBaseMixin {
     toSVG(variant, scale, remap, chars) {
@@ -26,7 +27,7 @@ class CharsMixin extends MBaseMixin {
         }
 
         if (variant.forceFamily) {
-            text = new BBOX_TEXT(MathJax.HTML, scale, text, variant.font);
+            text = new BBOX_TEXT(scale, text, variant.font);
             if (variant.h !== null) {
                 text.h = variant.h;
             }
@@ -117,7 +118,7 @@ class CharsMixin extends MBaseMixin {
                     N = n - 0x10000;
                     c = String.fromCharCode((N >> 10) + 0xD800) + String.fromCharCode((N & 0x3FF) + 0xDC00);
                 }
-                var box = new BBOX_TEXT(MathJax.HTML, scale * 100 / EDITABLESVG.config.scale, c, {
+                var box = new BBOX_TEXT(scale * 100 / EDITABLESVG.config.scale, c, {
                     "font-family": variant.defaultFamily || EDITABLESVG.config.undefinedFamily,
                     "font-style": (variant.italic ? "italic" : ""),
                     "font-weight": (variant.bold ? "bold" : "")
