@@ -326,7 +326,7 @@ class MBaseMixin extends ElementJax {
             values.mathcolor = values.color
         }
         if (values.mathcolor) {
-            MathJax.OutputJax.EditableSVG.Element(svg.element, {
+            Util.Element(svg.element, {
                 fill: values.mathcolor,
                 stroke: values.mathcolor
             })
