@@ -1,7 +1,7 @@
 /// <reference path="bbox.ts" />
 
 class BBOX_TEXT extends BBOX {
-    constructor(HTML, scale, text, def) {
+    constructor(scale, text, def) {
         if (!def) def = {};
 
         def.stroke = "none";
@@ -10,7 +10,7 @@ class BBOX_TEXT extends BBOX {
 
         super(def, "text");
 
-        HTML.addText(this.element, text);
+        MathJax.HTML.addText(this.element, text);
         this.EditableSVG.textSVG.appendChild(this.element);
 
         var bbox = this.element.getBBox();

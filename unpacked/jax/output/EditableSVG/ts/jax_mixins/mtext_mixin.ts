@@ -26,8 +26,7 @@ class MTextMixin extends MBaseMixin {
                 def["class"] = "MJX-sans-serif"
             }
 
-            svg.Add(new BBOX_TEXT(this.HTML,
-                                  scale * 100 / MathJax.OutputJax.EditableSVG.config.scale,
+            svg.Add(new BBOX_TEXT(scale * 100 / MathJax.OutputJax.EditableSVG.config.scale,
                                   this.data.join(""), def));
             svg.Clean();
             this.SVGhandleColor(svg);
