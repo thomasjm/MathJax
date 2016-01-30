@@ -310,6 +310,83 @@ class Cursor {
         this.moveTo(hole, 0)
     }
 
+    handleSuperOrSubscript(recall, c) {
+        if (this.position === 0) {
+            return; // Do nothing if we're at the beginning of the mbox
+        }
+
+        var prev = this.node.data[this.position - 1];
+
+        var index = (c === "_") ? MathJax.ElementJax.mml.msubsup().sub : MathJax.ElementJax.mml.msubsup().sup;
+
+        if (prev.type === "msubsup" || prev.type === "munderover") {
+            if (prev.data[index]) {
+                // Move into thing
+                var thing = prev.data[index];
+
+                if (thing.isCursorable()) {
+                    thing.moveCursorFromParent(this, Direction.LEFT)
+                } else {
+                    this.moveTo(prev, {
+                        section: index,
+                        pos: 1,
+                    })
+                }
+            } else {
+                // Create a new thing and move into it
+                this.createAndMoveIntoHole(prev, index);
+            }
+        } else {
+            // Convert the predecessor to an msubsup
+            var msubsup = MathJax.ElementJax.mml.msubsup();
+            msubsup.SetData(msubsup.base, prev);
+            this.node.SetData(this.position - 1, msubsup);
+            this.createAndMoveIntoHole(msubsup, index);
+        }
+
+        recall(['refocus', this])
+    }
+
+    handleSpace(recall, c) {
+        if (this.mode === Cursor.CursorMode.BACKSLASH) {
+            // Exit backslash mode and enter the thing we had
+            var latex = "";
+            for (var i = 1; i < this.node.data.length; i++) {
+                var mi = this.node.data[i];
+                if (mi.type !== 'mi') {
+                    throw new Error('Found non-identifier in backslash expression');
+                }
+                var chars = mi.data[0];
+                latex += chars.data[0];
+            }
+
+            var parser = this.makeParser()
+            var result = parser.parseControlSequence(latex)
+
+            if (!result) {
+                this.node.EditableSVGelem.classList.add('invalid')
+                return;
+            }
+
+            var mrow = this.node;
+            var index = mrow.parent.data.indexOf(mrow)
+
+            this.exitBackslashMode(result)
+
+            recall([this, function() {
+                this.refocus()
+            }]);
+        } else {
+            // Spaces help us jump out of boxes
+            this.node.moveCursor(this, 'r');
+
+            recall([this, function() {
+                this.refocus()
+                this.mode = Cursor.CursorMode.NORMAL
+            }]);
+        }
+    }
+
     keypress(event, recall) {
         event.preventDefault();
 
@@ -362,102 +439,34 @@ class Cursor {
                 }
 
             } else if (c === "^" || c === "_") {
-                // Superscript or subscript
-
-                if (this.position === 0) {
-                    return; // Do nothing if we're at the beginning of the mbox
-                }
-
-                var prev = this.node.data[this.position - 1];
-
-                var index = (c === "_") ? MathJax.ElementJax.mml.msubsup().sub : MathJax.ElementJax.mml.msubsup().sup;
-
-                if (prev.type === "msubsup" || prev.type === "munderover") {
-                    if (prev.data[index]) {
-                        // Move into thing
-                        var thing = prev.data[index];
-
-                        if (thing.isCursorable()) {
-                            thing.moveCursorFromParent(this, Direction.LEFT)
-                        } else {
-                            this.moveTo(prev, {
-                                section: index,
-                                pos: 1,
-                            })
-                        }
-                    } else {
-                        // Create a new thing and move into it
-                        this.createAndMoveIntoHole(prev, index);
-                    }
-                } else {
-                    // Convert the predecessor to an msubsup
-                    var msubsup = MathJax.ElementJax.mml.msubsup();
-                    msubsup.SetData(msubsup.base, prev);
-                    this.node.SetData(this.position - 1, msubsup);
-                    this.createAndMoveIntoHole(msubsup, index);
-                }
-
-                recall(['refocus', this])
-
-                return;
-
+                return this.handleSuperOrSubscript(recall, c);
             } else if (c === " ") {
-                if (this.mode === Cursor.CursorMode.BACKSLASH) {
-                    // Exit backslash mode and enter the thing we had
-                    var latex = "";
-                    for (var i = 1; i < this.node.data.length; i++) {
-                        var mi = this.node.data[i];
-                        if (mi.type !== 'mi') {
-                            throw new Error('Found non-identifier in backslash expression');
-                        }
-                        var chars = mi.data[0];
-                        latex += chars.data[0];
-                    }
-
-                    var parser = this.makeParser()
-                    var result = parser.parseControlSequence(latex)
-
-                    if (!result) {
-                        this.node.EditableSVGelem.classList.add('invalid')
-                        return
-                    }
-
-                    var mrow = this.node;
-                    var index = mrow.parent.data.indexOf(mrow)
-
-                    this.exitBackslashMode(result)
-
-                    recall([this, function() {
-                        this.refocus()
-                    }]);
-
-                    return;
-                } else {
-                    // Spaces help us jump out of boxes
-                    this.node.moveCursor(this, 'r');
-
-                    recall([this, function() {
-                        this.refocus()
-                        this.mode = Cursor.CursorMode.NORMAL
-                    }]);
-
-                    return;
-                }
+                return this.handleSpace(recall, c);
             }
 
             // Insertion
             // TODO: actually insert numbers
-            if (MathJax.InputJax.TeX.Definitions.letter.test(c) || MathJax.InputJax.TeX.Definitions.number.test(c)) {
+            if (MathJax.InputJax.TeX.Definitions.letter.test(c)) {
                 // Alpha, insert an mi
-                toInsert = new MathJax.ElementJax.mml.mi(new MathJax.ElementJax.mml.chars(c))
+                toInsert = new MathJax.ElementJax.mml.mi(
+                    new MathJax.ElementJax.mml.chars(c)
+                );
+            } else if (MathJax.InputJax.TeX.Definitions.number.test(c)) {
+                toInsert = new MathJax.ElementJax.mml.mn(
+                    new MathJax.ElementJax.mml.chars(c)
+                );
             } else if (MathJax.InputJax.TeX.Definitions.remap[c]) {
-                toInsert = new MathJax.ElementJax.mml.mo(new MathJax.ElementJax.mml.entity('#x' + MathJax.InputJax.TeX.Definitions.remap[c]));
+                toInsert = new MathJax.ElementJax.mml.mo(
+                    new MathJax.ElementJax.mml.entity('#x' + MathJax.InputJax.TeX.Definitions.remap[c])
+                );
             } else if (c === '+' || c === '/' || c === '=' || c === '.' || c === '(' || c === ')') {
-                toInsert = new MathJax.ElementJax.mml.mo(new MathJax.ElementJax.mml.chars(c))
+                toInsert = new MathJax.ElementJax.mml.mo(
+                    new MathJax.ElementJax.mml.chars(c)
+                );
             }
         }
 
-        if (!toInsert) return
+        if (!toInsert) return;
 
         this.node.data.splice(this.position, 0, null)
         this.node.SetData(this.position, toInsert)

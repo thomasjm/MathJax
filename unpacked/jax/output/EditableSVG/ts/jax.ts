@@ -38,7 +38,6 @@ class EditableSVG implements OutputJax {
     autoloadDir: any;
     ContextMenu: any;
     EVENT: any;
-    Element: any;
     FONTDATA: any;
     Mousedown: any;
     Mousemove: any;

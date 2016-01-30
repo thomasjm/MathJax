@@ -35,11 +35,10 @@
              svgarea.on('keyup', function() {
                  var found = Util.getJaxFromMath(svgarea[0]).root
                  try {
-                     console.log('TRYING TO CONVERT TO TEX');
                      texarea.val(found.toTex())
                  } catch (e) {
                      console.error("Failed to texify", e);
-                     texarea.val('INVALID')
+                     texarea.val('INVALID');
                  }
              });
 
