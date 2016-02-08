@@ -126,19 +126,19 @@ class Cursor {
     }
 
     keydown(event, recall) {
-        var direction
+        var direction;
         switch (event.which) {
         case 8: this.backspace(event, recall); break;
-        case 27: this.exitBackslashMode(false); recall(['refocus', this]); break
-        case 38: direction = Direction.UP; break
-        case 40: direction = Direction.DOWN; break
-        case 37: direction = Direction.LEFT; break
-        case 39: direction = Direction.RIGHT; break
+        case 27: this.exitBackslashMode(false); recall(['refocus', this]); break;
+        case 38: direction = Direction.UP; break;
+        case 40: direction = Direction.DOWN; break;
+        case 37: direction = Direction.LEFT; break;
+        case 39: direction = Direction.RIGHT; break;
         }
-        if (direction) {
+        if (direction !== undefined) {
             this.move(direction, event.shiftKey);
-            this.draw()
-            event.preventDefault()
+            this.draw();
+            event.preventDefault();
         }
     }
 
