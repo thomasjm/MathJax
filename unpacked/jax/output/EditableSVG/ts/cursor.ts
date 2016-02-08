@@ -12,9 +12,16 @@ class Cursor {
         SELECTION: "selection"
     }
 
+    // The node to which the cursor currently points
     node: MBaseMixin;
+
+    // TODO: convert to CursorMode
     mode: string;
+
+    // If in a row of letters, position is an int
+    // If in a fraction, position is a something to say if you're top or bottom
     position: any;
+
     boxes: any;
     startBlink: any; // setTimeout task
     renderedPosition: any;

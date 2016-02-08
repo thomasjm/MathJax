@@ -11,10 +11,10 @@ class BBOX_TEXT extends BBOX {
         super(def, "text");
 
         MathJax.HTML.addText(this.element, text);
-        this.EditableSVG.textSVG.appendChild(this.element);
+        MathJax.OutputJax.EditableSVG.textSVG.appendChild(this.element);
 
         var bbox = this.element.getBBox();
-        this.EditableSVG.textSVG.removeChild(this.element);
+        MathJax.OutputJax.EditableSVG.textSVG.removeChild(this.element);
         scale *= 1000 / Util.em;
 
         this.element.setAttribute("transform", "scale(" + Util.Fixed(scale) + ") matrix(1 0 0 -1 0 0)");
