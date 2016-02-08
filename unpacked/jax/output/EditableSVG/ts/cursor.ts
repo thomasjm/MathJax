@@ -307,7 +307,10 @@ class Cursor {
                 latex += chars.data[0];
             }
 
-            var result = Parser.parseControlSequence(latex)
+            var result = Parser.parseControlSequence("\\" + latex + "{A}")
+
+            // TODO: we get an `mi` back, here, but want an `mrow` in the
+            // `\mathcal` case
 
             if (!result) {
                 this.node.EditableSVGelem.classList.add('invalid')

@@ -1,21 +1,14 @@
 
 class Parser {
 
+    // @return texatom
     static parseControlSequence(cs) {
         var result = Parser.checkSpecialCS(cs)
         if (result) return result;
 
         var mathjaxParser = MathJax.InputJax.TeX.Parse(cs);
-
-        // Override some properties of the MathJax parser
-        mathjaxParser.csUndefined = mathjaxParser.csFindMacro = function() {};
-        mathjaxParser.GetCS = function() { return cs; };
-        mathjaxParser.mmlToken = function(x) { return x; };
-        mathjaxParser.Push = (function(x) { result = x });
-
-        mathjaxParser.ControlSequence();
-
-        return result;
+        mathjaxParser.Parse();
+        return mathjaxParser.stack.data[0].data[0];
     }
 
     static checkSpecialCS(cs) {
