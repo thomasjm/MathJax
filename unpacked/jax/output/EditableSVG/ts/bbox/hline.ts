@@ -1,7 +1,7 @@
 /// <reference path="bbox.ts" />
 
 class BBOX_HLINE extends BBOX {
-    constructor(w, t, dash, color, def) {
+    constructor(w, t, dash, color?, def?) {
         if (def == null) {
             def = {
                 "stroke-linecap": "square"
