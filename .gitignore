@@ -5,3 +5,5 @@ config/local/*.js
 unpacked/config/local/*.js
 !unpacked/config/local/local.js
 *~
+.cache
+__pycache__
