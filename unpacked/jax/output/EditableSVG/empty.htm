@@ -1,0 +1,154 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script type="text/javascript"
+                src="/MathJax.js?config=TeX-AMS-MML_EditableSVG">
+        </script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+
+        <style>
+         #mmlviz {
+             font-size: 5px;
+             ul {
+                 line-height: 5px;
+             }
+         }
+        </style>
+    </head>
+    <body>
+        <script>
+         MathJax.Hub.Config({
+             tex2jax: {
+                 inlineMath: [['$','$'], ['\\(','\\)']],
+                 preview: "TeX"
+             },
+         });
+
+         MathJax.Hub.Register.StartupHook("End", function() {
+             var texarea = $('#tex');
+             var svgarea = $('.MathJax_SVG');
+             var inputID = Util.getJaxFromMath(svgarea[0]).inputID;
+
+             svgarea.on('keyup', function() {
+                 var found = Util.getJaxFromMath(svgarea[0]).root
+                 try {
+                     texarea.val(found.toTex())
+                 } catch (e) {
+                     console.error("Failed to texify", e);
+                     texarea.val('INVALID');
+                 }
+             });
+
+             texarea.on('keyup', function() {
+                 var $script = $('#' + inputID);
+                 $script.text(texarea.val());
+                 var math2 = MathJax.InputJax.TeX.Translate($script[0]);
+                 var found = Util.getJaxFromMath(svgarea[0]);
+                 found.root.data = math2.root.data;
+                 Object.keys(math2).forEach(function(k) {
+                     if (k !== 'root') found[k] = math2[k]
+                 });
+                 found.root.rerender();
+                 visualizeJax(found.root, '#mmlviz', null);
+             });
+         });
+
+         var ie = (typeof document.selection != "undefined" && document.selection.type != "Control") && true;
+         var w3 = (typeof window.getSelection != "undefined") && true;
+         function getCaretPosition(element) {
+             var caretOffset = 0;
+             if (w3) {
+                 var range = window.getSelection().getRangeAt(0);
+                 var preCaretRange = range.cloneRange();
+                 preCaretRange.selectNodeContents(element);
+                 preCaretRange.setEnd(range.endContainer, range.endOffset);
+                 caretOffset = preCaretRange.toString().length;
+             } else if (ie) {
+                 var textRange = document.selection.createRange();
+                 var preCaretTextRange = document.body.createTextRange();
+                 preCaretTextRange.moveToElementText(element);
+                 preCaretTextRange.setEndPoint("EndToEnd", textRange);
+                 caretOffset = preCaretTextRange.text.length;
+             }
+             return caretOffset;
+         }
+
+         /*
+          * Append a visualization of the jax to a given div
+          * Pass in the jax and a jQuery selector div
+          */
+         function visualizeJax(jax, selector, cursor) {
+             selector = $(selector)
+                 selector.empty();
+             var hb = this.highlightBox;
+
+             var f = function(j, spacer) {
+                 var s;
+                 var end;
+                 if (typeof(j) === "string") {
+                     s = spacer + j + "\n";
+                     end = true;
+                 } else {
+                     s = spacer + (j ? j.type : "null") + "\n";
+                 }
+                 var item = $('<li><pre style="margin: 0;">' + s + '</pre></li>');
+                 item.appendTo(selector);
+                 if (end) return;
+                 item.on('click', function() {
+                     var bb = j.getSVGBBox();
+                     var svg = j.EditableSVGelem.ownerSVGElement;
+
+                     hb(svg, bb);
+                 });
+
+                 if (!j) return;
+
+                 for (var i = 0; i < j.data.length; i++) {
+                     f(j.data[i], spacer + " ");
+                 }
+             };
+             f(jax.root || jax, "");
+
+             cursorInfo = cursor ? JSON.stringify({
+                 type: cursor.node.type,
+                 position: cursor.position,
+                 mode: cursor.mode,
+                 selectionStart: cursor.selectionStart ? cursor.selectionStart.node.type : "null",
+                 selectionEnd: cursor.selectionEnd ? cursor.selectionEnd.node.type : "null"
+             }) : "(no cursor)";
+             selector.prepend('<pre>' + cursorInfo + '</pre>');
+
+             rootjax = jax.root; // Set a global to play with in console
+         }
+        </script>
+
+        <style>
+        </style>
+
+        <div class="main-input-box">
+	        <h2>Editable Math!</h2>
+            <!-- $$\nabla \times B={\mu}_0(J+{\epsilon}_0 \frac{\partial E}{\partial t})$$ -->
+            $$x$$
+	    </div>
+
+	    <h3>Tips:</h3>
+	    <ul>
+	        <li>Use backslash to enter LaTeX commands</li>
+            <li>Hit the spacebar to jump out of the current expression</li>
+	        <li>TODO: add hotkeys here once they work</li>
+            <li>Press Ctrl+m to make a new inline math box, and Ctrl+Shift+m to make a new block math box</li>
+	    </ul>
+
+        <div class="main-input-box">
+	        <h2>TeX</h2>
+	        <textarea rows="5" id="tex" style="width: 100%; font-family: monospace">x</textarea>
+	    </div>
+
+        <h2>MML visualization:</h2>
+        <ul id="mmlviz"></ul>
+
+    </body>
+</html>
