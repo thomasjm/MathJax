@@ -17,12 +17,14 @@ from unittest2 import TestCase
 
 class TestEditableSVG(TestCase):
     def setUp(self):
+        unpacked_dir = os.path.dirname(os.path.realpath(__file__)) + "/../../.."
+
         self.port = 8000
         self.http_server_proc = Popen(["python", "-m", "SimpleHTTPServer", str(self.port)],
-                                      cwd=(os.path.dirname(os.path.realpath(__file__)) + "/../../.."))
+                                      cwd=unpacked_dir)
 
         # Start selenium
-        self.selenium_proc = Popen(["java", "-jar", "selenium-server-standalone-2.52.0.jar"])
+        self.selenium_proc = Popen(["java", "-jar", unpacked_dir + "../test/selenium-server-standalone-2.52.0.jar"])
 
         self.driver = webdriver.Chrome()
 
