@@ -30,7 +30,7 @@ MathJax.OutputJax.EditableSVG = MathJax.OutputJax({
   version: "2.5.0",
   directory: MathJax.OutputJax.directory + "/EditableSVG",
   extensionDir: MathJax.OutputJax.extensionDir + "/EditableSVG",
-  autoloadDir: MathJax.OutputJax.directory + "/EditableSVG/autoload",
+  autoloadDir: MathJax.OutputJax.directory + "/EditableSVG/ts/autoload",
   fontDir: MathJax.OutputJax.directory + "/EditableSVG/fonts", // font name added later
 
   config: {

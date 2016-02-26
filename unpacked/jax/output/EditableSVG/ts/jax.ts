@@ -80,6 +80,8 @@ class EditableSVG implements OutputJax {
     ucMatch = MathJax.HTML.ucMatch;
 
     Config() {
+        console.log('AUTOLOAD DIR ', this.autoloadDir);
+
         // TODO: removed call to SUPER here
         var settings = MathJax.Hub.config.menuSettings,
         config = this.config,

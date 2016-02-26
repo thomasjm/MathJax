@@ -1,7 +1,7 @@
 /// <reference path="bbox.ts" />
 
 class BBOX_VLINE extends BBOX {
-    constructor(h, t, dash, color, def) {
+    constructor(h, t, dash, color?, def?) {
         if (def == null) {
             def = {
                 "stroke-linecap": "square"
