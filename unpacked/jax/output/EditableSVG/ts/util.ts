@@ -312,16 +312,6 @@ class Util {
         ];
     }
 
-    static getJaxFromMath(math) {
-        if (math.parentNode.className === "MathJax_SVG_Display") {
-            math = math.parentNode;
-        }
-        do {
-            math = math.nextSibling;
-        } while (math && math.nodeName.toLowerCase() !== "script");
-        return MathJax.Hub.getJaxFor(math);
-    }
-
     static getCursorValue(direction) {
         if (isNaN(direction)) {
             switch(direction[0].toLowerCase()) {

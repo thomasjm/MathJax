@@ -34,6 +34,13 @@ MathJax.Hub.Register.StartupHook("EditableSVG Jax Ready", function() {
         }
     });
 
+    MML.mtable.Augment({
+        toTex: function() {
+            console.log('NEED TO TOTEX THIS MTABLE: ', this);
+            return "";
+        }
+    });
+
     var oneChildNoBrace = {
         toTex: function() {
             return this.getChildTex(0);
