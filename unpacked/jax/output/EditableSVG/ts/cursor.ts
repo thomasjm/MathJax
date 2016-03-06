@@ -58,7 +58,7 @@ class Cursor {
         var cp = Util.screenCoordsToElemCoords(svg, event.clientX, event.clientY);
 
         // Find the deepest cursorable node that was clicked
-        var jax = Util.getJaxFromMath(svg.parentNode)
+        var jax = MathJax.OutputJax.EditableSVG.getJaxFromMath(svg.parentNode)
         var current = jax.root
         while (true) {
             var matchedItems = current.data.filter(function(node) {

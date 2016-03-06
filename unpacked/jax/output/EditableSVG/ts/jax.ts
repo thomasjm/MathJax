@@ -696,6 +696,16 @@ class EditableSVG implements OutputJax {
         svg.isMultiChar = true;
     }
 
+    static getJaxFromMath(math) {
+        if (math.parentNode.className === "MathJax_SVG_Display") {
+            math = math.parentNode;
+        }
+        do {
+            math = math.nextSibling;
+        } while (math && math.nodeName.toLowerCase() !== "script");
+        return MathJax.Hub.getJaxFor(math);
+    }
+
     constructor() {
         MathJax.Hub.Register.StartupHook("mml Jax Ready", function() {
             var MML = MathJax.ElementJax.mml;

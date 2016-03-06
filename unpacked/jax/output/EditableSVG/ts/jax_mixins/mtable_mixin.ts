@@ -129,10 +129,13 @@ class MTableMixin extends MBaseMixin {
         //  Compute alignment
         var Y, fY, n = "";
         if (typeof(values.align) !== "string") {values.align = String(values.align)}
-        if (values.align.match(/(top|bottom|center|baseline|axis)( +(-?\d+))?/))
-        {n = RegExp.$3||""; values.align = RegExp.$1} else {values.align = this.defaults.align}
+        if (values.align.match(/(top|bottom|center|baseline|axis)( +(-?\d+))?/)) {
+            n = RegExp.$3||"";
+            values.align = RegExp.$1
+        } else {
+            values.align = this.defaults.align
+        }
         if (n !== "") {
-
             //  Find the height of the given row
             n = parseInt(n);
             if (n < 0) {n = A.length + 1 + n}
@@ -149,14 +152,14 @@ class MTableMixin extends MBaseMixin {
                 bottom:   HD + fy - H[0],
                 center:   HD/2 - H[0],
                 baseline: HD/2 - H[0],
-                axis:     HD/2 + MathJax.InputJax.TeX.axis_height*scale - H[0]
+                axis:     HD/2 + Util.TeX.axis_height*scale - H[0]
             })[values.align];
             fY = ({
                 top:      -(HD + 2*fy),
                 bottom:   0,
                 center:   -(HD/2 + fy),
                 baseline: -(HD/2 + fy),
-                axis:     MathJax.InputJax.TeX.axis_height*scale - HD/2 - fy
+                axis:     Util.TeX.axis_height*scale - HD/2 - fy
             })[values.align];
         }
 

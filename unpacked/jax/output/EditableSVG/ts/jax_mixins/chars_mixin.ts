@@ -239,7 +239,11 @@ class CharsMixin extends MBaseMixin {
             }
         }
         if (delim.stretch) {
-            this["extendDelimiter" + delim.dir](svg, hw, delim.stretch, scale, font)
+            if (delim.dir == "H") {
+                EDITABLESVG.extendDelimiterH(svg, hw, delim.stretch, scale, font);
+            } else if (delim.dir == "V") {
+                EDITABLESVG.extendDelimiterV(svg, hw, delim.stretch, scale, font);
+            }
         }
         return svg;
     }
