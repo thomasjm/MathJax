@@ -45,14 +45,14 @@ class MTableMixin extends MBaseMixin {
                     var min = mo.Get("minsize",true);
                     if (min) {
                         if (mo.SVGcanStretch("Vertical")) {
-                            HD = mo.SVGdata.h + mo.SVGdata.d;
+                            HD = mo.EditableSVGdata.h + mo.EditableSVGdata.d;
                             if (HD) {
                                 min = Util.length2em(min,mu,HD);
-                                if (min*mo.SVGdata.h/HD > H[i]) {H[i] = min*mo.SVGdata.h/HD}
-                                if (min*mo.SVGdata.d/HD > D[i]) {D[i] = min*mo.SVGdata.d/HD}
+                                if (min*mo.EditableSVGdata.h/HD > H[i]) {H[i] = min*mo.EditableSVGdata.h/HD}
+                                if (min*mo.EditableSVGdata.d/HD > D[i]) {D[i] = min*mo.EditableSVGdata.d/HD}
                             }
                         } else if (mo.SVGcanStretch("Horizontal")) {
-                            min = Util.length2em(min,mu,mo.SVGdata.w);
+                            min = Util.length2em(min, mu, mo.EditableSVGdata.w);
                             if (min > W[j]) {W[j] = min}
                         }
                     }
