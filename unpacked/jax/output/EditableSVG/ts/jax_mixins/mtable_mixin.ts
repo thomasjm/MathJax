@@ -5,7 +5,7 @@ class MTableMixin extends MBaseMixin {
 
     toSVG() {
         this.SVGgetStyles();
-        var svg = new BBOX_SVG();
+        var svg = new BBOX_G();
 
         var scale = this.SVGgetScale(svg);
 
