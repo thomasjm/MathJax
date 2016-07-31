@@ -50,7 +50,7 @@ class MTableMixin extends MBaseMixin {
                                 min = Util.length2em(min,mu,HD);
                                 if (min*mo.EditableSVGdata.h/HD > H[i]) {H[i] = min*mo.EditableSVGdata.h/HD}
                                 if (min*mo.EditableSVGdata.d/HD > D[i]) {D[i] = min*mo.EditableSVGdata.d/HD}
-                            }
+n                            }
                         } else if (mo.SVGcanStretch("Horizontal")) {
                             min = Util.length2em(min, mu, mo.EditableSVGdata.w);
                             if (min > W[j]) {W[j] = min}
@@ -307,5 +307,133 @@ class MTableMixin extends MBaseMixin {
             svg.x = svg.X = 167;
         }
         super.SVGhandleSpace(svg);
+    }
+
+    //////////////////
+    // Cursor stuff //
+    //////////////////
+
+    isCursorable() { return true; }
+
+    moveCursorFromParent(cursor, direction) {
+        if (direction == Direction.RIGHT) {
+            // Try to move into the (0, 0) cell
+            var mtr = this.data[0];
+            var mtd = mtr.data[0];
+            return mtd.data[0].moveCursorFromParent(cursor, direction);
+        } else if (direction == Direction.LEFT) {
+            // Try to move into the bottom right cell
+            var mtr = this.data[this.data.length-1];
+            var mtd = mtr.data[mtr.data.length-1];
+            return mtd.data[0].moveCursorFromParent(cursor, direction);
+        } else {
+            console.log("TODO: unimplemented direction for moveCursorFromParent in mtable_mixin.ts");
+        }
+    }
+
+    moveCursorFromChild(cursor, direction, child) {
+        console.log("moveCursorFromChild called!");
+    }
+
+    // TODO: fix this to use the normal (x, y), not the (clientX, clientY)
+    moveCursorFromClick(cursor, x, y, clientX, clientY) {
+        // See if we hit any cell
+        for (var i = 0; i < this.data.length; i++) {
+            var mtr = this.data[i];
+            for (var j = 0; j < mtr.data.length; j++) {
+                var mtd = mtr.data[j];
+
+                var node = mtd.data[0];
+                if (Util.nodeContainsScreenPoint(node, clientX, clientY)) {
+                    node.moveCursorFromClick(cursor, x, y);
+                    return;
+                }
+            }
+        }
+
+        console.log("Didn't manage to move cursor");
+    }
+
+    moveCursor(cursor, direction) {
+        console.log("moveCursor called!");
+    }
+
+    drawCursor(cursor) {
+        console.log("drawCursor called!");
+    }
+
+    drawCursorHighlight(cursor) {
+        console.log('drawCursorHighlight called!');
+    }
+}
+
+
+class MTableRowMixin extends MBaseMixin {
+    isCursorable() { return true; }
+
+    moveCursorFromChild(cursor, direction, child) {
+        console.log("mtr moveCursorFromChild called!");
+    }
+}
+
+class MTableCellMixin extends MBaseMixin {
+    isCursorable() { return true; }
+
+    moveCursorFromChild(cursor, direction, child) {
+        // Determine the row and column number
+
+        var row = this.parent;
+        var mtable = this.parent.parent;
+
+        var colIndex = row.data.indexOf(this);
+        var rowIndex = mtable.data.indexOf(row);
+
+        var w = row.data.length;
+        var h = mtable.data.length;
+
+        if (direction == Direction.RIGHT) {
+            if (colIndex == w-1) {
+                // Try to move right of the matrix
+                mtable.parent.moveCursorFromChild(cursor, direction, mtable);
+            } else {
+                // Move one cell to the right
+                var neighborMtd = row.data[colIndex+1];
+                neighborMtd.moveCursorFromParent(cursor, direction);
+            }
+        } else if (direction == Direction.LEFT) {
+            if (colIndex == 0) {
+                // Try to move left of the matrix
+                mtable.parent.moveCursorFromChild(cursor, direction, mtable);
+            } else {
+                // Move one cell to the left
+                var neighborMtd = row.data[colIndex-1];
+                neighborMtd.moveCursorFromParent(cursor, direction);
+            }
+        } else if (direction == Direction.DOWN) {
+            if (rowIndex == h-1) {
+                // Try to move below the matrix
+                mtable.parent.moveCursorFromChild(cursor, direction, mtable);
+            } else {
+                // Move one cell down
+                var neighborRow = mtable.data[rowIndex+1];
+                var neighborMtd = neighborRow.data[colIndex];
+                neighborMtd.moveCursorFromParent(cursor, direction);
+            }
+        } else if (direction == Direction.UP) {
+            if (rowIndex == 0) {
+                // Try to move above the matrix
+                mtable.parent.moveCursorFromChild(cursor, direction, mtable);
+            } else {
+                // Move one cell down
+                var neighborRow = mtable.data[rowIndex-1];
+                var neighborMtd = neighborRow.data[colIndex];
+                neighborMtd.moveCursorFromParent(cursor, direction);
+            }
+        }
+    }
+
+    moveCursorFromParent(cursor, direction) {
+        // We should contain an mrow, so move into it
+        this.data[0].moveCursorFromParent(cursor, direction);
     }
 }

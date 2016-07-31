@@ -274,9 +274,10 @@ class Util {
     }
 
     static nodeContainsScreenPoint(node, x, y) {
-        var bb = node.getBB && node.getBB()
+        var bb = node.getBB && node.getBB();
         var p = this.screenCoordsToElemCoords(node.EditableSVGelem, x, y);
-        if (!bb || !p) return false
+
+        if (!bb || !p) return false;
 
         return Util.boxContains(bb, p.x, p.y);
     }

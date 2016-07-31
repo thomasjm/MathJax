@@ -155,16 +155,12 @@
       ".MathJax_MenuDisabled": {
         color:"GrayText"
       },
-<<<<<<< d4ab1b35c96dd964eaa9e1ed2c86e39fffbdacf6
-=======
 
->>>>>>> All EditableSVG work
       ".MathJax_MenuActive": {
         "background-color": (isPC ? "Highlight" : "#606872"),
         color: (isPC ? "HighlightText" : "white")
       },
 
-<<<<<<< d4ab1b35c96dd964eaa9e1ed2c86e39fffbdacf6
       ".MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus": {
         "background-color": "#E8E8E8"
       },
@@ -213,28 +209,22 @@
       },
       ".MathJax_MenuClose:hover:focus": {
         outline:"none"
-=======
+      },
       ".MathJax_Menu_Close": {
           position:"absolute",
           width: "31px", height: "31px",
           top:"-15px", left:"-15px"
->>>>>>> All EditableSVG work
       }
     }
   });
 
-<<<<<<< d4ab1b35c96dd964eaa9e1ed2c86e39fffbdacf6
   var FALSE, HOVER, KEY;
-=======
-  var FALSE, HOVER;
->>>>>>> All EditableSVG work
+
   HUB.Register.StartupHook("MathEvents Ready",function () {
     FALSE = MathJax.Extension.MathEvents.Event.False;
     HOVER = MathJax.Extension.MathEvents.Hover;
     KEY = MathJax.Extension.MathEvents.Event.KEY;
   });
-
-<<<<<<< d4ab1b35c96dd964eaa9e1ed2c86e39fffbdacf6
 
   /*************************************************************/
   /*
@@ -279,9 +269,6 @@
     Space: function(event, menu) { }
   }, {});
 
-
-=======
->>>>>>> All EditableSVG work
   /*************************************************************/
   /*
    *  The main menu class
@@ -329,12 +316,7 @@
 
       div.appendChild(menu);
       this.posted = true;
-<<<<<<< d4ab1b35c96dd964eaa9e1ed2c86e39fffbdacf6
       if (menu.offsetWidth) menu.style.width = (menu.offsetWidth+2) + "px";
-=======
-
-      menu.style.width = (menu.offsetWidth+2) + "px";
->>>>>>> All EditableSVG work
       var x = event.pageX, y = event.pageY;
       if (!x && !y && "clientX" in event) {
         x = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
@@ -375,10 +357,7 @@
       }
 
       menu.style.left = x+"px"; menu.style.top = y+"px";
-<<<<<<< d4ab1b35c96dd964eaa9e1ed2c86e39fffbdacf6
-=======
 
->>>>>>> All EditableSVG work
       if (document.selection && document.selection.empty) {document.selection.empty()}
 
       // Focusing while keeping the scroll position.
@@ -459,15 +438,7 @@
     Space: function(event, menu) {
       this.Remove(event, menu);
     }
-<<<<<<< d4ab1b35c96dd964eaa9e1ed2c86e39fffbdacf6
   },{
-=======
-
-  },{
-
-    config: CONFIG,
->>>>>>> All EditableSVG work
-
     config: CONFIG,
 
     Remove:     function (event) {return MENU.Event(event,this,"Remove")},
@@ -540,7 +511,6 @@
       }
     },
 
-<<<<<<< d4ab1b35c96dd964eaa9e1ed2c86e39fffbdacf6
     /*************************************************************/
     /*
      *  Keyboard navigation of menu.
@@ -570,11 +540,7 @@
       MENU.active = node;
       node.focus();
     },
-=======
-    saveCookie: function () {HTML.Cookie.Set("menu",this.cookie)},
-    getCookie: function () {this.cookie = HTML.Cookie.Get("menu")},
 
->>>>>>> All EditableSVG work
     //
     // Focus is a global affair, since we only ever want a single focused item.
     //
@@ -693,8 +659,6 @@
     },
     Mouseup: function (event,menu) {return this.Remove(event,menu)},
 
-<<<<<<< d4ab1b35c96dd964eaa9e1ed2c86e39fffbdacf6
-
     DeactivateSubmenus: function(menu) {
       var menus = document.getElementById("MathJax_MenuFrame").childNodes,
           items = ITEM.GetMenuNode(menu).childNodes;
@@ -718,8 +682,6 @@
       }
     },
 
-=======
->>>>>>> All EditableSVG work
     Touchstart: function (event,menu) {return this.TouchEvent(event,menu,"Mousedown")},
     Touchend: function (event,menu)   {return this.TouchEvent(event,menu,"Mouseup")},
     TouchEvent: function (event,menu,type) {
@@ -1090,21 +1052,9 @@
   /*
    *  Handle the ABOUT box
    */
-<<<<<<< d4ab1b35c96dd964eaa9e1ed2c86e39fffbdacf6
   MENU.About = function (event) {
     var font = MENU.About.GetFont();
     var format = MENU.About.GetFormat();
-=======
-  MENU.About = function () {
-    var HTMLCSS = OUTPUT["HTML-CSS"] || {};
-    var font =
-       (HTMLCSS.imgFonts ? "image" :
-       (HTMLCSS.fontInUse ?
-         (HTMLCSS.webFonts ? "web" : "local")+" "+HTMLCSS.fontInUse :
-       (OUTPUT.SVG ? "web SVG" : "generic")) ) + " fonts";
-    var format = (!HTMLCSS.webFonts || HTMLCSS.imgFonts ? null :
-        HTMLCSS.allowWebFonts.replace(/otf/,"woff or otf") + " fonts");
->>>>>>> All EditableSVG work
     var jax = ["MathJax.js v"+MathJax.fileversion,["br"]];
     jax.push(["div",{style:{"border-top":"groove 2px",margin:".25em 0"}}]);
     MENU.About.GetJax(jax,MathJax.InputJax,["InputJax","%1 Input Jax v%2"]);
@@ -1186,10 +1136,6 @@
   };
 
 
-<<<<<<< d4ab1b35c96dd964eaa9e1ed2c86e39fffbdacf6
-=======
-
->>>>>>> All EditableSVG work
   /*
    *  Handle the MathJax HELP menu
    */
@@ -1602,20 +1548,13 @@
         ),
         ITEM.RULE(),
         ITEM.SUBMENU(["Renderer","Math Renderer"],    {hidden:!CONFIG.showRenderer},
-<<<<<<< d4ab1b35c96dd964eaa9e1ed2c86e39fffbdacf6
           ITEM.RADIO(["HTML-CSS","HTML-CSS"],       "renderer", {action: MENU.Renderer}),
           ITEM.RADIO(["CommonHTML","Common HTML"],  "renderer", {action: MENU.Renderer, value:"CommonHTML"}),
           ITEM.RADIO(["PreviewHTML","Preview HTML"],"renderer", {action: MENU.Renderer, value:"PreviewHTML"}),
           ITEM.RADIO(["MathML","MathML"],           "renderer", {action: MENU.Renderer, value:"NativeMML"}),
           ITEM.RADIO(["SVG","SVG"],                 "renderer", {action: MENU.Renderer}),
           ITEM.RADIO(["PlainSource","Plain Source"],"renderer", {action: MENU.Renderer, value:"PlainSource"}),
-=======
-          ITEM.RADIO("HTML-CSS",     "renderer", {action: MENU.Renderer}),
-          ITEM.RADIO("Fast HTML",    "renderer", {action: MENU.Renderer, value:"CommonHTML"}),
-          ITEM.RADIO("MathML",       "renderer", {action: MENU.Renderer, value:"NativeMML"}),
-          ITEM.RADIO("SVG",          "renderer", {action: MENU.Renderer}),
-          ITEM.RADIO("Editable SVG", "renderer", {action: MENU.Renderer, value:"EditableSVG"}),
->>>>>>> All EditableSVG work
+          ITEM.RADIO(["EditableSVG"],               "renderer", {action: MENU.Renderer, value:"EditableSVG"}),
           ITEM.RULE(),
           ITEM.CHECKBOX(["FastPreview","Fast Preview"], "FastPreview"),
           ITEM.CHECKBOX(["AssistiveMML","Assistive MathML"], "assistiveMML", {action:MENU.AssistiveMML}),

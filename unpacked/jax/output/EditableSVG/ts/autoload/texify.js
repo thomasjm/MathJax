@@ -1,13 +1,14 @@
 MathJax.Hub.Register.StartupHook("EditableSVG Jax Ready", function() {
     var MML = MathJax.ElementJax.mml;
     var SVG = MathJax.OutputJax.EditableSVG;
-    var DEFS = MathJax.InputJax.TeX.Definitions
-    var entities
+    var DEFS = MathJax.InputJax.TeX.Definitions;
+    var entities;
 
     MML.mbase.Augment({
         toTex: function() {
-            throw new Error('toTex not implemented for '+this.type);
+            throw new Error('toTex not implemented for ' + this.type);
         },
+
         getChildTex: function(i) {
             return this.data[i] ? this.data[i].toTex() : '';
         }
@@ -36,8 +37,34 @@ MathJax.Hub.Register.StartupHook("EditableSVG Jax Ready", function() {
 
     MML.mtable.Augment({
         toTex: function() {
-            console.log('NEED TO TOTEX THIS MTABLE: ', this);
-            return "";
+            var tex = '\\begin{bmatrix}\n';
+            for (var i = 0; i < this.data.length; i++) {
+                tex += this.data[i].toTex();
+            };
+            tex += "\\end{bmatrix}";
+            return tex;
+        }
+    });
+
+    MML.mtr.Augment({
+        toTex: function() {
+            var tex = "";
+            for (var i = 0; i < this.data.length; i++) {
+                tex += " " + this.data[i].toTex();
+            }
+            tex += " \\\\ \n";
+            return tex;
+        }
+    });
+
+    MML.mtd.Augment({
+        toTex: function() {
+            var tex = "";
+            for (var i = 0; i < this.data.length; i++) {
+                tex += this.data[i].toTex();
+                if (i < this.data.length-1) tex += " & ";
+            }
+            return tex;
         }
     });
 

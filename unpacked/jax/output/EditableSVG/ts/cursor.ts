@@ -57,6 +57,8 @@ class Cursor {
 
         var cp = Util.screenCoordsToElemCoords(svg, event.clientX, event.clientY);
 
+        console.log("CP: ", cp);
+
         // Find the deepest cursorable node that was clicked
         var jax = MathJax.OutputJax.EditableSVG.getJaxFromMath(svg.parentNode)
         var current = jax.root
@@ -65,8 +67,9 @@ class Cursor {
                 if (node === null) return false;
                 return Util.nodeContainsScreenPoint(node, event.clientX, event.clientY);
             });
+
             if (matchedItems.length > 1) {
-                console.error('huh? matched more than one child');
+                console.error('Huh? matched more than one child');
             } else if (matchedItems.length === 0) {
                 break;
             }
@@ -78,7 +81,7 @@ class Cursor {
                 break;
             }
         }
-        current.moveCursorFromClick(this, cp.x, cp.y);
+        current.moveCursorFromClick(this, cp.x, cp.y, event.clientX, event.clientY);
     }
 
     moveTo(node, position) {

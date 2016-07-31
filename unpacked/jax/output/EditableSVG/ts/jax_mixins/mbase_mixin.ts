@@ -55,7 +55,7 @@ class MBaseMixin extends ElementJax {
     getBB(relativeTo) {
         var elem = this.EditableSVGelem;
         if (!elem) {
-            console.log('Oh no! Couldn\'t find elem for this');
+            console.log("Oh no! Couldn't find elem for this: ", this);
             return;
         }
 

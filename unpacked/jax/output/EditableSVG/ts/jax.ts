@@ -740,9 +740,13 @@ class EditableSVG implements OutputJax {
             MML.munderover.Augment(MUnderOverMixin.getMethods(this));
             MML.msubsup.Augment(MSubSupMixin.getMethods(this));
             MML.mmultiscripts.Augment(MMultiScriptsMixin.getMethods(this));
-            MML.mtable.Augment(MTableMixin.getMethods(this));
             MML.math.Augment(MathMixin.getMethods(this));
             MML.TeXAtom.Augment(TeXAtomMixin.getMethods(this));
+
+            MML.mtable.Augment(MTableMixin.getMethods(this));
+            MML.mtr.Augment(MTableRowMixin.getMethods(this));
+            MML.mtd.Augment(MTableCellMixin.getMethods(this));
+
 
             MML["annotation-xml"].Augment({
                 toSVG: MML.mbase.SVGautoload

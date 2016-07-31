@@ -36,14 +36,20 @@ class MTableAutoloadMixin extends MBaseMixin {
   toSVG(span) {
     this.SVGgetStyles();
     var svg = this.SVG(), scale = this.SVGgetScale(svg);
-    if (this.data.length === 0) {this.SVGsaveData(svg);return svg}
+
+    if (this.data.length === 0) {
+      this.SVGsaveData(svg);
+      return svg;
+    }
+
     var values = this.getValues("columnalign","rowalign","columnspacing","rowspacing",
                                 "columnwidth","equalcolumns","equalrows",
                                 "columnlines","rowlines","frame","framespacing",
                                 "align","useHeight","width","side","minlabelspacing");
     //  Handle relative width as fixed width in relation to container
-    if (values.width.match(/%$/))
-    {svg.width = values.width = SVG.Em((SVG.cwidth/1000)*(parseFloat(values.width)/100))}
+      if (values.width.match(/%$/)) {
+          svg.width = values.width = SVG.Em((SVG.cwidth/1000)*(parseFloat(values.width)/100));
+      }
 
     var mu = this.SVGgetMu(svg);
     var LABEL = -1;
