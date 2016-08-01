@@ -157,7 +157,7 @@ class MBaseMixin extends ElementJax {
 
         if (this["class"]) {
             svg.removeable = false;
-            MathJax.OutputJax.EditableSVG.Element(svg.element, {
+            Util.Element(svg.element, {
                 "class": this["class"]
             })
         }
@@ -166,13 +166,13 @@ class MBaseMixin extends ElementJax {
         // FIXME:  if an element has an id, its zoomed copy will have the same ID
         if (this.id) {
             svg.removeable = false;
-            MathJax.OutputJax.EditableSVG.Element(svg.element, {
+            Util.Element(svg.element, {
                 "id": this.id
             })
         }
 
         if (this.href) {
-            var a = MathJax.OutputJax.EditableSVG.Element("a", {
+            var a = Util.Element("a", {
                 "class": "mjx-svg-href"
             });
             a.setAttributeNS(Util.XLINKNS, "href", this.href);
@@ -347,7 +347,7 @@ class MBaseMixin extends ElementJax {
             }
             dup.x = 0;
             dup.y = 0;
-            svg.element = MathJax.OutputJax.EditableSVG.Element("g");
+            svg.element = Util.Element("g");
             svg.removeable = true;
             svg.Add(dup, bleft + pleft, 0);
         }
@@ -368,7 +368,7 @@ class MBaseMixin extends ElementJax {
         if (values.background !== MathJax.ElementJax.mml.COLOR.TRANSPARENT) {
             var nodeName = svg.element.nodeName.toLowerCase();
             if (nodeName !== "g" && nodeName !== "svg") {
-                var g = MathJax.OutputJax.EditableSVG.Element("g");
+                var g = Util.Element("g");
                 g.appendChild(svg.element);
                 svg.element = g;
                 svg.removeable = true;

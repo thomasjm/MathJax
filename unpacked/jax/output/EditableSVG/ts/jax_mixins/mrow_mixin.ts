@@ -46,9 +46,9 @@ class MRowMixin extends MBaseMixin {
         // TODO: added just to support the backslash-mode gray box
         // This allows you to set the class on the SVG elem based on the model
         // This is probably not the best way to do this
-        if (this.cls) {
-            svg.element.setAttribute("class", this.cls);
-        }
+        // if (this.cls) {
+        //     svg.element.setAttribute("class", this.cls);
+        // }
 
         return svg;
     }

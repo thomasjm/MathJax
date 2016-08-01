@@ -46,7 +46,7 @@ MathJax.Hub.Register.StartupHook("EditableSVG Jax Ready",function () {
       def.transform = "translate(0,"+H+") matrix(1 0 0 -1 0 0)";
       def.preserveAspectRatio = "none";
       this.SUPER(arguments).Init.call(this,def);
-      this.element.setAttributeNS(XLINKNS,"href",img.src);
+      this.element.setAttributeNS(Util.XLINKNS, "href", img.src);
       this.w = this.r = W; this.h = this.H = H + y;
       this.d = this.D = -y; this.l = 0;
     }

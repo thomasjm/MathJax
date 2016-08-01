@@ -286,7 +286,7 @@ class Util {
         var d = 100; // TODO: use proper units
 
         var drawLine = function(x1, y1, x2, y2) {
-            var line = document.createElementNS(this.SVGNS, 'line')
+            var line = document.createElementNS(Util.SVGNS, 'line')
             svg.appendChild(line)
             line.setAttribute('style', 'stroke:rgb(0,0,255);stroke-width:20')
             line.setAttribute('x1', x1)
@@ -303,10 +303,9 @@ class Util {
             // Top right
             drawLine(bb.x + bb.width, bb.y, bb.x + bb.width - d, bb.y),
             drawLine(bb.x + bb.width, bb.y, bb.x + bb.width, bb.y + d),
-            // Bottom right
+            // Bottom left
             drawLine(bb.x, bb.y + bb.height, bb.x, bb.y + bb.height - d),
             drawLine(bb.x, bb.y + bb.height, bb.x + d, bb.y + bb.height),
-
             // Bottom right
             drawLine(bb.x + bb.width, bb.y + bb.height, bb.x + bb.width - d, bb.y + bb.height),
             drawLine(bb.x + bb.width, bb.y + bb.height, bb.x + bb.width, bb.y + bb.height - d)

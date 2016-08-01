@@ -376,8 +376,8 @@ class Cursor {
                     grayRow.backslashRow = true
                     this.node.data.splice(this.position, 0, null)
                     this.node.SetData(this.position, grayRow)
-                    var oldClass = grayRow.cls ? grayRow.cls + ' ' : '';
-                    grayRow.cls = oldClass + "backslash-mode";
+                    var oldClass = grayRow.class ? grayRow.class + ' ' : '';
+                    grayRow.class = oldClass + "backslash-mode";
                     recall([this, function() {
                         this.moveTo(grayRow, 1)
                         this.refocus()
