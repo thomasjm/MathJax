@@ -361,19 +361,6 @@ class Cursor {
 
         if (!this.node) return;
 
-        if (this.node.type === 'hole') {
-            // Convert this hole into an empty mrow so the rest of this function
-            // can proceed to put something in it
-            // NOTE: depends on the assumption that every code path through the rest of this
-            // function inserts something into the mrow
-            var parent = this.node.parent;
-            var holeIndex = parent.data.indexOf(this.node);
-            var row = MathJax.ElementJax.mml.mrow()
-            console.log("INSERTING MROW");
-            parent.SetData(holeIndex, row)
-            row.moveCursorFromParent(this, Direction.RIGHT)
-        }
-
         if (this.mode === Cursor.CursorMode.BACKSLASH) {
             this.node.EditableSVGelem.classList.remove('invalid')
         }
@@ -398,6 +385,18 @@ class Cursor {
                 }
                 node = node.parent;
             }
+        }
+
+        if (this.node.type === 'hole') {
+            // Convert this hole into an empty mrow so the rest of this function
+            // can proceed to put something in it
+            // NOTE: depends on the assumption that every code path through the rest of this
+            // function inserts something into the mrow
+            var parent = this.node.parent;
+            var holeIndex = parent.data.indexOf(this.node);
+            var row = MathJax.ElementJax.mml.mrow()
+            parent.SetData(holeIndex, row)
+            row.moveCursorFromParent(this, Direction.RIGHT)
         }
 
         if (this.node.type === 'mrow') {
