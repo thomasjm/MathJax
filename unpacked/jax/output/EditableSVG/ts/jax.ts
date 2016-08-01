@@ -486,9 +486,10 @@ class EditableSVG implements OutputJax {
                 if (type[0] !== 'm' || type === 'mrow') {
                     EditableSVG.preprocessElementJax(cur)
                 } else {
-                    var row = new MathJax.ElementJax.mml.mrow()
-                    row.Append(EditableSVG.preprocessElementJax(cur))
-                    root.SetData(i, row)
+                    console.log("Wrapping a thing in an mrow");
+                    // var row = new MathJax.ElementJax.mml.mrow()
+                    // row.Append(EditableSVG.preprocessElementJax(cur))
+                    // root.SetData(i, row)
                 }
             }
         }

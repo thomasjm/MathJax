@@ -15,7 +15,7 @@ class Parser {
 
         mathjaxParser.ControlSequence();
 
-        return result;
+        return [result];
     }
 
     static checkSpecialCS(cs) {
@@ -24,15 +24,37 @@ class Parser {
 
         if (cs === 'frac') {
             var hole = new MML.hole();
-            var result = new MML.mfrac(hole, new MML.hole());
+            var mfrac = new MML.mfrac(hole, new MML.hole());
+
+            var result = [mfrac];
             result.moveCursorAfter = [hole, 0];
             return result;
         }
 
         if (cs === 'sqrt') {
-            var result = new MML.msqrt();
+            var msqrt = new MML.msqrt();
             var hole = new MML.hole();
-            result.SetData(0, hole);
+            msqrt.SetData(0, hole);
+
+            var result = [msqrt];
+            result.moveCursorAfter = [hole, 0];
+            return result;
+        }
+
+        if (cs === 'matrix' || cs === 'bmatrix') {
+            var mtable = new MML.mtable();
+            var mtr = new MML.mtr();
+            var mtd = new MML.mtd();
+            var hole = new MML.hole();
+
+            mtable.SetData(0, mtr);
+            mtr.SetData(0, mtd);
+            mtd.SetData(0, hole);
+
+            var lbracket = new MML.mo(new MML.chars("["));
+            var rbracket = new MML.mo(new MML.chars("]"));
+
+            var result = [lbracket, mtable, rbracket];
             result.moveCursorAfter = [hole, 0];
             return result;
         }
@@ -51,7 +73,7 @@ class Parser {
                     value = cs;
                 }
 
-                return new MML.mo(new MML.chars(value));
+                return [new MML.mo(new MML.chars(value))];
             }
         }
     }

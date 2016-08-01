@@ -163,17 +163,29 @@ class Cursor {
     // TODO: give replace a type here...
     exitBackslashMode(replace: any) {
         this.mode = Cursor.CursorMode.NORMAL
+
         var ppos = this.node.parent.data.indexOf(this.node)
+
         if (!replace) {
-            this.node.parent.data.splice(ppos, 1)
+            this.node.parent.data.splice(ppos, 1);
         } else {
-            this.node.parent.SetData(ppos++, replace)
+            var data = this.node.parent.data;
+
+            // Fill in an array of nulls first to make room
+            var arr = [];
+            for (var i = 0; i < replace.length; i++) arr.push(null);
+            data.splice.apply(data, [ppos, 1].concat(arr) );
+
+            // Now call SetData to put the actual data in
+            for (var i = 0; i < replace.length; i++) {
+                this.node.parent.SetData(ppos + i, replace[i]);
+            }
         }
 
         if (replace && replace.moveCursorAfter) {
-            this.moveTo.apply(this, replace.moveCursorAfter)
+            this.moveTo.apply(this, replace.moveCursorAfter);
         } else {
-            this.moveTo(this.node.parent, ppos)
+            this.moveTo(this.node.parent, ppos+1);
         }
     }
 
@@ -308,12 +320,18 @@ class Cursor {
                 latex += chars.data[0];
             }
 
-            var result = Parser.parseControlSequence(latex)
+            var result = Parser.parseControlSequence(latex);
+
+            // var result = MathJax.InputJax.TeX.Parse('\\' + latex);
+            // The first layer is an mml
+            // result = result.stack.data[0].data[0];
 
             if (!result) {
                 this.node.EditableSVGelem.classList.add('invalid')
                 return;
             }
+
+            console.log("Got result: ", result);
 
             var mrow = this.node;
             var index = mrow.parent.data.indexOf(mrow)
@@ -325,7 +343,7 @@ class Cursor {
             }]);
         } else {
             // Spaces help us jump out of boxes
-            this.node.moveCursor(this, 'r');
+            this.node.moveCursor(this, Direction.RIGHT);
 
             recall([this, function() {
                 this.refocus()
@@ -351,12 +369,35 @@ class Cursor {
             var parent = this.node.parent;
             var holeIndex = parent.data.indexOf(this.node);
             var row = MathJax.ElementJax.mml.mrow()
+            console.log("INSERTING MROW");
             parent.SetData(holeIndex, row)
             row.moveCursorFromParent(this, Direction.RIGHT)
         }
 
         if (this.mode === Cursor.CursorMode.BACKSLASH) {
             this.node.EditableSVGelem.classList.remove('invalid')
+        }
+
+        // TODO: move this into central hotkey-handling module
+        if (event.ctrlKey && event.shiftKey) {
+            var node = this.node;
+            while (node) {
+                if (node.type == "mtable" && code == 10) {
+                    node.addColumn();
+                    recall([this, function() { this.refocus() }]);
+                }
+                node = node.parent;
+            }
+        }
+        if (event.ctrlKey && !event.shiftKey) {
+            var node = this.node;
+            while (node) {
+                if (node.type == "mtable" && code == 10) {
+                    node.addRow();
+                    recall([this, function() { this.refocus() }]);
+                }
+                node = node.parent;
+            }
         }
 
         if (this.node.type === 'mrow') {
@@ -424,7 +465,7 @@ class Cursor {
         recall([this, function() {
             this.move(Direction.RIGHT)
             this.refocus()
-        }])
+        }]);
     }
 
     clearBoxes() {

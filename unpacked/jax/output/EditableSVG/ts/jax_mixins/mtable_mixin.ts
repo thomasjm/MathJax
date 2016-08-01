@@ -365,6 +365,32 @@ n                            }
     drawCursorHighlight(cursor) {
         console.log('drawCursorHighlight called!');
     }
+
+    addRow() {
+        var MML = MathJax.ElementJax.mml;
+
+        var numCols = this.data[0].data.length;
+        var newRow = new MML.mtr();
+        for (var i = 0; i < numCols; i++) {
+            var mtd = new MML.mtd();
+            var mrow = new MML.mrow();
+            mtd.SetData(0, mrow);
+            mrow.SetData(0, new MML.hole());
+            newRow.SetData(i, mtd);
+        }
+        this.SetData(this.data.length, newRow);
+    }
+
+    addColumn() {
+        var MML = MathJax.ElementJax.mml;
+        for (var i = 0; i < this.data.length; i++) {
+            var mtd = new MML.mtd();
+            var mrow = new MML.mrow();
+            mtd.SetData(0, mrow);
+            mrow.SetData(0, new MML.hole());
+            this.data[i].SetData(this.data[i].data.length, mtd);
+        }
+    }
 }
 
 
