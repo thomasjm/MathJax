@@ -57,8 +57,6 @@ class Cursor {
 
         var cp = Util.screenCoordsToElemCoords(svg, event.clientX, event.clientY);
 
-        console.log("CP: ", cp);
-
         // Find the deepest cursorable node that was clicked
         var jax = MathJax.OutputJax.EditableSVG.getJaxFromMath(svg.parentNode)
         var current = jax.root
@@ -370,7 +368,11 @@ class Cursor {
                     this.mode = Cursor.CursorMode.BACKSLASH;
 
                     // Insert mrow
-                    var grayRow = MathJax.ElementJax.mml.mrow(MathJax.ElementJax.mml.mo(MathJax.ElementJax.mml.entity('#x005C')));
+                    var grayRow = MathJax.ElementJax.mml.mrow(
+                        MathJax.ElementJax.mml.mo(
+                            MathJax.ElementJax.mml.entity('#x005C')
+                        )
+                    );
                     grayRow.backslashRow = true
                     this.node.data.splice(this.position, 0, null)
                     this.node.SetData(this.position, grayRow)

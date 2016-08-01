@@ -19,7 +19,7 @@ class TestEditableSVG(TestCase):
     def setUp(self):
         unpacked_dir = os.path.dirname(os.path.realpath(__file__)) + "/../../.."
 
-        self.port = 8000
+        self.port = 8123
         self.http_server_proc = Popen(["python", "-m", "SimpleHTTPServer", str(self.port)],
                                       cwd=unpacked_dir)
 
