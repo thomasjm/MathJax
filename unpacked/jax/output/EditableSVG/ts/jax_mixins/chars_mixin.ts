@@ -131,8 +131,6 @@ class CharsMixin extends MBaseMixin {
                 svg.Add(c, svg.w, 0);
                 MathJax.Hub.signal.Post(["SVG Jax - unknown char", n, variant]);
             }
-
-            return svg;
         }
 
         if (text.length == 1 && font.skew && font.skew[n]) {

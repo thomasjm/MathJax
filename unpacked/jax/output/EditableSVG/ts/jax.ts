@@ -501,10 +501,22 @@ class EditableSVG implements OutputJax {
         math.rerender = rerender
         span.setAttribute('tabindex', '0')
 
+        var addTexToDOM = function() {
+            var tex = math.toTex();
+            console.log("Tex: ", tex);
+            console.log("math: ", math);
+            math.EditableSVGelem.setAttribute("tex", tex);
+        }
+
+        MathJax.Hub.Register.StartupHook("End",function () {
+            addTexToDOM();
+        });
+
         function rerender(callback) {
             try {
-                EditableSVG.preprocessElementJax(math).toSVG(span, div, true)
-                math.cursor.refocus()
+                EditableSVG.preprocessElementJax(math).toSVG(span, div, true);
+                math.cursor.refocus();
+                addTexToDOM();
             } catch (err) {
                 if (err.restart) {
                     MathJax.Callback.After([rerender, callback], err.restart)
