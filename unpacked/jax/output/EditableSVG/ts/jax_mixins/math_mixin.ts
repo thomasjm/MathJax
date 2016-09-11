@@ -140,6 +140,18 @@ class MathMixin extends MBaseMixin {
     //////////////////
 
     moveCursorFromChild(cursor, direction, child) {
-        return false
+        // Signal that someone tried to move out of this box
+        if (direction == Direction.LEFT) {
+            MathJax.Hub.Startup.signal.Post("EditableSVG move_cursor_left");
+        } else if (direction == Direction.RIGHT) {
+            MathJax.Hub.Startup.signal.Post("EditableSVG move_cursor_right");
+        } else if (direction == Direction.UP) {
+            MathJax.Hub.Startup.signal.Post("EditableSVG move_cursor_up");
+        } if (direction == Direction.DOWN) {
+            MathJax.Hub.Startup.signal.Post("EditableSVG move_cursor_down");
+        }
+
+        // As far as the EditableSVG goes, don't let the cursor actually move
+        return false;
     }
 }

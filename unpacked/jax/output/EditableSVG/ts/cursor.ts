@@ -1,7 +1,4 @@
 
-// TODO: remove
-declare function visualizeJax(jax: any, selector: string, ptr: any);
-
 class Cursor {
     selectionStart: any;
     selectionEnd: any;
@@ -529,14 +526,6 @@ class Cursor {
         }
 
         var jax = MathJax.Hub.getAllJax('#' + svgelem.parentNode.id)[0];
-
-        // TODO: remove this, it's just for debugging
-        try {
-            visualizeJax(jax, '#mmlviz', this);
-        } catch (err) {
-            // Ignore
-            console.error('Failed to visualize jax', err);
-        }
 
         if (!skipScroll) this.scrollIntoView(svgelem)
     }
