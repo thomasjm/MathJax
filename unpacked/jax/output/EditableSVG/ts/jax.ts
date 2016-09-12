@@ -422,9 +422,6 @@ class EditableSVG implements OutputJax {
                 state.SVGdelay = true; // delay if there are more scripts
             }
         }
-
-        // Notify that a render has taken place
-        MathJax.Hub.Startup.signal.Post("EditableSVG rerender");
     }
 
     postTranslate(state, partial) {
@@ -451,6 +448,9 @@ class EditableSVG implements OutputJax {
 
         //  Save our place so we know what is revealed
         state.SVGlast = state.SVGeqn;
+
+        // Notify that a render has taken place
+        MathJax.Hub.Startup.signal.Post("EditableSVG rerender");
     }
 
     resetGlyphs(reset?) {
