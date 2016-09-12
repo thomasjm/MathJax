@@ -422,6 +422,9 @@ class EditableSVG implements OutputJax {
                 state.SVGdelay = true; // delay if there are more scripts
             }
         }
+
+        // Notify that a render has taken place
+        MathJax.Hub.Startup.signal.Post("EditableSVG rerender");
     }
 
     postTranslate(state, partial) {
@@ -524,7 +527,8 @@ class EditableSVG implements OutputJax {
                 }
                 throw err;
             }
-            MathJax.Callback(callback)()
+            MathJax.Callback(callback)();
+            MathJax.Hub.Startup.signal.Post("EditableSVG rerender");
         }
 
         function handler(e) {
@@ -710,13 +714,17 @@ class EditableSVG implements OutputJax {
     }
 
     static getJaxFromMath(math) {
-        if (math.parentNode.className === "MathJax_SVG_Display") {
-            math = math.parentNode;
+        try {
+            if (math.parentNode.className === "MathJax_SVG_Display") {
+                math = math.parentNode;
+            }
+            do {
+                math = math.nextSibling;
+            } while (math && math.nodeName.toLowerCase() !== "script");
+            return MathJax.Hub.getJaxFor(math);
+        } catch (e) {
+            console.error("Error in getJaxFromMath", e);
         }
-        do {
-            math = math.nextSibling;
-        } while (math && math.nodeName.toLowerCase() !== "script");
-        return MathJax.Hub.getJaxFor(math);
     }
 
     constructor() {
