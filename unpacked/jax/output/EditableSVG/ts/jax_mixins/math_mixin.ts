@@ -212,6 +212,8 @@ class MathMixin extends MBaseMixin {
       // Ignore if this isn't for our widget
       if (args[1] != id) return;
 
+      console.log("Processing draw other cursor");
+
       var cursorID = args[2];
       var path = args[3];
       var position = args[4];
@@ -229,8 +231,16 @@ class MathMixin extends MBaseMixin {
 
       cursor.moveTo(node, position)
       cursor.draw();
+    });
 
-      console.log("MATHJAX GOT OTHER CURSOR MOVE MESSAGE! ", cursorID, path);
+    MathJax.hiteSignal.MessageHook("EditableSVG clear_other_cursor", function(args) {
+      console.log("Processing clear other cursor");
+
+      var cursorID = args[1];
+      if (cursorID in that.otherCursors) {
+        that.otherCursors[cursorID].blur();
+        delete that.otherCursors[cursorID];
+      }
     });
   }
 
