@@ -5,6 +5,8 @@
 class MathMixin extends MBaseMixin {
   isCursorable() { return false; } // TODO actually implement cursor
 
+  otherCursors: any; // Dict of other cursors, belonging to other editors
+
   toSVG(span, div, replace?: boolean) {
     var CONFIG = MathJax.OutputJax.EditableSVG.config;
 
@@ -142,6 +144,8 @@ class MathMixin extends MBaseMixin {
   installCursorListeners() {
     var that = this;
 
+    that.otherCursors = {};
+
     // The ID is on the containing span
     var id = $(that.EditableSVGelem).parent().attr("id");
 
@@ -154,7 +158,7 @@ class MathMixin extends MBaseMixin {
       // Clear the signal on receipt of this message
       // TODO: use a saner pubsub system so we don't have to clear
       // TODO: is this still necessary now that we use widget IDs?
-      MathJax.Hub.Startup.signal.Clear();
+      // MathJax.Hub.Startup.signal.Clear();
 
       var cursor = that.cursor;
       console.log("Got move into from left! ID: ");
@@ -168,7 +172,7 @@ class MathMixin extends MBaseMixin {
       // Clear the signal on receipt of this message
       // TODO: use a saner pubsub system so we don't have to clear
       // TODO: is this still necessary now that we use widget IDs?
-      MathJax.Hub.Startup.signal.Clear();
+      // MathJax.Hub.Startup.signal.Clear();
 
       var cursor = that.cursor;
       console.log("Got move into from right! ID: ");
@@ -182,7 +186,7 @@ class MathMixin extends MBaseMixin {
       // Clear the signal on receipt of this message
       // TODO: use a saner pubsub system so we don't have to clear
       // TODO: is this still necessary now that we use widget IDs?
-      MathJax.Hub.Startup.signal.Clear();
+      // MathJax.Hub.Startup.signal.Clear();
 
       var cursor = that.cursor;
       console.log("Got move into from top! ID: ");
@@ -196,12 +200,37 @@ class MathMixin extends MBaseMixin {
       // Clear the signal on receipt of this message
       // TODO: use a saner pubsub system so we don't have to clear
       // TODO: is this still necessary now that we use widget IDs?
-      MathJax.Hub.Startup.signal.Clear();
+      // MathJax.Hub.Startup.signal.Clear();
 
       var cursor = that.cursor;
       console.log("Got move into from bottom! ID: ");
       that.data[0].moveCursorFromParent(cursor, Direction.DOWN);
       $(that.EditableSVGelem).parent().focus()
+    });
+
+    MathJax.hiteSignal.MessageHook("EditableSVG draw_other_cursor", function(args) {
+      // Ignore if this isn't for our widget
+      if (args[1] != id) return;
+
+      var cursorID = args[2];
+      var path = args[3];
+      var position = args[4];
+      var color = args[5];
+
+      var node = that;
+      while (path.length > 0) {
+        node = node.data[path.shift()];
+      }
+
+      if (!(cursorID in that.otherCursors)) {
+        that.otherCursors[cursorID] = new Cursor(color, true);
+      }
+      var cursor =  that.otherCursors[cursorID];
+
+      cursor.moveTo(node, position)
+      cursor.draw();
+
+      console.log("MATHJAX GOT OTHER CURSOR MOVE MESSAGE! ", cursorID, path);
     });
   }
 
