@@ -14,9 +14,15 @@ MathJax.Hub.Register.StartupHook("EditableSVG Jax Ready", function() {
         }
     });
 
+    MML.annotation.Augment({
+        toTex: function() {
+            return '';
+        }
+    });
+
     MML.hole.Augment({
         toTex: function() {
-            return '{ }';
+            return '\\hole';
         }
     });
 

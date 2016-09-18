@@ -2,8 +2,6 @@
 /// <reference path="msqrt_mixin.ts" />
 
 class MRootMixin extends MBaseMixin {
-    isCursorable() { return true; }
-
     toSVG() {
         this.SVGgetStyles();
         var svg  = new BBOX();
@@ -71,6 +69,8 @@ class MRootMixin extends MBaseMixin {
     //////////////////
     // Cursor stuff //
     //////////////////
+
+    isCursorable() { return true; }
 
     moveCursorFromChild(c, d) {
         this.parent.moveCursorFromChild(c, d, this)
