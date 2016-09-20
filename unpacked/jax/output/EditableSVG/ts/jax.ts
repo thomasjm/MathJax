@@ -452,7 +452,7 @@ class EditableSVG implements OutputJax {
 
         // Notify that a render has taken place
         var id = script.getAttribute("id");
-        MathJax.hiteSignal.Post(["EditableSVG rerender", id]);
+        MathJax.hiteSignal.Post(["EditableSVG rerender", id + "-Frame"]);
     }
 
     resetGlyphs(reset?) {
