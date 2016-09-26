@@ -34,7 +34,7 @@ class Hole extends MBaseMixin {
 
         svg.Clean();
 
-        var hole = new BBOX_RECT(400, 0, 300, {
+        var hole = new BBOX_RECT(700*this.scale, 0, 525*this.scale, {
             fill: 'white',
             stroke: 'blue',
             "stroke-width": '20'
