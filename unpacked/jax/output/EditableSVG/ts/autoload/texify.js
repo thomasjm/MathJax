@@ -83,7 +83,11 @@ MathJax.Hub.Register.StartupHook("EditableSVG Jax Ready", function() {
     MML.TeXAtom.Augment(oneChildNoBrace);
     MML.math.Augment(oneChildNoBrace);
     MML.mn.Augment(oneChildNoBrace);
-    MML.mo.Augment(oneChildNoBrace);
+    MML.mo.Augment({
+        toTex: function() {
+            return " " + this.getChildTex(0) + " ";
+        }
+    });
     MML.mi.Augment(oneChildNoBrace);
 
     MML.entity.Augment({
@@ -129,14 +133,18 @@ MathJax.Hub.Register.StartupHook("EditableSVG Jax Ready", function() {
         toTex: function() {
             var result = '';
             var i;
-            for (i=0; i<this.data.length; ++i)
+            for (i=0; i<this.data.length; ++i) {
                 result += this.getChildTex(i);
+            }
             if (!result) return result;
-            if (result[0] === '(' && result[result.length-1] === ')') {
+            if ((result[0] === '(' && result[result.length-1] === ')') ||
+                (result[0] === '[' && result[result.length-1] === ']') ||
+                (result[0] === '{' && result[result.length-1] === '}')) {
                 result = '\\left' + result.slice(0, -1) + '\\right' + result.slice(-1);
             }
+
             return result;
-        },
+        }
     });
 
     function wrapInBraces(tex) {
