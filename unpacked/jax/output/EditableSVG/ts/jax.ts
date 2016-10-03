@@ -817,7 +817,6 @@ class EditableSVG implements OutputJax {
 
 // TODO: this is not compatible with IE8, use something like $(document).ready
 var load = function(event) {
-    console.log('LOADING');
     EditableSVG.apply(MathJax.OutputJax.EditableSVG);
 
     // TODO: we're blowing away config right now

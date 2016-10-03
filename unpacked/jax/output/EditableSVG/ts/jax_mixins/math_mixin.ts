@@ -149,65 +149,6 @@ class MathMixin extends MBaseMixin {
     // The ID is on the containing span
     var id = $(that.EditableSVGelem).parent().attr("id");
 
-    console.log("Registering listeners on ID: ", id);
-
-    MathJax.hiteSignal.MessageHook("EditableSVG move_into_from_left", function(args) {
-      // Ignore if this isn't for our widget
-      if (args[1] != id) return;
-
-      // Clear the signal on receipt of this message
-      // TODO: use a saner pubsub system so we don't have to clear
-      // TODO: is this still necessary now that we use widget IDs?
-      // MathJax.Hub.Startup.signal.Clear();
-
-      var cursor = that.cursor;
-      console.log("Got move into from left! ID: ");
-      that.data[0].moveCursorFromParent(cursor, Direction.RIGHT);
-      $(that.EditableSVGelem).parent().focus()
-    });
-    MathJax.hiteSignal.MessageHook("EditableSVG move_into_from_right", function(args) {
-      // Ignore if this isn't for our widget
-      if (args[1] != id) return;
-
-      // Clear the signal on receipt of this message
-      // TODO: use a saner pubsub system so we don't have to clear
-      // TODO: is this still necessary now that we use widget IDs?
-      // MathJax.Hub.Startup.signal.Clear();
-
-      var cursor = that.cursor;
-      console.log("Got move into from right! ID: ");
-      that.data[0].moveCursorFromParent(cursor, Direction.LEFT);
-      $(that.EditableSVGelem).parent().focus()
-    });
-    MathJax.hiteSignal.MessageHook("EditableSVG move_into_from_top", function(args) {
-      // Ignore if this isn't for our widget
-      if (args[1] != id) return;
-
-      // Clear the signal on receipt of this message
-      // TODO: use a saner pubsub system so we don't have to clear
-      // TODO: is this still necessary now that we use widget IDs?
-      // MathJax.Hub.Startup.signal.Clear();
-
-      var cursor = that.cursor;
-      console.log("Got move into from top! ID: ");
-      that.data[0].moveCursorFromParent(cursor, Direction.UP);
-      $(that.EditableSVGelem).parent().focus()
-    });
-    MathJax.hiteSignal.MessageHook("EditableSVG move_into_from_bottom", function(args) {
-      // Ignore if this isn't for our widget
-      if (args[1] != id) return;
-
-      // Clear the signal on receipt of this message
-      // TODO: use a saner pubsub system so we don't have to clear
-      // TODO: is this still necessary now that we use widget IDs?
-      // MathJax.Hub.Startup.signal.Clear();
-
-      var cursor = that.cursor;
-      console.log("Got move into from bottom! ID: ");
-      that.data[0].moveCursorFromParent(cursor, Direction.DOWN);
-      $(that.EditableSVGelem).parent().focus()
-    });
-
     MathJax.hiteSignal.MessageHook("EditableSVG draw_other_cursor", function(args) {
       // Ignore if this isn't for our widget
       if (args[1] != id) return;
@@ -244,19 +185,39 @@ class MathMixin extends MBaseMixin {
     });
   }
 
+  // Allow external code to register a listener on this event
+  // This is a very simple system: you can only register one listener
+  onMoveCursorLeft(fn) {
+    this.onMoveCursorLeft = fn;
+  }
+
+  onMoveCursorRight(fn) {
+    this.onMoveCursorRight = fn;
+  }
+
+  onMoveCursorUp(fn) {
+    this.onMoveCursorUp = fn;
+  }
+
+  onMoveCursorDown(fn) {
+    this.onMoveCursorDown = fn;
+  }
+
   moveCursorFromChild(cursor, direction, child) {
     // The ID is on the containing span
     var id = $(this.EditableSVGelem).parent().attr("id");
 
+    var that = this;
+
     // Signal that someone tried to move out of this box
     if (direction == Direction.LEFT) {
-      MathJax.hiteSignal.Post(["EditableSVG move_cursor_left", id]);
+      if (that.onMoveCursorLeft) { setTimeout(function() { that.onMoveCursorLeft(); }, 0); }
     } else if (direction == Direction.RIGHT) {
-      MathJax.hiteSignal.Post(["EditableSVG move_cursor_right", id]);
+      if (that.onMoveCursorRight) { setTimeout(function() { that.onMoveCursorRight(); }, 0); }
     } else if (direction == Direction.UP) {
-      MathJax.hiteSignal.Post(["EditableSVG move_cursor_up", id]);
+      if (that.onMoveCursorUp) { setTimeout(function() { that.onMoveCursorUp(); }, 0); }
     } if (direction == Direction.DOWN) {
-      MathJax.hiteSignal.Post(["EditableSVG move_cursor_down", id]);
+      if (that.onMoveCursorDown) { setTimeout(function() { that.onMoveCursorDown(); }, 0); }
     }
 
     // As far as the EditableSVG goes, don't let the cursor actually move
