@@ -128,6 +128,7 @@ class Cursor {
   }
 
   draw() {
+    if (!this.node) return;
     this.node.drawCursor(this)
   }
 
