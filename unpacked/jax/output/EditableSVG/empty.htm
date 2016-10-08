@@ -30,10 +30,10 @@
          MathJax.Hub.Register.StartupHook("End", function() {
              var texarea = $('#tex');
              var svgarea = $('.MathJax_SVG');
-             var inputID = Util.getJaxFromMath(svgarea[0]).inputID;
+             var inputID = MathJax.OutputJax.EditableSVG.getJaxFromMath(svgarea[0]).inputID;
 
              svgarea.on('keyup', function() {
-                 var found = Util.getJaxFromMath(svgarea[0]).root
+                 var found = MathJax.OutputJax.EditableSVG.getJaxFromMath(svgarea[0]).root
                  try {
                      texarea.val(found.toTex())
                  } catch (e) {
@@ -46,7 +46,7 @@
                  var $script = $('#' + inputID);
                  $script.text(texarea.val());
                  var math2 = MathJax.InputJax.TeX.Translate($script[0]);
-                 var found = Util.getJaxFromMath(svgarea[0]);
+                 var found = MathJax.OutputJax.EditableSVG.getJaxFromMath(svgarea[0]);
                  found.root.data = math2.root.data;
                  Object.keys(math2).forEach(function(k) {
                      if (k !== 'root') found[k] = math2[k]
@@ -133,14 +133,6 @@
             <!-- $$\nabla \times B={\mu}_0(J+{\epsilon}_0 \frac{\partial E}{\partial t})$$ -->
             $$x$$
 	    </div>
-
-	    <h3>Tips:</h3>
-	    <ul>
-	        <li>Use backslash to enter LaTeX commands</li>
-            <li>Hit the spacebar to jump out of the current expression</li>
-	        <li>TODO: add hotkeys here once they work</li>
-            <li>Press Ctrl+m to make a new inline math box, and Ctrl+Shift+m to make a new block math box</li>
-	    </ul>
 
         <div class="main-input-box">
 	        <h2>TeX</h2>

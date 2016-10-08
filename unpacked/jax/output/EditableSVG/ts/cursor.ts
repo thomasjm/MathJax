@@ -136,7 +136,9 @@ class Cursor {
     var direction;
     switch (event.which) {
     case 8: this.backspace(event, recall); break;
+
     case 27: this.exitBackslashMode(false); recall(['refocus', this]); break;
+
     case 38: direction = Direction.UP; break;
     case 40: direction = Direction.DOWN; break;
     case 37: direction = Direction.LEFT; break;
@@ -372,6 +374,7 @@ class Cursor {
     }
 
     // TODO: move this into central hotkey-handling module
+    // Control + Shift + Enter = add new column to mtable
     if (event.ctrlKey && event.shiftKey) {
       var node = this.node;
       while (node) {
@@ -382,6 +385,7 @@ class Cursor {
         node = node.parent;
       }
     }
+    // Control + Enter = add new row to mtable
     if (event.ctrlKey && !event.shiftKey) {
       var node = this.node;
       while (node) {
@@ -436,6 +440,10 @@ class Cursor {
         }
 
       } else if (c === "^" || c === "_") {
+        // If we're in backslash mode, pretend a space was entered to exit it first
+        if (this.mode === Cursor.CursorMode.BACKSLASH) {
+          this.handleSpace(recall, c);
+        }
         return this.handleSuperOrSubscript(recall, c);
       } else if (c === " ") {
         return this.handleSpace(recall, c);
@@ -553,7 +561,7 @@ class Cursor {
     var id = node.inputID + "-Frame";
 
     // Broadcast
-    MathJax.hiteSignal.Post(["EditableSVG cursor_drawn", id, path, position]);
+    MathJax.OutputJax.EditableSVG.hiteSignal.Post(["EditableSVG cursor_drawn", id, path, position]);
   }
 
   clearHighlight() {

@@ -149,7 +149,7 @@ class MathMixin extends MBaseMixin {
     // The ID is on the containing span
     var id = $(that.EditableSVGelem).parent().attr("id");
 
-    MathJax.hiteSignal.MessageHook("EditableSVG draw_other_cursor", function(args) {
+    MathJax.OutputJax.EditableSVG.hiteSignal.MessageHook("EditableSVG draw_other_cursor", function(args) {
       // Ignore if this isn't for our widget
       if (args[1] != id) return;
 
@@ -174,7 +174,7 @@ class MathMixin extends MBaseMixin {
       cursor.draw();
     });
 
-    MathJax.hiteSignal.MessageHook("EditableSVG clear_other_cursor", function(args) {
+    MathJax.OutputJax.EditableSVG.hiteSignal.MessageHook("EditableSVG clear_other_cursor", function(args) {
       console.log("Processing clear other cursor");
 
       var cursorID = args[1];

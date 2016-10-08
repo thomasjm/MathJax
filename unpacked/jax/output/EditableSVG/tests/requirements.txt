@@ -1,0 +1,4 @@
+pytest==2.8.7
+python-prctl==1.6.1
+selenium==2.52.0
+unittest2==1.1.0
