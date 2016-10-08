@@ -7,6 +7,9 @@ class MathMixin extends MBaseMixin {
 
   otherCursors: any; // Dict of other cursors, belonging to other editors
 
+  onRerenderFn: any;
+  onCursorDrawnFn: any;
+
   toSVG(span, div, replace?: boolean) {
     var CONFIG = MathJax.OutputJax.EditableSVG.config;
 
@@ -137,52 +140,39 @@ class MathMixin extends MBaseMixin {
     return MBaseMixin.SVGautoloadFile('texify')
   }
 
+
   //////////////////
   // Cursor stuff //
   //////////////////
 
-  installCursorListeners() {
+  drawOtherCursor(cursorID, path, position, color) {
     var that = this;
 
-    that.otherCursors = {};
+    that.otherCursors = that.otherCursors || {};
 
-    // The ID is on the containing span
-    var id = $(that.EditableSVGelem).parent().attr("id");
+    var node = that;
+    while (path.length > 0) {
+      node = node.data[path.shift()];
+    }
 
-    MathJax.OutputJax.EditableSVG.hiteSignal.MessageHook("EditableSVG draw_other_cursor", function(args) {
-      // Ignore if this isn't for our widget
-      if (args[1] != id) return;
+    if (!(cursorID in that.otherCursors)) {
+      that.otherCursors[cursorID] = new Cursor(that, color, true);
+    }
+    var cursor =  that.otherCursors[cursorID];
 
-      console.log("Processing draw other cursor");
+    cursor.moveTo(node, position)
+    cursor.draw();
+  }
 
-      var cursorID = args[2];
-      var path = args[3];
-      var position = args[4];
-      var color = args[5];
+  clearOtherCursor(cursorID) {
+    var that = this;
 
-      var node = that;
-      while (path.length > 0) {
-        node = node.data[path.shift()];
-      }
+    that.otherCursors = that.otherCursors || {};
 
-      if (!(cursorID in that.otherCursors)) {
-        that.otherCursors[cursorID] = new Cursor(color, true);
-      }
-      var cursor =  that.otherCursors[cursorID];
-
-      cursor.moveTo(node, position)
-      cursor.draw();
-    });
-
-    MathJax.OutputJax.EditableSVG.hiteSignal.MessageHook("EditableSVG clear_other_cursor", function(args) {
-      console.log("Processing clear other cursor");
-
-      var cursorID = args[1];
-      if (cursorID in that.otherCursors) {
-        that.otherCursors[cursorID].blur();
-        delete that.otherCursors[cursorID];
-      }
-    });
+    if (cursorID in that.otherCursors) {
+      that.otherCursors[cursorID].blur();
+      delete that.otherCursors[cursorID];
+    }
   }
 
   // Allow external code to register a listener on this event
@@ -201,6 +191,31 @@ class MathMixin extends MBaseMixin {
 
   onMoveCursorDown(fn) {
     this.onMoveCursorDown = fn;
+  }
+
+  installOnRerender(fn) {
+    this.onRerenderFn = fn;
+  }
+
+  onRerender() {
+    if (this.onRerenderFn) this.onRerenderFn();
+  }
+
+  installOnCursorDrawn(fn) {
+    var that = this;
+
+    that.onCursorDrawnFn = fn;
+
+    MathJax.Hub.signal.MessageHook("EditableSVG clear_other_cursor", function(args) {
+      console.log("Processing clear other cursor");
+
+      var cursorID = args[1];
+      that.clearOtherCursor(cursorID);
+    });
+  }
+
+  onCursorDrawn() {
+    if (this.onCursorDrawnFn) this.onCursorDrawnFn.apply(this, arguments);
   }
 
   moveCursorFromChild(cursor, direction, child) {

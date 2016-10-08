@@ -386,7 +386,6 @@ class EditableSVG implements OutputJax {
     math.setTeXclass();
     try {
       math.toSVG(span, div);
-      math.installCursorListeners();
     } catch (err) {
       if (err.restart) {
         while (span.firstChild) {
@@ -455,7 +454,7 @@ class EditableSVG implements OutputJax {
 
     // Notify that a render has taken place
     var id = script.getAttribute("id");
-    MathJax.OutputJax.EditableSVG.hiteSignal.Post(["EditableSVG rerender", id + "-Frame"]);
+    state.jax.root.onRerender();
   }
 
   resetGlyphs(reset?) {
@@ -505,9 +504,9 @@ class EditableSVG implements OutputJax {
   }
 
   AddInputHandlers(math, span, div) {
-    math.cursor = new Cursor()
-    math.rerender = rerender
-    span.setAttribute('tabindex', '0')
+    math.cursor = new Cursor(math);
+    math.rerender = rerender;
+    span.setAttribute('tabindex', '0');
 
     var addTexToDOM = function() {
       var tex = math.toTex();
@@ -534,7 +533,7 @@ class EditableSVG implements OutputJax {
       }
       MathJax.Callback(callback)();
       var id = span.getAttribute("id");
-      MathJax.OutputJax.EditableSVG.hiteSignal.Post(["EditableSVG rerender", id]);
+      math.onRerender();
     }
 
     function handler(e) {

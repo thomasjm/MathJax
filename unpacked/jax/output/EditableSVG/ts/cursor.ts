@@ -12,6 +12,9 @@ class Cursor {
   // The node to which the cursor currently points
   node: MBaseMixin;
 
+  // The root math node that owns this cursor
+  math: MBaseMixin;
+
   // TODO: convert to CursorMode
   mode: string;
 
@@ -29,7 +32,8 @@ class Cursor {
   color: string;
   isOtherCursor: bool;
 
-  constructor(color?: string, isOtherCursor?: bool) {
+  constructor(math, color?: string, isOtherCursor?: bool) {
+    this.math = math;
     this.selectionStart = null;
     this.selectionEnd = null;
     this.mode = Cursor.CursorMode.NORMAL;
@@ -561,7 +565,7 @@ class Cursor {
     var id = node.inputID + "-Frame";
 
     // Broadcast
-    MathJax.OutputJax.EditableSVG.hiteSignal.Post(["EditableSVG cursor_drawn", id, path, position]);
+    this.math.onCursorDrawn(id, path, position);
   }
 
   clearHighlight() {
