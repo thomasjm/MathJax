@@ -80,8 +80,6 @@ class EditableSVG implements OutputJax {
   ucMatch = MathJax.HTML.ucMatch;
 
   Config() {
-    console.log('AUTOLOAD DIR ', this.autoloadDir);
-
     // TODO: removed call to SUPER here
     var settings = MathJax.Hub.config.menuSettings,
         config = this.config,
@@ -150,11 +148,7 @@ class EditableSVG implements OutputJax {
     });
 
     // Determine pixels-per-inch and em-size
-    var div = MathJax.HTML.addElement(this.hiddenDiv, "div", {
-      style: {
-        width: "5in"
-      }
-    });
+    var div = MathJax.HTML.addElement(this.hiddenDiv, "div", { style: { width: "5in" } });
     Util.pxPerInch = div.offsetWidth / 5;
     this.hiddenDiv.removeChild(div);
 
@@ -163,9 +157,7 @@ class EditableSVG implements OutputJax {
 
     // Global defs for font glyphs
     BBOX_GLYPH.defs = Util.addElement(Util.addElement(this.hiddenDiv.parentNode, "svg"),
-                                      "defs", {
-                                        id: "MathJax_SVG_glyphs"
-                                      });
+                                      "defs", { id: "MathJax_SVG_glyphs" });
 
     // Used in preTranslate to get scaling factors
     this.ExSpan = MathJax.HTML.Element("span", {
@@ -174,9 +166,7 @@ class EditableSVG implements OutputJax {
         "font-size-adjust": "none"
       }
     }, [
-      ["span", {
-        className: "MathJax_SVG_ExBox"
-      }]
+      ["span", { className: "MathJax_SVG_ExBox" }]
     ]);
 
     // Used in preTranslate to get linebreak width
@@ -454,7 +444,11 @@ class EditableSVG implements OutputJax {
 
     // Notify that a render has taken place
     var id = script.getAttribute("id");
-    state.jax.root.onRerender();
+    for (var i = 0; i < scripts.length; i++) {
+      var jax = MathJax.Hub.getJaxFor(scripts[i]);
+      console.log("Got jax: ", jax);
+      jax.root.onRerender();
+    }
   }
 
   resetGlyphs(reset?) {
@@ -739,9 +733,6 @@ class EditableSVG implements OutputJax {
     var hole = MathJax.ElementJax.mml.hole();
     math.SetData(0, hole);
     math.rerender.bind(math)();
-    // Focus to trigger rerender
-    // $(math).focus();
-    // if (math.rerender) math.rerender();
   }
 
   constructor() {
