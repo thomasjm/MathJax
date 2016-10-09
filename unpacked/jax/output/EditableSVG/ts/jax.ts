@@ -340,6 +340,25 @@ class EditableSVG implements OutputJax {
     state.SVGi = -1;
     state.SVGchunk = this.config.EqnChunk;
     state.SVGdelay = false;
+
+    // Prune the state so it's more suitable for interactive editing
+    this.pruneJax(jax);
+  }
+
+  /**
+   * Edit the model to make it more suitable for interactive editing.
+   * For example, by removing superfluous mrows that would cause extra cursoring.
+   **/
+  pruneJax(jax) {
+    var math = jax.root;
+
+    // If we have an mrow containing a hole, shift it to be just a hole
+    if (math.data.length == 1 &&
+        math.data[0].type == "mrow" &&
+        math.data[0].data.length == 1 &&
+        math.data[0].data[0].type == "hole") {
+      math.SetData(0, math.data[0].data[0]);
+    }
   }
 
   Translate(script, state) {
