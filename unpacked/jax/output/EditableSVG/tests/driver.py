@@ -66,3 +66,7 @@ def get_driver():
 
     driver = make_driver()
     return driver
+
+def close_driver():
+    global driver
+    if driver: driver.close()
