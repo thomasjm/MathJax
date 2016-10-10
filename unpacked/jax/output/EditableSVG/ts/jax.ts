@@ -276,7 +276,7 @@ class EditableSVG implements OutputJax {
         span.ontouchend = this.TOUCH.end;
       }
       if (jax.EditableSVG.display) {
-        div = MathJax.HTML.Element("div", {
+        div = MathJax.HTML.Element("span", {
           className: "MathJax_SVG_Display"
         });
         div.appendChild(span);

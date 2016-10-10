@@ -174,6 +174,11 @@ MathJax.Hub.Register.StartupHook("EditableSVG Jax Ready", function() {
             var lookup = (typeof value === 'string') ? value : value[0];
             entities[lookup] = '\\' + key;
         }
+
+        // Override some things
+
+        // Without this override, \smallint clobbers \int, so our things texify to \smallint
+        entities["222B"] = "\\int";
     }
 
     MathJax.Hub.Startup.signal.Post('texify Ready');

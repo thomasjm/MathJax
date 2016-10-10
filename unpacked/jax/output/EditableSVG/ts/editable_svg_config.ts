@@ -32,7 +32,7 @@ class EditableSVGConfig {
 
         ".MathJax_SVG_Display": {
             position: "relative",
-            display: "block!important",
+            // display: "block!important",
             "text-indent": 0,
             "max-width": "none",
             "max-height": "none",
