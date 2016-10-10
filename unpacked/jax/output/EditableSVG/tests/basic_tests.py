@@ -14,4 +14,4 @@ class BasicTests(EditableSVGTest):
         self.send_keystrokes("x^2x", "x^{2x}")
 
     def test_integral(self):
-        self.send_keystrokes("\int ^x  _y", "{\\smallint}^x_y")
+        self.send_keystrokes("\int ^x  _y", "{\\int}^x_y")
