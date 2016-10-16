@@ -9,6 +9,10 @@ class MathMixin extends MBaseMixin {
 
   onRerenderFn: any;
   onCursorDrawnFn: any;
+  onMoveCursorLeftFn: any;
+  onMoveCursorRightFn: any;
+  onMoveCursorUpFn: any;
+  onMoveCursorDownFn: any;
 
   toSVG(span, div, replace?: boolean) {
     var CONFIG = MathJax.OutputJax.EditableSVG.config;
@@ -177,20 +181,36 @@ class MathMixin extends MBaseMixin {
 
   // Allow external code to register a listener on this event
   // This is a very simple system: you can only register one listener
-  onMoveCursorLeft(fn) {
-    this.onMoveCursorLeft = fn;
+  installOnMoveCursorLeft(fn) {
+    this.onMoveCursorLeftFn = fn;
   }
 
-  onMoveCursorRight(fn) {
-    this.onMoveCursorRight = fn;
+  onMoveCursorLeft() {
+    if (this.onMoveCursorLeftFn) this.onMoveCursorLeftFn();
   }
 
-  onMoveCursorUp(fn) {
-    this.onMoveCursorUp = fn;
+  installOnMoveCursorRight(fn) {
+    this.onMoveCursorRightFn = fn;
   }
 
-  onMoveCursorDown(fn) {
-    this.onMoveCursorDown = fn;
+  onMoveCursorRight() {
+    if (this.onMoveCursorRightFn) this.onMoveCursorRightFn();
+  }
+
+  installOnMoveCursorUp(fn) {
+    this.onMoveCursorUpFn = fn;
+  }
+
+  onMoveCursorUp() {
+    if (this.onMoveCursorUpFn) this.onMoveCursorUpFn();
+  }
+
+  installOnMoveCursorDown(fn) {
+    this.onMoveCursorDownFn = fn;
+  }
+
+  onMoveCursorDown() {
+    if (this.onMoveCursorDownFn) this.onMoveCursorDownFn();
   }
 
   installOnRerender(fn) {
